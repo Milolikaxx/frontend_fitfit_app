@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "395036848681",
+    "project_id": "fitfit-login",
+    "storage_bucket": "fitfit-login.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395036848681:android:f023cefcfed95ed62ea238",
+        "android_client_info": {
+          "package_name": "com.example.frontend_fitfit_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEThA826COSs2nd6479rKHj4cJr0CCdx8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
