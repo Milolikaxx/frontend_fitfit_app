@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/pages/home.dart';
+import 'package:frontend_fitfit_app/pages/signup.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -50,15 +51,15 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.only(top: 20, bottom: 20),
               child: TextFormField(
                 controller: emailController,
-                validator: (emailController) {
+                validator: (value) {
                   // add email validation
-                  if (emailController == null || emailController.isEmpty) {
+                  if (value == null || value.isEmpty) {
                     return 'Please enter some text';
                   }
 
                   bool emailValid = RegExp(
                           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                      .hasMatch(emailController);
+                      .hasMatch(value);
                   if (!emailValid) {
                     return 'Please enter a valid email';
                   }
@@ -68,6 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: 'Enter your email',
+                  hintStyle: const TextStyle(color: Colors.white),
                   prefixIcon: const Icon(
                     Icons.email_outlined,
                     color: Colors.white,
@@ -87,13 +89,13 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.only(bottom: 20),
               child: TextFormField(
                 controller: passwordController,
-                validator: (passwordController) {
-                  if (passwordController == null ||
-                      passwordController.isEmpty) {
+                validator: (value) {
+                  if (value == null ||
+                      value.isEmpty) {
                     return 'Please enter some text';
                   }
 
-                  if (passwordController.length < 8) {
+                  if (value.length < 8) {
                     return 'Password must be at least 8 characters';
                   }
                   return null;
@@ -102,6 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                     hintText: 'Enter your password',
+                    hintStyle: const TextStyle(color: Colors.white),
                     prefixIcon: const Icon(Icons.lock_outline_rounded,
                         color: Colors.white),
                     enabledBorder: OutlineInputBorder(
@@ -131,10 +134,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.only(bottom: 10),
               child: ElevatedButton(
                 onPressed: () {
-                  //  Navigator.pushReplacement(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => const BarBottom()));
+   
                 },
                 style: ButtonStyle(
                   minimumSize:
@@ -170,7 +170,7 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: OutlinedButton(
-                onPressed: singIn,
+                onPressed: signIn,
                 style: ButtonStyle(
                   minimumSize:
                       MaterialStateProperty.all<Size>(const Size(300, 50)),
@@ -206,10 +206,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.only(bottom: 50),
               child: ElevatedButton(
                 onPressed: () {
-                  //  Navigator.pushReplacement(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => const BarBottom()));
+                  Get.to(() => const SignUpPage());
                 },
                 style: ButtonStyle(
                   minimumSize:
@@ -234,7 +231,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void singIn() async {
+  void signIn() async {
     GoogleSignIn googleSignIn = GoogleSignIn(
       scopes: scopes,
     );
