@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/pages/login.dart';
+import 'package:frontend_fitfit_app/pages/signup.dart';
 import 'package:get/get.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -24,10 +25,7 @@ class _WelcomePageState extends State<WelcomePage> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    //  Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const BarBottom()));
+                    Get.to(() => const SignUpPage());
                   },
                   style: ButtonStyle(
                     minimumSize:
