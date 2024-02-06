@@ -4,10 +4,8 @@ import 'package:frontend_fitfit_app/pages/welcome.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-
 class HomePage extends StatefulWidget {
-  final GoogleSignInAccount? user;
-  const HomePage({super.key,required this.user});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -18,27 +16,29 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home Page"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            //การเรียกใช้ข้อมูลผู้ใช้จาก Google Firebase
-            CircleAvatar(
-              backgroundImage: NetworkImage(widget.user!.photoUrl.toString()),
-              radius: 50,
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: const Color(0xFFF8721D),
+          leading: const CircleAvatar(
+            backgroundImage: NetworkImage(
+              'https://cdn-icons-png.flaticon.com/512/2171/2171947.png',
             ),
-            const Padding(padding: EdgeInsets.all(20.0)),
-            Text(widget.user!.email),
-            Text(widget.user!.displayName.toString()),
-            const Padding(padding: EdgeInsets.all(100.0)),
-            _googleSignInButton(),
+          ),
+          title: const Text("Test Test"),
+          actions: [
+            IconButton(
+              icon: const Icon(
+                Icons.exit_to_app_rounded,
+                color: Color.fromARGB(255, 255, 255, 255)
+              ),
+              onPressed: () {
+                
+              },
+            ),
           ],
-        ),
-      )
-    );
+        )
+        );
   }
 
   //ปุ่ม Sign Out การออกจากระบบ
@@ -47,12 +47,12 @@ class _HomePageState extends State<HomePage> {
       child: SizedBox(
         height: 50,
         child: ElevatedButton(
-          child: const Text( "Log Out"),
-          onPressed: () async{
-           await GoogleSignIn().disconnect();
-           log("Sign Out Success!!");
-           Get.to(() => const WelcomePage());
-          } ,
+          child: const Text("Log Out"),
+          onPressed: () async {
+            await GoogleSignIn().disconnect();
+            log("Sign Out Success!!");
+            Get.to(() => const WelcomePage());
+          },
         ),
       ),
     );

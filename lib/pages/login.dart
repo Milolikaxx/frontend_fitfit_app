@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/home.dart';
 import 'package:frontend_fitfit_app/pages/signup.dart';
 import 'package:get/get.dart';
@@ -38,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Log in ",
+                    "เข้าสู่ระบบ",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -68,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  hintText: 'Enter your email',
+                  hintText: 'อีเมล',
                   hintStyle: const TextStyle(color: Colors.white),
                   prefixIcon: const Icon(
                     Icons.email_outlined,
@@ -103,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: !_isPasswordVisible,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                    hintText: 'Enter your password',
+                    hintText: 'รหัสผ่าน',
                     hintStyle: const TextStyle(color: Colors.white),
                     prefixIcon: const Icon(Icons.lock_outline_rounded,
                         color: Colors.white),
@@ -134,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.only(bottom: 10),
               child: ElevatedButton(
                 onPressed: () {
-   
+                    Get.to(() => const Barbottom());
                 },
                 style: ButtonStyle(
                   minimumSize:
@@ -148,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 child: const Text(
-                  'Log in',
+                  'เข้าสู่ระบบ',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
@@ -158,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
               child: GestureDetector(
                 onTap: () {},
                 child: const Text(
-                  'Forgot password?',
+                  'ลืมรหัสผ่าน?',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -195,7 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const Text(
-                      'Log in with Google',
+                      'เข้าสู่ระบบด้วย Google',
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ],
@@ -220,7 +221,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 child: const Text(
-                  'Create new account',
+                  'สร้างบัญชีใหม่',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
@@ -241,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
       log(googleSignInAccount.id);
       log(googleSignInAccount.displayName ?? 'No Dispayname');
       log(googleSignInAccount.photoUrl ?? 'No url');
-      Get.to(() => HomePage(user: googleSignInAccount));
+      // Get.to(() => HomePage(user: googleSignInAccount));
     } else {
       log('error');
     }

@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       home: const WelcomePage(),
       theme: ThemeData(
           textTheme:
-              GoogleFonts.notoSansTextTheme(Theme.of(context).textTheme)),
+              GoogleFonts.promptTextTheme(Theme.of(context).textTheme)),
     );
   }
 }
