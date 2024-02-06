@@ -14,6 +14,7 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   var nameController = TextEditingController();
+  var emailController = TextEditingController();
   var dateController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isconPasswordVisible = false;
@@ -26,6 +27,7 @@ class _SignUpPageState extends State<SignUpPage> {
     super.initState();
     imgPick = "";
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +39,7 @@ class _SignUpPageState extends State<SignUpPage> {
             child: Column(
               children: [
                 const Text(
-                  'Sign up',
+                  'สมัครสมาชิก',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -54,13 +56,13 @@ class _SignUpPageState extends State<SignUpPage> {
                     controller: nameController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your name.';
+                        return 'กรุณากรอกชื่อในระบบของคุณ';
                       }
                       return null;
                     },
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      hintText: 'username',
+                      hintText: 'ชื่อในระบบ',
                       hintStyle: const TextStyle(color: Colors.white),
                       enabledBorder: OutlineInputBorder(
                         borderSide:
@@ -81,13 +83,13 @@ class _SignUpPageState extends State<SignUpPage> {
                     controller: dateController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your birthday.';
+                        return 'กรุณากรอกวันเกิดของคุณ';
                       }
                       return null;
                     },
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      hintText: 'Birthday',
+                      hintText: 'วันเกิด',
                       hintStyle: const TextStyle(color: Colors.white),
                       enabledBorder: OutlineInputBorder(
                         borderSide:
@@ -127,25 +129,23 @@ class _SignUpPageState extends State<SignUpPage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 10),
                   child: TextFormField(
-                    controller: nameController,
+                    controller: emailController,
                     validator: (value) {
                       // add email validation
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'กรุณากรอกอีเมลของคุณ';
                       }
-
                       bool emailValid = RegExp(
                               r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                           .hasMatch(value);
                       if (!emailValid) {
-                        return 'Please enter a valid email';
+                        return 'กรุณาใส่อีเมลให้ถูกต้อง';
                       }
-
                       return null;
                     },
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      hintText: 'Email',
+                      hintText: 'อีเมล',
                       hintStyle: const TextStyle(color: Colors.white),
                       enabledBorder: OutlineInputBorder(
                         borderSide:
@@ -177,7 +177,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     obscureText: !_isPasswordVisible,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                        hintText: 'Password',
+                        hintText: 'รหัสผ่าน',
                         hintStyle: const TextStyle(color: Colors.white),
                         enabledBorder: OutlineInputBorder(
                           borderSide:
@@ -219,7 +219,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     obscureText: !_isPasswordVisible,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                        hintText: 'Confirm password',
+                        hintText: 'ยืนยันรหัสผ่าน',
                         hintStyle: const TextStyle(color: Colors.white),
                         enabledBorder: OutlineInputBorder(
                           borderSide:
@@ -260,7 +260,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
                     child: const Text(
-                      'Create  account',
+                      'สมัครสมาชิก',
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
@@ -294,7 +294,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                         const Text(
-                          ' Sign in with Google',
+                          'สมัครด้วยบัญชี Google',
                           style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ],
@@ -411,7 +411,6 @@ class _SignUpPageState extends State<SignUpPage> {
           setState(() {
             imgPick = result.data['fileUrl'];
           });
-          
         }
       }
     }

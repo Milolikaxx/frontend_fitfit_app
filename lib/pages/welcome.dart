@@ -40,7 +40,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     ),
                   ),
                   child: const Text(
-                    'Sign Up',
+                    'สมัครสมาชิก',
                     style: TextStyle(fontSize: 18,color: Colors.white),
                   ),
                 ),
@@ -71,7 +71,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     ),
                   ),
                   child: const Text(
-                    'Log in',
+                    'เข้าสู่ระบบ',
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
