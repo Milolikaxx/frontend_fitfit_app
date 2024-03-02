@@ -14,8 +14,8 @@ class _SocailPageState extends State<SocailPage> {
         backgroundColor: Colors.black,
         appBar: AppBar(
            backgroundColor: const Color(0xFFF8721D),
-          title: const Text("Feeds"),
-          
+          title: const Text("Feeds",style: TextStyle(color: Colors.white),),
+           automaticallyImplyLeading: false,
         ));
   }
 }

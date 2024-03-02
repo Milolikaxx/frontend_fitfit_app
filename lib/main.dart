@@ -5,11 +5,13 @@ import 'package:frontend_fitfit_app/pages/welcome.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() async{
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(const MyApp());
 }
 
@@ -20,8 +22,13 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       home: const WelcomePage(),
       theme: ThemeData(
-          textTheme:
-              GoogleFonts.promptTextTheme(Theme.of(context).textTheme)),
+        textTheme: GoogleFonts.promptTextTheme(Theme.of(context).textTheme),
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Colors.white,
+          selectionColor: Colors.white,
+          selectionHandleColor: Colors.white,
+        ),
+      ),
     );
   }
 }
