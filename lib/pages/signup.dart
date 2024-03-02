@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/pages/login.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -21,6 +22,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final confirmPasswordController = TextEditingController();
   var passwordController = TextEditingController();
   var imgPick = "";
+
   DateTime? pickedDate;
   @override
   void initState() {
@@ -28,156 +30,49 @@ class _SignUpPageState extends State<SignUpPage> {
     imgPick = "";
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(40.0),
-          child: Center(
-            child: Column(
-              children: [
-                const Text(
-                  'สมัครสมาชิก',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 255, 255, 255),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: (imgPick != "") ? profileImg() : profileNoImg(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 15, bottom: 10),
-                  child: TextFormField(
-                    controller: nameController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'กรุณากรอกชื่อในระบบของคุณ';
-                      }
-                      return null;
-                    },
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'ชื่อในระบบ',
-                      hintStyle: const TextStyle(color: Colors.white),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.white, width: 2),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.white, width: 2),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bgsignup.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(40.0),
+            child: Center(
+              child: Column(
+                children: [
+                  const Text(
+                    'สมัครสมาชิก',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 255, 255, 255),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: TextFormField(
-                    controller: dateController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'กรุณากรอกวันเกิดของคุณ';
-                      }
-                      return null;
-                    },
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'วันเกิด',
-                      hintStyle: const TextStyle(color: Colors.white),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.white, width: 2),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.white, width: 2),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                    readOnly:
-                        true, //set it true, so that user will not able to edit text
-                    onTap: () async {
-                      pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(
-                              1800), //DateTime.now() - not to allow to choose before today.
-                          lastDate: DateTime(2100));
-                      if (pickedDate != null) {
-                        log(pickedDate
-                            .toString()); // //pickedDate output format => 2021-03-10 00:00:00.000
-                        String formattedDate =
-                            DateFormat('dd-MM-yyyy').format(pickedDate!);
-                        log(formattedDate);
-                        setState(() {
-                          dateController.text = formattedDate;
-                        });
-                      } else {
-                        log("Date is not selected");
-                      }
-                    },
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: (imgPick != "") ? profileImg() : profileNoImg(),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: TextFormField(
-                    controller: emailController,
-                    validator: (value) {
-                      // add email validation
-                      if (value == null || value.isEmpty) {
-                        return 'กรุณากรอกอีเมลของคุณ';
-                      }
-                      bool emailValid = RegExp(
-                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                          .hasMatch(value);
-                      if (!emailValid) {
-                        return 'กรุณาใส่อีเมลให้ถูกต้อง';
-                      }
-                      return null;
-                    },
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'อีเมล',
-                      hintStyle: const TextStyle(color: Colors.white),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.white, width: 2),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.white, width: 2),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: TextFormField(
-                    controller: passwordController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-
-                      if (value.length < 8) {
-                        return 'Password must be at least 8 characters';
-                      }
-                      return null;
-                    },
-                    obscureText: !_isPasswordVisible,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                        hintText: 'รหัสผ่าน',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15, bottom: 10),
+                    child: TextFormField(
+                      controller: nameController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'กรุณากรอกชื่อในระบบของคุณ';
+                        }
+                        return null;
+                      },
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: 'ชื่อในระบบ',
                         hintStyle: const TextStyle(color: Colors.white),
                         enabledBorder: OutlineInputBorder(
                           borderSide:
@@ -189,37 +84,23 @@ class _SignUpPageState extends State<SignUpPage> {
                               const BorderSide(color: Colors.white, width: 2),
                           borderRadius: BorderRadius.circular(18),
                         ),
-                        suffixIcon: IconButton(
-                          color: Colors.white,
-                          icon: Icon(_isPasswordVisible
-                              ? Icons.visibility_off
-                              : Icons.visibility),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
-                        )),
+                      ),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 20),
-                  child: TextFormField(
-                    controller: confirmPasswordController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-
-                      if (value.length < 8) {
-                        return 'Password must be at least 8 characters';
-                      }
-                      return null;
-                    },
-                    obscureText: !_isPasswordVisible,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                        hintText: 'ยืนยันรหัสผ่าน',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    child: TextFormField(
+                      controller: dateController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'กรุณากรอกวันเกิดของคุณ';
+                        }
+                        return null;
+                      },
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        // label: const Text('วันเกิด'),
+                        hintText: 'วันเกิด',
                         hintStyle: const TextStyle(color: Colors.white),
                         enabledBorder: OutlineInputBorder(
                           borderSide:
@@ -231,77 +112,238 @@ class _SignUpPageState extends State<SignUpPage> {
                               const BorderSide(color: Colors.white, width: 2),
                           borderRadius: BorderRadius.circular(18),
                         ),
-                        suffixIcon: IconButton(
-                          color: Colors.white,
-                          icon: Icon(_isconPasswordVisible
-                              ? Icons.visibility_off
-                              : Icons.visibility),
-                          onPressed: () {
-                            setState(() {
-                              _isconPasswordVisible = !_isconPasswordVisible;
-                            });
-                          },
-                        )),
+                      ),
+                      readOnly:
+                          true, //set it true, so that user will not able to edit text
+                      onTap: () async {
+                        pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime(2101),
+                            locale: const Locale('th', 'TH')); // Set Thai locale
+                        if (pickedDate != null) {
+                          log(pickedDate
+                              .toString()); // //pickedDate output format => 2021-03-10 00:00:00.000
+                          final formattedDate =
+                              DateFormat('dd/MM/yyyy').format(pickedDate!);
+                          log(formattedDate);
+                          setState(() {
+                            dateController.text = formattedDate;
+                          });
+                        } else {
+                          log("Date is not selected");
+                        }
+                      },
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 50),
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      minimumSize:
-                          MaterialStateProperty.all<Size>(const Size(330, 50)),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color(0xFFF8721D)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    child: TextFormField(
+                      controller: emailController,
+                      validator: (value) {
+                        // add email validation
+                        if (value == null || value.isEmpty) {
+                          return 'กรุณากรอกอีเมลของคุณ';
+                        }
+                        bool emailValid = RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(value);
+                        if (!emailValid) {
+                          log('กรุณาใส่อีเมลให้ถูกต้อง');
+                          return 'กรุณาใส่อีเมลให้ถูกต้อง';
+                        }
+                        return null;
+                      },
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: 'อีเมล',
+                        hintStyle: const TextStyle(color: Colors.white),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(color: Colors.white, width: 2),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              const BorderSide(color: Colors.white, width: 2),
                           borderRadius: BorderRadius.circular(18),
                         ),
                       ),
                     ),
-                    child: const Text(
-                      'สมัครสมาชิก',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    child: TextFormField(
+                      controller: passwordController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+
+                        if (value.length < 8) {
+                          return 'Password must be at least 8 characters';
+                        }
+                        return null;
+                      },
+                      obscureText: !_isPasswordVisible,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                          hintText: 'รหัสผ่าน',
+                          hintStyle: const TextStyle(color: Colors.white),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.white, width: 2),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.white, width: 2),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          suffixIcon: IconButton(
+                            color: Colors.white,
+                            icon: Icon(_isPasswordVisible
+                                ? Icons.visibility_off
+                                : Icons.visibility),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          )),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      minimumSize:
-                          MaterialStateProperty.all<Size>(const Size(300, 50)),
-                      side: MaterialStateProperty.all<BorderSide>(
-                          const BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      )),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 20),
+                    child: TextFormField(
+                      controller: confirmPasswordController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+
+                        if (value.length < 8) {
+                          return 'Password must be at least 8 characters';
+                        }
+                        return null;
+                      },
+                      obscureText: !_isPasswordVisible,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                          hintText: 'ยืนยันรหัสผ่าน',
+                          hintStyle: const TextStyle(color: Colors.white),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.white, width: 2),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.white, width: 2),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          suffixIcon: IconButton(
+                            color: Colors.white,
+                            icon: Icon(_isconPasswordVisible
+                                ? Icons.visibility_off
+                                : Icons.visibility),
+                            onPressed: () {
+                              setState(() {
+                                _isconPasswordVisible = !_isconPasswordVisible;
+                              });
+                            },
+                          )),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10),
-                          child: Image.asset(
-                            'assets/images/google.png',
-                            width: 25,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 50),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        minimumSize: MaterialStateProperty.all<Size>(
+                            const Size(330, 50)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFFF8721D)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
                           ),
                         ),
-                        const Text(
-                          'สมัครด้วยบัญชี Google',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                      ],
+                      ),
+                      child: const Text(
+                        'สมัครสมาชิก',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        minimumSize: MaterialStateProperty.all<Size>(
+                            const Size(300, 50)),
+                        side: MaterialStateProperty.all<BorderSide>(
+                            const BorderSide(
+                          color: Colors.white,
+                          width: 2.0,
+                        )),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Image.asset(
+                              'assets/images/google.png',
+                              width: 25,
+                            ),
+                          ),
+                          const Text(
+                            'สมัครด้วยบัญชี Google',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                          maintainState: false,
+                        ));
+                      },
+                      style: ButtonStyle(
+                        minimumSize: MaterialStateProperty.all<Size>(
+                            const Size(330, 50)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFFF8721D)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'มีบัญชีอยู่แล้ว',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

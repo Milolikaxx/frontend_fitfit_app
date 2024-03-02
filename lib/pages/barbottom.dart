@@ -45,13 +45,13 @@ class _BarbottomState extends State<Barbottom> {
             backgroundColor: Color(0xFFF8721D),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline,size: 40,) ,
+            icon: Icon(Icons.add_circle_outline,size: 30,) ,
             label: 'เพิ่ม',
             backgroundColor: Color(0xFFF8721D),
           ),
           BottomNavigationBarItem( 
             icon: Icon(Icons.history),
-            label: 'ประวัติออกกำลังกาย',
+            label: 'ประวัติ',
             backgroundColor: Color(0xFFF8721D),
           ),
           BottomNavigationBarItem(
