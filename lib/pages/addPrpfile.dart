@@ -17,11 +17,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded,
-              color: Color.fromARGB(255, 255, 255, 255)),
-          onPressed: () {},
-        ),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -217,7 +213,30 @@ class _AddProfilePageState extends State<AddProfilePage> {
               ],
             ),
             const SizedBox(
-              height: 50,
+              height: 20,
+            ),
+             Padding(
+              padding: const EdgeInsets.only(bottom: 50),
+              child: ElevatedButton(
+                onPressed: () {
+                  
+                },
+                style: ButtonStyle(
+                  minimumSize:
+                      MaterialStateProperty.all<Size>(const Size(200, 50)),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(const Color(0xFFF8721D)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                child: const Text(
+                  'สร้างโปรไฟล์ออกกำลังกาย',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
             ),
           ],
         ),
