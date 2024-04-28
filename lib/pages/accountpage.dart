@@ -60,7 +60,7 @@ class _AccountPageState extends State<AccountPage> {
                         fontSize: 18,
                         color: Color.fromARGB(255, 255, 255, 255)))),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             postMe(height, width)
           ],
@@ -93,17 +93,11 @@ class _AccountPageState extends State<AccountPage> {
                   const Divider(
                     thickness: 2.5,
                   ),
-                  // ignore: prefer_const_constructors
-                  SizedBox(
-                    height: 10,
-                  ),
-               
-                  post(),
-                   const SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   post(),
-                    const SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                 ],
@@ -113,10 +107,10 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  Container post() {
+  Widget post() {
     return Container(
-      width: 335,
-      height: 256,
+      width: 350,
+      padding: const EdgeInsets.only(top: 5),
       decoration: ShapeDecoration(
         color: const Color(0x66CCCCCC),
         shape: RoundedRectangleBorder(
@@ -130,11 +124,12 @@ class _AccountPageState extends State<AccountPage> {
             Row(
               children: [
                 Container(
-                  width: 46,
-                  height: 46.55,
+                  width: 47,
+                  height: 47,
                   decoration: const ShapeDecoration(
                     image: DecorationImage(
-                      image: NetworkImage("https://via.placeholder.com/46x47"),
+                      image: NetworkImage(
+                          "https://i.pinimg.com/736x/af/2d/bc/af2dbc00320f21026d87f3820d13429e.jpg"),
                       fit: BoxFit.cover,
                     ),
                     shape: OvalBorder(),
@@ -164,6 +159,19 @@ class _AccountPageState extends State<AccountPage> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(
+                  width: 130,
+                ),
+                Row(
+                 
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.delete,
+                          color: Colors.red),
+                      onPressed: () {},
+                    ),
+                    ],
                 )
               ],
             ),
@@ -171,30 +179,52 @@ class _AccountPageState extends State<AccountPage> {
               height: 10,
             ),
             Container(
-              width: 292,
-              height: 43.51,
+              width: 300,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
               decoration: ShapeDecoration(
-                color: const Color(0xFFE56020),
+                color: const Color(0x66CCCCCC),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'เพลงเกาหลีเกาใจออกกำลังกายชิลๆ อิอิ ',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              width: 300,
+              padding: const EdgeInsets.only(top: 10 , bottom: 10),
+              decoration: ShapeDecoration(
+                color: const Color.fromARGB(255, 255, 255, 255),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: const Row(
                 children: [
-                  SizedBox(
-                    width: 10,
+                  Image(
+                    image: NetworkImage(
+                        "https://i.pinimg.com/564x/06/f9/6f/06f96f2944fcfabe3a291a1060441511.jpg"),
+                    width: 150,
+                    height: 130,
                   ),
-                  SizedBox(
-                    width: 203,
-                    height: 18,
-                    child: Text(
-                      'เพลงเกาหลีเกาใจออกกำลังกายชิลๆ อิอิ',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("ปั่นจักยาน ตามมูมู",
+                          style: TextStyle(fontSize: 16, color: Colors.black)),
+                      Text("playlist by Gojo",
+                          style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    ],
+                  )
                 ],
               ),
             ),

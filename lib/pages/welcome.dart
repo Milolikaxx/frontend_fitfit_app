@@ -64,7 +64,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.only(bottom: 30),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
