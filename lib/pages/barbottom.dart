@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/pages/accountpage.dart';
-import 'package:frontend_fitfit_app/pages/addPrpfile.dart';
+import 'package:frontend_fitfit_app/pages/add_profile.dart';
 import 'package:frontend_fitfit_app/pages/exercise.dart';
 import 'package:frontend_fitfit_app/pages/home.dart';
 import 'package:frontend_fitfit_app/pages/social.dart';
