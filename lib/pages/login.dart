@@ -1,8 +1,11 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/model/request/user_login_post_req.dart';
+import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
 
 import 'package:frontend_fitfit_app/pages/signup.dart';
+import 'package:frontend_fitfit_app/service/api/user.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -21,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   List<String> scopes = <String>[
     'email',
   ];
+late UserService userService;
   @override
   void initState() {
     super.initState();
@@ -67,7 +71,6 @@ class _LoginPageState extends State<LoginPage> {
                             padding: const EdgeInsets.only(top: 20, bottom: 20),
                             child: TextFormField(
                               controller: emailController,
-                              
                               validator: (value) {
                                 // add email validation
                                 if (value == null || value.isEmpty) {
@@ -102,7 +105,6 @@ class _LoginPageState extends State<LoginPage> {
                                       color: Colors.white, width: 2),
                                   borderRadius: BorderRadius.circular(18),
                                 ),
-                               
                               ),
                             ),
                           ),
@@ -156,12 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState?.validate() ??
-                                    true) {
-                                    Get.to(() => const Barbottom());
-                                }
-                              },
+                              onPressed: login,
                               style: ButtonStyle(
                                 minimumSize: MaterialStateProperty.all<Size>(
                                     const Size(330, 50)),
@@ -275,6 +272,28 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  void login() async {
+    if (_formKey.currentState?.validate() ?? true) {
+      UserLoginPostRequest loginObj = UserLoginPostRequest(
+          email: emailController.text, password: passwordController.text);
+      try {
+        UserLoginPostResponse res = await userService.login(loginObj);
+        if (res.uid != 0) {
+          // if (context.mounted) {
+          //   // context.read<AppData>().stdID = res.email;
+
+          // }
+          log('เข้าสู่ระบบ');
+          Get.to(() => const Barbottom());
+        } else {
+          Get.snackbar('เข้าสู่ระบบไม่สำเร็จ', 'กรุณากรอกข้อมูลให้ถูกต้อง');
+        }
+      } catch (_) {}
+    } else {
+      Get.snackbar('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลให้ครบ');
+    }
   }
 
   void signIn() async {

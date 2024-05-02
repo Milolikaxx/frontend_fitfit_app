@@ -37,6 +37,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
   List<Musictype> selectedTags = [];
   int duration = 10;
   int lv = 1;
+  String lvText = 'เบามาก';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -184,7 +185,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     width: 18,
                   ),
                   Text(
-                    "LV. $lv",
+                    "LV. $lv $lvText",
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 25,
@@ -287,7 +288,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
     log("ประเภทออกกำลงักาย  $dropdownValue");
     log("เลเวลออกกำลังกาย $lv");
     for (var element in selectedTags) {
-       log(element.name);
+      log(element.name);
     }
     // Get.to(() => const PlaylistAfterCreatePage());
   }
@@ -296,14 +297,38 @@ class _AddProfilePageState extends State<AddProfilePage> {
     if (lv > 1) {
       setState(() {
         lv -= 1;
+        if (lv == 5) {
+          lvText = 'หนักมาก';
+        } else if (lv == 4) {
+          lvText = 'หนัก';
+        } else if (lv == 3) {
+          lvText = 'ปานกลาง';
+        } else if (lv == 2) {
+          lvText = 'เบา';
+        } else if (lv == 1) {
+          lvText = 'เบามาก';
+        }
+        lvText;
       });
     }
   }
 
   void addLv() {
     if (lv < 5) {
+      if (lv == 4) {
+        lvText = 'หนักมาก';
+      } else if (lv == 3) {
+        lvText = 'หนัก';
+      } else if (lv == 2) {
+        lvText = 'ปานกลาง';
+      } else if (lv == 1) {
+        lvText = 'เบา';
+      } else if (lv == 0) {
+        lvText = 'เบามาก';
+      }
       setState(() {
         lv += 1;
+        lvText;
       });
     }
   }

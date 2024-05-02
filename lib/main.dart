@@ -2,9 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/firebase_options.dart';
 import 'package:frontend_fitfit_app/pages/welcome.dart';
+import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 // import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 // import 'package:flutter_localization/flutter_localization.dart';
 
@@ -14,8 +16,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(
+      create: (context) => AppData(),
+    )
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
