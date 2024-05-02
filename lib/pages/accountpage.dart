@@ -88,7 +88,7 @@ class _AccountPageState extends State<AccountPage> {
                     height: 20,
                   ),
                   const Text(
-                    'รายการเพลงที่แชร์',
+                    'เพลย์ลิสต์เพลงของคุณที่แชร์',
                     style: TextStyle(
                         color: Color(0xFFF8721D),
                         fontSize: 18,
@@ -163,9 +163,6 @@ class _AccountPageState extends State<AccountPage> {
                       ),
                     ),
                   ],
-                ),
-                const SizedBox(
-                  width: 130,
                 ),
                 Row(
                   children: [

@@ -34,7 +34,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
           ),
         ],
       ),
-      body: Column(
+      body: const Column(
         children: [
           
         ],
