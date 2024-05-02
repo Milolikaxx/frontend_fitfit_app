@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/pages/editprofile.dart';
+import 'package:get/get.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -41,7 +43,9 @@ class _AccountPageState extends State<AccountPage> {
               height: 10,
             ),
             OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(() => const EditProfilePage());
+                },
                 style: ButtonStyle(
                   minimumSize:
                       MaterialStateProperty.all<Size>(const Size(100, 50)),
@@ -161,14 +165,12 @@ class _AccountPageState extends State<AccountPage> {
                   ],
                 ),
                 Row(
-                 
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.delete,
-                          color: Colors.red),
+                      icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed: () {},
                     ),
-                    ],
+                  ],
                 )
               ],
             ),
@@ -197,7 +199,7 @@ class _AccountPageState extends State<AccountPage> {
             ),
             Container(
               width: 300,
-              padding: const EdgeInsets.only(top: 10 , bottom: 10),
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
               decoration: ShapeDecoration(
                 color: const Color.fromARGB(255, 255, 255, 255),
                 shape: RoundedRectangleBorder(
