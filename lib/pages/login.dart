@@ -6,8 +6,10 @@ import 'package:frontend_fitfit_app/pages/barbottom.dart';
 
 import 'package:frontend_fitfit_app/pages/signup.dart';
 import 'package:frontend_fitfit_app/service/api/user.dart';
+import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -24,10 +26,11 @@ class _LoginPageState extends State<LoginPage> {
   List<String> scopes = <String>[
     'email',
   ];
-late UserService userService;
+  late UserService userService;
   @override
   void initState() {
     super.initState();
+    userService = context.read<AppData>().userService;
   }
 
   @override
@@ -290,7 +293,9 @@ late UserService userService;
         } else {
           Get.snackbar('เข้าสู่ระบบไม่สำเร็จ', 'กรุณากรอกข้อมูลให้ถูกต้อง');
         }
-      } catch (_) {}
+      } catch (e) {
+        log(e.toString());
+      }
     } else {
       Get.snackbar('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลให้ครบ');
     }
