@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/pages/login.dart';
@@ -125,17 +124,15 @@ class _SignUpPageState extends State<SignUpPage> {
                         //   // );
                         // },
                         onTap: () async {
-                          pickedDate = await showRoundedDatePicker(
+                          pickedDate = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
                               firstDate: DateTime(1900),
-                              lastDate: DateTime(2101),
-                              locale: const Locale('th','TH'));
+                              lastDate: DateTime(2101));
                           if (pickedDate != null) {
                             log(pickedDate
-                                .toString()); // //pickedDate output format => 2021-03-10 00:00:00.000
-                            final formattedDate =
-                                DateFormat.yMMMMEEEEd('th').format(pickedDate!);
+                                .toString()); //pickedDate output format => 2021-03-10 00:00:00.000
+                            final formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate!);
                             log(formattedDate);
                             setState(() {
                               dateController.text = formattedDate;

@@ -11,5 +11,7 @@ abstract class UserService {
 
     @POST("/user/login")
     Future<UserLoginPostResponse> login(@Body() UserLoginPostRequest user);
+
+    
 }
 
