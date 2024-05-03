@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:frontend_fitfit_app/model/request/user_login_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/model/request/user_edit_put_req.dart';
 
 part 'generated/user.g.dart';
 
@@ -13,7 +14,6 @@ abstract class UserService {
   Future<UserLoginPostResponse> login(@Body() UserLoginPostRequest user);
 
   @PUT("/user/update/{id}")
-  Future<UserLoginPostResponse> edit(@Body() UserEditPutRequest edituser, @Path() int id );
-
-    
+  Future<UserLoginPostResponse> edit(
+      @Body() UserEditPutRequest edituser, @Path() int id);
 }

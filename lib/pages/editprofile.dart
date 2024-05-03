@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/pages/accountpage.dart';
 import 'package:frontend_fitfit_app/pages/editpasswordpage.dart';
+import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 import 'dart:developer';
 import 'package:frontend_fitfit_app/model/request/user_edit_put_req.dart';
 import 'package:frontend_fitfit_app/service/api/user.dart';
+import 'package:provider/provider.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -20,16 +22,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
 
-  late UserService userService;
-
   void editUser() async {
     UserEditPutRequest editObj = UserEditPutRequest(
         name: nameController.text,
-        birthday: "birthday",
+        birthday: "1999-11-23",
         email: emailController.text,
-        imageProfile: "imageProfile",
+        imageProfile: "Null",
         googleId: "Null");
-    await userService.edit(editObj);
+    var res = await userService.edit(editObj, 1);
+    // ignore: unrelated_type_equality_checks
+    if (res == 1) {
+      log("Pass");
+      // ignore: unrelated_type_equality_checks
+    } else if (res == 0) {
+      log("Not Pass");
+    } else {
+      log("Other");
+    }
+  }
+
+  late UserService userService;
+  @override
+  void initState() {
+    super.initState();
+    userService = context.read<AppData>().userService;
   }
 
   @override
@@ -128,11 +144,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10, top: 20),
                     child: ElevatedButton(
-                      onPressed: () {
-                        // if (_formKey.currentState?.validate() ?? true) {
-                        // Get.to(() => const Barbottom());
-                        // }
-                      },
+                      onPressed: editUser,
                       style: ButtonStyle(
                         minimumSize: MaterialStateProperty.all<Size>(
                             const Size(300, 50)),
