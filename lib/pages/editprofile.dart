@@ -5,6 +5,8 @@ import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 import 'dart:developer';
+import 'package:frontend_fitfit_app/model/request/user_edit_put_req.dart';
+import 'package:frontend_fitfit_app/service/api/user.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -15,6 +17,20 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   var imgPick = "";
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+
+  late UserService userService;
+
+  void editUser() async {
+    UserEditPutRequest editObj = UserEditPutRequest(
+        name: nameController.text,
+        birthday: "birthday",
+        email: emailController.text,
+        imageProfile: "imageProfile",
+        googleId: "Null");
+    await userService.edit(editObj);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +88,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  editDataSet("ชื่อผู้ใช้", "ชื่อผู้ใช้"),
-                  editDataSet("อีเมล", "อีเมล"),
+                  editDataSet("ชื่อผู้ใช้", "ชื่อผู้ใช้", nameController),
+                  editDataSet("อีเมล", "อีเมล", emailController),
                   editDate("วันเกิด"),
                   // editDataSet("Password", "กรุณากรอกข้อมูล"),
                   // editDataSet("Confirm Password", "กรุณากรอกข้อมูล"),
@@ -142,7 +158,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget editDataSet(title, detail) {
+  Widget editDataSet(title, detail, textController) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
@@ -163,6 +179,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           Padding(
             padding: const EdgeInsets.only(top: 0, bottom: 0),
             child: TextFormField(
+              controller: textController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'กรุณากรอกข้อความ';
