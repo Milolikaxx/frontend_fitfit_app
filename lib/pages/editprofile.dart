@@ -21,23 +21,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
   var imgPick = "";
   final nameController = TextEditingController();
   final emailController = TextEditingController();
+  DateTime? _selectedDate;
 
   void editUser() async {
     UserEditPutRequest editObj = UserEditPutRequest(
         name: nameController.text,
-        birthday: "1999-11-23",
+        birthday: "1990-12-23T00:00:00Z",
         email: emailController.text,
-        imageProfile: "Null",
+        imageProfile: imgPick,
         googleId: "Null");
-    var res = await userService.edit(editObj, 1);
-    // ignore: unrelated_type_equality_checks
-    if (res == 1) {
-      log("Pass");
-      // ignore: unrelated_type_equality_checks
-    } else if (res == 0) {
-      log("Not Pass");
-    } else {
-      log("Other");
+    try {
+      // ส่ง request ไปยังเซิร์ฟเวอร์และรอการตอบกลับ
+      var res = await userService.edit(1, editObj);
+
+      // ตรวจสอบ response ที่ได้รับจากเซิร์ฟเวอร์
+      if (res == 1) {
+        log((_selectedDate).toString());
+        log(imgPick);
+        log("Pass");
+      } else if (res == 0) {
+        log("Not Pass");
+      } else {
+        log("Other");
+      }
+    } catch (e) {
+      log("Error: $e");
     }
   }
 
@@ -72,9 +80,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
               padding: const EdgeInsets.only(top: 10),
               child: (imgPick != "") ? profileImg() : profileNoImg(),
             ),
-            // const CircleAvatar(
-            //     radius: 50.0,
-            //     backgroundImage: AssetImage('assets/images/runner.png')),
             const SizedBox(height: 10),
             const Text(
               "name name",
@@ -193,6 +198,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: TextFormField(
               controller: textController,
               validator: (value) {
+                log("Press on");
                 if (value == null || value.isEmpty) {
                   return 'กรุณากรอกข้อความ';
                 }
@@ -218,8 +224,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
     );
   }
-
-  DateTime? _selectedDate;
 
   Widget editDate(title) {
     return Padding(

@@ -4,38 +4,41 @@
 
 import 'dart:convert';
 
-UserEditPutRequest userEditPutRequestFromJson(String str) => UserEditPutRequest.fromJson(json.decode(str));
+UserEditPutRequest userEditPutRequestFromJson(String str) =>
+    UserEditPutRequest.fromJson(json.decode(str));
 
-String userEditPutRequestToJson(UserEditPutRequest data) => json.encode(data.toJson());
+String userEditPutRequestToJson(UserEditPutRequest data) =>
+    json.encode(data.toJson());
 
 class UserEditPutRequest {
-    String name;
-    String birthday;
-    String email;
-    String imageProfile;
-    String googleId;
+  String name;
+  String birthday;
+  String email;
+  String imageProfile;
+  String googleId;
 
-    UserEditPutRequest({
-        required this.name,
-        required this.birthday,
-        required this.email,
-        required this.imageProfile,
-        required this.googleId,
-    });
+  UserEditPutRequest({
+    required this.name,
+    required this.birthday,
+    required this.email,
+    required this.imageProfile,
+    required this.googleId,
+  });
 
-    factory UserEditPutRequest.fromJson(Map<String, dynamic> json) => UserEditPutRequest(
+  factory UserEditPutRequest.fromJson(Map<String, dynamic> json) =>
+      UserEditPutRequest(
         name: json["name"],
         birthday: json["birthday"],
         email: json["email"],
         imageProfile: json["imageProfile"],
         googleId: json["googleID"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "name": name,
         "birthday": birthday,
         "email": email,
         "imageProfile": imageProfile,
         "googleID": googleId,
-    };
+      };
 }
