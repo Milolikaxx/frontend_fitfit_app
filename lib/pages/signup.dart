@@ -1,10 +1,14 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:frontend_fitfit_app/model/request/user_register_post_req.dart';
+import 'package:frontend_fitfit_app/service/api/user.dart';
+import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/pages/login.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -24,9 +28,11 @@ class _SignUpPageState extends State<SignUpPage> {
   var imgPick = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime? pickedDate;
+  late UserService userService;
   @override
   void initState() {
     super.initState();
+    userService = context.read<AppData>().userService;
     imgPick = "";
   }
 
@@ -132,10 +138,11 @@ class _SignUpPageState extends State<SignUpPage> {
                           if (pickedDate != null) {
                             log(pickedDate
                                 .toString()); //pickedDate output format => 2021-03-10 00:00:00.000
-                            final formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate!);
-                            log(formattedDate);
+                            // final formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate!);
+                            // log(formattedDate);
                             setState(() {
-                              dateController.text = formattedDate;
+                              dateController.text =
+                                  '${pickedDate!.day}/${pickedDate!.month}/${pickedDate!.year}';
                             });
                           } else {
                             log("Date is not selected");
@@ -357,8 +364,60 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  void signUp() {
-    if (_formKey.currentState?.validate() ?? true) {}
+  void signUp() async {
+    String birthdayStr = pickedDate!.toIso8601String();
+    log(birthdayStr);
+    String bStr = "${birthdayStr.split(".")[0]}z";
+    DateTime birthdayDateTime = DateTime.parse(bStr);
+    log(birthdayDateTime.toIso8601String());
+    if (_formKey.currentState?.validate() ?? true) {
+      if (passwordController.text != confirmPasswordController.text) {
+        if (imgPick == "") {
+          UserRegisterPostRequest registerObj = UserRegisterPostRequest(
+              name: nameController.text,
+              birthday: birthdayDateTime,
+              email: emailController.text,
+              password: passwordController.text,
+              imageProfile:
+                  "http://202.28.34.197:8888/contents/ac11379f-1be1-46fe-ae0d-0c41ff876e24.png",
+              googleId: null);
+          try {
+            int res = await userService.register(registerObj);
+            if (res > 0) {
+              log('สมัครสมาชิกสำเร็จ ');
+              Get.snackbar('สมัครสมาชิกสำเร็จ', '');
+            } else {
+              log('สมัครสมาชิกไม่สำเร็จ ');
+              Get.snackbar('ข้อมูลไม่ถูกต้อง', 'กรุณากรอกข้อมูลให้ถูกต้อง');
+              
+            }
+          } catch (e) {
+            log(e.toString());
+          }
+        }
+      } else {
+        UserRegisterPostRequest registerObj = UserRegisterPostRequest(
+            name: nameController.text,
+            birthday: birthdayDateTime,
+            email: emailController.text,
+            password: passwordController.text,
+            imageProfile: imgPick,
+            googleId: null);
+        try {
+          int res = await userService.register(registerObj);
+          if (res == 0) {
+            log('สมัครสมาชิกไม่สำเร็จ ');
+            Get.snackbar('ข้อมูลไม่ถูกต้อง', 'กรุณากรอกข้อมูลให้ถูกต้อง');
+          } else {
+            Get.snackbar('สมัครสมาชิกสำเร็จ', '');
+          }
+        } catch (e) {
+          log(e.toString());
+        }
+      }
+    } else {
+      Get.snackbar('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลให้ครบ');
+    }
   }
 
   Widget profileNoImg() {

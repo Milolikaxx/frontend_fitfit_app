@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final userRegisterPostRequest = userRegisterPostRequestFromJson(jsonString);
+
 import 'dart:convert';
 
 UserRegisterPostRequest userRegisterPostRequestFromJson(String str) =>
@@ -11,26 +15,34 @@ class UserRegisterPostRequest {
   DateTime birthday;
   String email;
   String password;
+  dynamic imageProfile;
+  dynamic googleId;
 
   UserRegisterPostRequest({
-    required this.name,
-    required this.birthday,
-    required this.email,
-    required this.password,
+     required this.name,
+     required this.birthday,
+     required  this.email,
+     required this.password,
+     required this.imageProfile,
+     this.googleId,
   });
 
   factory UserRegisterPostRequest.fromJson(Map<String, dynamic> json) =>
       UserRegisterPostRequest(
-        name: json["name"],
-        birthday: DateTime.parse(json["birthday"]),
-        email: json["email"],
-        password: json["password"],
+        name: json["Name"],
+        birthday: DateTime.parse(json["Birthday"]),
+        email: json["Email"],
+        password: json["Password"],
+        imageProfile: json["ImageProfile"],
+        googleId: json["GoogleID"],
       );
 
   Map<String, dynamic> toJson() => {
-        "name": name,
-        "birthday": birthday.toIso8601String(),
-        "email": email,
-        "password": password,
+        "Name": name,
+        "Birthday": birthday.toIso8601String(),
+        "Email": email,
+        "Password": password,
+        "ImageProfile": imageProfile,
+        "GoogleID": googleId,
       };
 }
