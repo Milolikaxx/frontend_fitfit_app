@@ -32,8 +32,8 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   void initState() {
     super.initState();
-    userService = context.read<AppData>().userService;
     imgPick = "";
+    userService = context.read<AppData>().userService;
   }
 
   @override
@@ -241,7 +241,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           }
                           return null;
                         },
-                        obscureText: !_isPasswordVisible,
+                        obscureText: !_isconPasswordVisible,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                             hintText: 'ยืนยันรหัสผ่าน',
@@ -372,24 +372,21 @@ class _SignUpPageState extends State<SignUpPage> {
     log(birthdayDateTime.toIso8601String());
     if (_formKey.currentState?.validate() ?? true) {
       if (passwordController.text != confirmPasswordController.text) {
-        if (imgPick == "") {
+        if (imgPick != "") {
           UserRegisterPostRequest registerObj = UserRegisterPostRequest(
               name: nameController.text,
               birthday: birthdayDateTime,
               email: emailController.text,
               password: passwordController.text,
-              imageProfile:
-                  "http://202.28.34.197:8888/contents/ac11379f-1be1-46fe-ae0d-0c41ff876e24.png",
+              imageProfile: imgPick,
               googleId: null);
           try {
             int res = await userService.register(registerObj);
-            if (res > 0) {
-              log('สมัครสมาชิกสำเร็จ ');
-              Get.snackbar('สมัครสมาชิกสำเร็จ', '');
-            } else {
+            if (res == 0) {
               log('สมัครสมาชิกไม่สำเร็จ ');
               Get.snackbar('ข้อมูลไม่ถูกต้อง', 'กรุณากรอกข้อมูลให้ถูกต้อง');
-              
+            } else {
+              Get.snackbar('สมัครสมาชิกสำเร็จ', '');
             }
           } catch (e) {
             log(e.toString());
@@ -401,15 +398,17 @@ class _SignUpPageState extends State<SignUpPage> {
             birthday: birthdayDateTime,
             email: emailController.text,
             password: passwordController.text,
-            imageProfile: imgPick,
+            imageProfile:
+                "http://202.28.34.197:8888/contents/ac11379f-1be1-46fe-ae0d-0c41ff876e24.png",
             googleId: null);
         try {
           int res = await userService.register(registerObj);
-          if (res == 0) {
+          if (res > 0) {
+            log('สมัครสมาชิกสำเร็จ ');
+            Get.snackbar('สมัครสมาชิกสำเร็จ', '');
+          } else {
             log('สมัครสมาชิกไม่สำเร็จ ');
             Get.snackbar('ข้อมูลไม่ถูกต้อง', 'กรุณากรอกข้อมูลให้ถูกต้อง');
-          } else {
-            Get.snackbar('สมัครสมาชิกสำเร็จ', '');
           }
         } catch (e) {
           log(e.toString());

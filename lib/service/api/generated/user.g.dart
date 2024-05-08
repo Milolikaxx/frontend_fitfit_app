@@ -19,12 +19,12 @@ class _UserService implements UserService {
   String? baseUrl;
 
   @override
-  Future<UserLoginPostResponse> login(UserLoginPostRequest user) async {
+  Future<UserLoginPostResponse> login(UserLoginPostRequest userLogin) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(user.toJson());
+    _data.addAll(userLogin.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<UserLoginPostResponse>(Options(
       method: 'POST',
@@ -49,13 +49,13 @@ class _UserService implements UserService {
   @override
   Future<int> edit(
     int id,
-    UserEditPutRequest editObj,
+    UserEditPutRequest edituser,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(editObj.toJson());
+    _data.addAll(edituser.toJson());
     final _result = await _dio.fetch<int>(_setStreamType<int>(Options(
       method: 'PUT',
       headers: _headers,

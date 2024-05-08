@@ -12,11 +12,11 @@ abstract class UserService {
   factory UserService(Dio dio, {String baseUrl}) = _UserService;
 
   @POST("/user/login")
-  Future<UserLoginPostResponse> login(@Body() UserLoginPostRequest user);
+  Future<UserLoginPostResponse> login(@Body() UserLoginPostRequest userLogin);
 
   @PUT("/user/update/{id}")
-  Future<UserLoginPostResponse> edit(
-      @Body() UserEditPutRequest edituser, @Path() int id);
+  Future<int> edit( @Path() int id,
+      @Body() UserEditPutRequest edituser);
 
   @POST("/user/register")
   Future<int> register(@Body() UserRegisterPostRequest userRegister);
