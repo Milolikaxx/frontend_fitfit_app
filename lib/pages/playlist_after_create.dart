@@ -35,14 +35,12 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
         ],
       ),
       body: const Column(
-        children: [
-          
-        ],
+        children: [],
       ),
     );
   }
 
   void savePlaylist() {
-     Get.to(() => const SavePlaylistPage());
+    Get.to(() => const SavePlaylistPage());
   }
 }

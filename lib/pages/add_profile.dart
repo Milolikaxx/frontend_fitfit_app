@@ -290,7 +290,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
     for (var element in selectedTags) {
       log(element.name);
     }
-    // Get.to(() => const PlaylistAfterCreatePage());
+    Get.to(() => const PlaylistAfterCreatePage());
   }
 
   void decreaseLv() {
