@@ -348,6 +348,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
           }
         }
         log('เพิ่มโปรไฟล์ออกกำลังกายสำเร็จ');
+        Get.to(() => const PlaylistAfterCreatePage());
       }
     } catch (e) {
       log(e.toString());
