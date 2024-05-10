@@ -11,5 +11,5 @@ abstract class WorkoutMusicTypeService {
       _WorkoutMusicTypeService;
 
   @POST("/wpmt/save")
-  Future<int> saveWP(@Body() WorkoutMusicTypePostRequest saveWpMt);
+  Future<int> saveWPMT(@Body() WorkoutMusicTypePostRequest saveWpMt);
 }

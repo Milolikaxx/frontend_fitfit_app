@@ -19,7 +19,7 @@ class _WorkoutMusicTypeService implements WorkoutMusicTypeService {
   String? baseUrl;
 
   @override
-  Future<int> saveWP(WorkoutMusicTypePostRequest saveWpMt) async {
+  Future<int> saveWPMT(WorkoutMusicTypePostRequest saveWpMt) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
