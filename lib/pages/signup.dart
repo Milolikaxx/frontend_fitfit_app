@@ -403,10 +403,14 @@ class _SignUpPageState extends State<SignUpPage> {
             googleId: null);
         try {
           int res = await userService.register(registerObj);
-          if (res > 0) {
+          if (res == 1) {
             log('สมัครสมาชิกสำเร็จ ');
             Get.snackbar('สมัครสมาชิกสำเร็จ', '');
-          } else {
+          }else if (res == 2){
+            Get.snackbar('อีเมลนี้มีอยู่แล้ว', 'กรุณากรอกอีเมลใหม่');
+          } else if (res == 3){
+            Get.snackbar('ชื่อนี้มีอยู่แล้ว', 'กรุณากรอกชื่อๆใหม่');
+          }else  {
             log('สมัครสมาชิกไม่สำเร็จ ');
             Get.snackbar('ข้อมูลไม่ถูกต้อง', 'กรุณากรอกข้อมูลให้ถูกต้อง');
           }

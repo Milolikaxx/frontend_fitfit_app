@@ -11,26 +11,26 @@ String userLoginPostResponseToJson(UserLoginPostResponse data) =>
     json.encode(data.toJson());
 
 class UserLoginPostResponse {
-  int uid;
-  String name;
-  DateTime birthday;
-  String email;
-  String password;
-  String imageProfile;
-  String googleId;
-  DateTime createdAt;
-  DateTime updatedAt;
+  int? uid;
+  String? name;
+  DateTime? birthday;
+  String? email;
+  String? password;
+  String? imageProfile;
+  String? googleId;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   UserLoginPostResponse({
-    required this.uid,
-    required this.name,
-    required this.birthday,
-    required this.email,
-    required this.password,
-    required this.imageProfile,
-    required this.googleId,
-    required this.createdAt,
-    required this.updatedAt,
+    this.uid,
+    this.name,
+    this.birthday,
+    this.email,
+    this.password,
+    this.imageProfile,
+    this.googleId,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory UserLoginPostResponse.fromJson(Map<String, dynamic> json) =>
@@ -49,12 +49,12 @@ class UserLoginPostResponse {
   Map<String, dynamic> toJson() => {
         "Uid": uid,
         "Name": name,
-        "Birthday": birthday.toIso8601String(),
+        "Birthday": birthday?.toIso8601String(),
         "Email": email,
         "Password": password,
         "ImageProfile": imageProfile,
         "GoogleID": googleId,
-        "CreatedAt": createdAt.toIso8601String(),
-        "UpdatedAt": updatedAt.toIso8601String(),
+        "CreatedAt": createdAt?.toIso8601String(),
+        "UpdatedAt": updatedAt?.toIso8601String(),
       };
 }

@@ -284,10 +284,10 @@ class _LoginPageState extends State<LoginPage> {
       try {
         UserLoginPostResponse res = await userService.login(loginObj);
         if (res.uid != 0) {
-          // if (context.mounted) {
-          //   // context.read<AppData>().stdID = res.email;
 
-          // }
+          if (context.mounted) {
+            context.read<AppData>().user = res;
+          }
           log('เข้าสู่ระบบ');
           Get.to(() => const Barbottom());
         } else {

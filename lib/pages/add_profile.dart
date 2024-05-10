@@ -288,7 +288,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
     log("ประเภทออกกำลงักาย  $dropdownValue");
     log("เลเวลออกกำลังกาย $lv");
     for (var element in selectedTags) {
-      log(element.name);
+      log(element.id.toString());
     }
     // Get.to(() => const PlaylistAfterCreatePage());
   }
