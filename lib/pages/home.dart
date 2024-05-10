@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/service/api/user.dart';
+import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,6 +13,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // GoogleSignInAccount? user;
+  late UserLoginPostResponse user;
+  @override
+  void initState() {
+    super.initState();
+    user = context.read<AppData>().user;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +32,9 @@ class _HomePageState extends State<HomePage> {
             'https://cdn-icons-png.flaticon.com/512/2171/2171947.png',
           ),
         ),
-        title: const Text(
-          "Test Test",
-          style: TextStyle(color: Colors.white),
+        title:  Text(
+          "${user.name}",
+          style: const TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
