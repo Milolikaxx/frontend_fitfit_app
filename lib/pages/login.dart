@@ -38,10 +38,12 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
+        height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/bglogin.png'),
             fit: BoxFit.cover,
+            
           ),
         ),
         child: SingleChildScrollView(
