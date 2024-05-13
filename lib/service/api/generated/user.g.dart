@@ -77,6 +77,36 @@ class _UserService implements UserService {
   }
 
   @override
+  Future<int> editPassword(
+    int id,
+    UserEditPutRequest edituser,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(edituser.toJson());
+    final _result = await _dio.fetch<int>(_setStreamType<int>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/user/updatepassword/${id}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+    final value = _result.data!;
+    return value;
+  }
+
+  @override
   Future<int> register(UserRegisterPostRequest userRegister) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

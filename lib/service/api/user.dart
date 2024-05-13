@@ -15,8 +15,10 @@ abstract class UserService {
   Future<UserLoginPostResponse> login(@Body() UserLoginPostRequest userLogin);
 
   @PUT("/user/update/{id}")
-  Future<int> edit( @Path() int id,
-      @Body() UserEditPutRequest edituser);
+  Future<int> edit(@Path() int id, @Body() UserEditPutRequest edituser);
+
+  @PUT("/user/updatepassword/{id}")
+  Future<int> editPassword(@Path() int id, @Body() UserEditPutRequest edituser);
 
   @POST("/user/register")
   Future<int> register(@Body() UserRegisterPostRequest userRegister);

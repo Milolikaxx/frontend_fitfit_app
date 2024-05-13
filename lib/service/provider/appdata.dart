@@ -9,14 +9,15 @@ import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 class AppData with ChangeNotifier {
   //Api baseurl
   // String baseUrl = "http://202.28.34.197:8020";
-  String baseUrl = "http://192.168.1.13:8080";
-  // String baseUrl = "http://192.168.1.41:8080";
+  // String baseUrl = "http://192.168.1.13:8080";
+  String baseUrl = "http://192.168.1.41:8080";
 
   late UserLoginPostResponse user = UserLoginPostResponse();
 
   UserService get userService => UserService(Dio(), baseUrl: baseUrl);
-   WorkoutMusicTypeService get workoutMusicType => WorkoutMusicTypeService(Dio(), baseUrl: baseUrl);
-   WorkoutProfileService get workoutProfile => WorkoutProfileService(Dio(), baseUrl: baseUrl);
-    MusicTypeService get  musicType=>
-       MusicTypeService(Dio(), baseUrl: baseUrl);
+  WorkoutMusicTypeService get workoutMusicType =>
+      WorkoutMusicTypeService(Dio(), baseUrl: baseUrl);
+  WorkoutProfileService get workoutProfile =>
+      WorkoutProfileService(Dio(), baseUrl: baseUrl);
+  MusicTypeService get musicType => MusicTypeService(Dio(), baseUrl: baseUrl);
 }
