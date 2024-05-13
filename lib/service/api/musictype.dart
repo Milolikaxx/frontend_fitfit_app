@@ -10,6 +10,5 @@ abstract class MusicTypeService {
       _MusicTypeService;
 
   @GET("/mt")
-  //Result ของการเรียกเส้นจะได้มาเป็น  List<TripGetResponse>
   Future<List<MusictypeGetResponse>> getMusictype();
 }
