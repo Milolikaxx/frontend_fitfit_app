@@ -4,6 +4,7 @@ import 'package:retrofit/retrofit.dart';
 import 'package:frontend_fitfit_app/model/request/user_login_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/model/request/user_edit_put_req.dart';
+import 'package:frontend_fitfit_app/model/request/user_editpassword_post_req.dart';
 
 part 'generated/user.g.dart';
 
@@ -18,7 +19,8 @@ abstract class UserService {
   Future<int> edit(@Path() int id, @Body() UserEditPutRequest edituser);
 
   @PUT("/user/updatepassword/{id}")
-  Future<int> editPassword(@Path() int id, @Body() UserEditPutRequest edituser);
+  Future<int> editPassword(
+      @Path() int id, @Body() UserEditPasswordPostRequest edituser);
 
   @POST("/user/register")
   Future<int> register(@Body() UserRegisterPostRequest userRegister);

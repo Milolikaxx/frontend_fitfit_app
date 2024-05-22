@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/model/request/user_editpassword_post_req.dart';
 import 'package:frontend_fitfit_app/pages/editprofile.dart';
 import 'package:get/get.dart';
 import 'package:frontend_fitfit_app/service/api/user.dart';
@@ -22,11 +23,13 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
   final oldpasswordController = TextEditingController();
   final newpasswordController = TextEditingController();
   final confirmpasswordController = TextEditingController();
+  late UserService userService;
 
   @override
   void initState() {
     super.initState();
     user = context.read<AppData>().user;
+    userService = context.read<AppData>().userService;
     loadData = loadDataAsync();
   }
 
@@ -228,17 +231,21 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
   }
 
   void editPassword() async {
-    // if (_formKey.currentState?.validate() ?? true) {
-    log("do");
-    log(user.password.toString());
-    log(oldpasswordController.text);
-    log(newpasswordController.text);
-    log(confirmpasswordController.text);
-    // if (user.password == OldpasswordController.text) {
-    //   log("Currect OldPassword");
-    // }
-    // } else {
-    //   Get.snackbar('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลให้ครบ');
-    // }
+    if (newpasswordController.text == confirmpasswordController.text) {
+      UserEditPasswordPostRequest editPasswordObj = UserEditPasswordPostRequest(
+          password: oldpasswordController.text,
+          passwordNew: newpasswordController.text);
+      var res = await userService.editPassword(1, editPasswordObj);
+      if (res == 1) {
+        log("Pass");
+      } else if (res == 0) {
+        log("Not Pass");
+      } else {
+        log(res.toString());
+        log("Other");
+      }
+    } else {
+      log("รหัสไม่ตรงกัน");
+    }
   }
 }

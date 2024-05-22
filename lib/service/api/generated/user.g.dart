@@ -79,7 +79,7 @@ class _UserService implements UserService {
   @override
   Future<int> editPassword(
     int id,
-    UserEditPutRequest edituser,
+    UserEditPasswordPostRequest edituser,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
