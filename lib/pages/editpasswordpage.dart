@@ -24,6 +24,9 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
   final newpasswordController = TextEditingController();
   final confirmpasswordController = TextEditingController();
   late UserService userService;
+  bool _isOldPasswordVisible = false;
+  bool _isNewPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   @override
   void initState() {
@@ -57,9 +60,12 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
             ]),
         body: Column(
           children: [
-            const CircleAvatar(
-                radius: 50.0,
-                backgroundImage: AssetImage('assets/images/runner.png')),
+            CircleAvatar(
+              radius: 50.0,
+              backgroundImage: NetworkImage(
+                '${user.imageProfile}',
+              ),
+            ),
             const SizedBox(height: 10),
             Text(
               "${user.name}",
@@ -100,7 +106,7 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                           "รหัสผ่าน", "ใส่รหัสผ่าน", oldpasswordController),
                       newPassword("รหัสผ่านใหม่", "ใส่รหัสผ่านใหม่",
                           newpasswordController),
-                      newPassword(
+                      confirmPassword(
                           "ยืนยันรหัสผ่านใหม่",
                           "ใส่รหัสผ่านที่เหมือนกับรหัสผ่านใหม่",
                           confirmpasswordController),
@@ -161,20 +167,31 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                 }
                 return null;
               },
+              obscureText: !_isOldPasswordVisible,
               style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
-                hintText: detail,
-                hintStyle: const TextStyle(color: Colors.black),
-                contentPadding: const EdgeInsets.only(left: 10.0),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.black, width: 2),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.black, width: 2),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-              ),
+                  hintText: detail,
+                  hintStyle: const TextStyle(color: Colors.black),
+                  contentPadding: const EdgeInsets.only(left: 10.0),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  suffixIcon: IconButton(
+                    color: Colors.black,
+                    icon: Icon(_isOldPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _isOldPasswordVisible = !_isOldPasswordVisible;
+                      });
+                    },
+                  )),
             ),
           ),
         ],
@@ -203,26 +220,98 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
           Padding(
             padding: const EdgeInsets.only(top: 0, bottom: 0),
             child: TextFormField(
+              controller: newpasswordController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'ใส่รหัสผ่าน';
                 }
                 return null;
               },
+              obscureText: !_isNewPasswordVisible,
               style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
-                hintText: detail,
-                hintStyle: const TextStyle(color: Colors.black),
-                contentPadding: const EdgeInsets.only(left: 10.0),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.black, width: 2),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.black, width: 2),
-                  borderRadius: BorderRadius.circular(18),
-                ),
+                  hintText: detail,
+                  hintStyle: const TextStyle(color: Colors.black),
+                  contentPadding: const EdgeInsets.only(left: 10.0),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  suffixIcon: IconButton(
+                    color: Colors.black,
+                    icon: Icon(_isNewPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _isNewPasswordVisible = !_isNewPasswordVisible;
+                      });
+                    },
+                  )),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget confirmPassword(title, detail, textController) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0),
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 0, bottom: 0),
+            child: TextFormField(
+              controller: confirmpasswordController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'ใส่รหัสผ่าน';
+                }
+                return null;
+              },
+              obscureText: !_isConfirmPasswordVisible,
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                  hintText: detail,
+                  hintStyle: const TextStyle(color: Colors.black),
+                  contentPadding: const EdgeInsets.only(left: 10.0),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  suffixIcon: IconButton(
+                    color: Colors.black,
+                    icon: Icon(_isConfirmPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      });
+                    },
+                  )),
             ),
           ),
         ],
@@ -238,13 +327,16 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
       var res = await userService.editPassword(1, editPasswordObj);
       if (res == 1) {
         log("Pass");
+        Get.snackbar('สำเร็จ', 'แก้ไขรหัสผ่านสำเร็จ');
+        loadData = loadDataAsync();
       } else if (res == 0) {
         log("Not Pass");
       } else {
-        log(res.toString());
+        Get.snackbar('รหัสผ่านไม่ถูกต้อง', 'กรุณาใส่รหัสผ่านให้ถูกต้อง');
         log("Other");
       }
     } else {
+      Get.snackbar('ยืนยันรหัสผ่านไม่ถูกต้อง', 'กรุณายืนยันรหัสผ่านให้ถูกต้อง');
       log("รหัสไม่ตรงกัน");
     }
   }

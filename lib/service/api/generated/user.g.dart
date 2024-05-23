@@ -87,7 +87,7 @@ class _UserService implements UserService {
     final _data = <String, dynamic>{};
     _data.addAll(edituser.toJson());
     final _result = await _dio.fetch<int>(_setStreamType<int>(Options(
-      method: 'PUT',
+      method: 'POST',
       headers: _headers,
       extra: _extra,
     )

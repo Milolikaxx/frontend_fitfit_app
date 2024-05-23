@@ -18,7 +18,7 @@ abstract class UserService {
   @PUT("/user/update/{id}")
   Future<int> edit(@Path() int id, @Body() UserEditPutRequest edituser);
 
-  @PUT("/user/updatepassword/{id}")
+  @POST("/user/updatepassword/{id}")
   Future<int> editPassword(
       @Path() int id, @Body() UserEditPasswordPostRequest edituser);
 
