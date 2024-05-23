@@ -9,6 +9,7 @@ import 'dart:developer';
 import 'package:frontend_fitfit_app/model/request/user_edit_put_req.dart';
 import 'package:frontend_fitfit_app/service/api/user.dart';
 import 'package:provider/provider.dart';
+import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -18,7 +19,9 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  late var loadData;
   var imgPick = "";
+  late UserLoginPostResponse user;
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   DateTime? _selectedDate;
@@ -53,7 +56,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
+    user = context.read<AppData>().user;
     userService = context.read<AppData>().userService;
+    loadData = loadDataAsync();
+  }
+
+  loadDataAsync() async {
+    // liseWorkoutPdrofile = await wpService.getMorkoutProfile(user.uid!);
   }
 
   @override
@@ -81,9 +90,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
               child: (imgPick != "") ? profileImg() : profileNoImg(),
             ),
             const SizedBox(height: 10),
-            const Text(
-              "name name",
-              style: TextStyle(
+            Text(
+              '${user.name}',
+              style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.white),
@@ -109,8 +118,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  editDataSet("ชื่อผู้ใช้", "ชื่อผู้ใช้", nameController),
-                  editDataSet("อีเมล", "อีเมล", emailController),
+                  editDataSet("ชื่อผู้ใช้", "${user.name}", nameController),
+                  editDataSet("อีเมล", "${user.email}", emailController),
                   editDate("วันเกิด"),
                   // editDataSet("Password", "กรุณากรอกข้อมูล"),
                   // editDataSet("Confirm Password", "กรุณากรอกข้อมูล"),
@@ -207,7 +216,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 hintText: detail,
-                hintStyle: const TextStyle(color: Colors.black),
+                hintStyle: const TextStyle(color: Color.fromARGB(159, 0, 0, 0)),
                 contentPadding: const EdgeInsets.only(left: 10.0),
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.black, width: 2),
@@ -299,17 +308,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
           width: 130,
           height: 130,
           decoration: BoxDecoration(
-              border: Border.all(width: 4, color: Colors.white),
-              boxShadow: [
-                BoxShadow(
-                    spreadRadius: 2,
-                    blurRadius: 10,
-                    color: Colors.black.withOpacity(0.1))
-              ],
-              shape: BoxShape.circle,
-              image: const DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage('assets/images/runner.png'))),
+            border: Border.all(width: 4, color: Colors.white),
+            boxShadow: [
+              BoxShadow(
+                  spreadRadius: 2,
+                  blurRadius: 10,
+                  color: Colors.black.withOpacity(0.1))
+            ],
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(
+                '${user.imageProfile}',
+              ),
+            ),
+          ),
         ),
         Positioned(
             bottom: 0,
