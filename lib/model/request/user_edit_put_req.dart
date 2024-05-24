@@ -12,7 +12,7 @@ String userEditPutRequestToJson(UserEditPutRequest data) =>
 
 class UserEditPutRequest {
   String name;
-  String birthday;
+  DateTime birthday;
   String email;
   String imageProfile;
   String googleId;
@@ -28,7 +28,7 @@ class UserEditPutRequest {
   factory UserEditPutRequest.fromJson(Map<String, dynamic> json) =>
       UserEditPutRequest(
         name: json["name"],
-        birthday: json["birthday"],
+        birthday: DateTime.parse(json["Birthday"]),
         email: json["email"],
         imageProfile: json["imageProfile"],
         googleId: json["googleID"],
@@ -36,7 +36,7 @@ class UserEditPutRequest {
 
   Map<String, dynamic> toJson() => {
         "name": name,
-        "birthday": birthday,
+        "Birthday": birthday.toIso8601String(),
         "email": email,
         "imageProfile": imageProfile,
         "googleID": googleId,

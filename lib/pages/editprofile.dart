@@ -27,9 +27,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   DateTime? _selectedDate;
 
   void editUser() async {
+    // "1990-12-23T00:00:00Z"
+    String birthdayStr = _selectedDate!.toIso8601String();
+    String bStr = "${birthdayStr.split(".")[0]}z";
+    DateTime birthdayDateTime = DateTime.parse(bStr);
     UserEditPutRequest editObj = UserEditPutRequest(
         name: nameController.text,
-        birthday: "1990-12-23T00:00:00Z",
+        birthday: birthdayDateTime,
         email: emailController.text,
         imageProfile: imgPick,
         googleId: "Null");
