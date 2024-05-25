@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/pages/save_playlist.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-// import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 class PlaylistAfterCreatePage extends StatefulWidget {
   const PlaylistAfterCreatePage({super.key});
@@ -12,14 +11,24 @@ class PlaylistAfterCreatePage extends StatefulWidget {
       _PlaylistAfterCreatePageState();
 }
 
+class Musicdata {
+  final double music;
+  final double bpm;
+
+  Musicdata(this.music, this.bpm);
+}
+
 class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
-  List<SalesData> data = [
-    SalesData('3:55', 110),
-    SalesData('2:25', 125),
-    SalesData('4:34', 130),
-    SalesData('2:09', 120),
-    SalesData('3:11', 99)
+  List<Musicdata> chartData = [
+    Musicdata(3.48, 135),
+    Musicdata(3.59, 172),
+    Musicdata(4.03, 144),
+    Musicdata(3.27, 160),
+    Musicdata(4.51, 131),
+    Musicdata(4.40, 141),
+    Musicdata(3.35, 110),
   ];
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -45,6 +54,21 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        
+        child: const Icon(Icons.edit,color: Colors.white,),
+        onPressed: () {
+          // Action when button is pressed
+          setState(() {});
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(30), 
+        ),
+        backgroundColor: const Color(0xFFF8721D), // สีพื้นหลังของปุ่ม
+      ),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.endFloat, // ตำแหน่งของปุ่ม
       body: Column(
         children: [
           musicGraph(),
@@ -84,23 +108,23 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                musicChilds(),
-                musicChilds(),
-                musicChilds(),
-                musicChilds(),
-                musicChilds(),
-                musicChilds(),
-                musicChilds(),
-                musicChilds(),
-                musicChilds(),
-                musicChilds(),
-                musicChilds(),
-                musicChilds(),
-                musicChilds(),
-              ],
-            ),
+            child: Stack(children: [
+              Column(
+                children: [
+                  musicChilds(),
+                  musicChilds(),
+                  musicChilds(),
+                  musicChilds(),
+                  musicChilds(),
+                  musicChilds(),
+                  musicChilds(),
+                  musicChilds(),
+                  musicChilds(),
+                  musicChilds(),
+                  musicChilds(),
+                ],
+              ),
+            ]),
           ),
         ),
       ),
@@ -176,26 +200,19 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
     return SizedBox(
       height: 250,
       child: SfCartesianChart(
-        primaryXAxis: const CategoryAxis(),
-        // legend: const Legend(isVisible: true),
-        tooltipBehavior: TooltipBehavior(enable: true),
-        series: <CartesianSeries<SalesData, String>>[
-          LineSeries<SalesData, String>(
-            dataSource: data,
-            xValueMapper: (SalesData sales, _) => sales.year,
-            yValueMapper: (SalesData sales, _) => sales.sales,
-            // name: 'Sales',
-            // dataLabelSettings: const DataLabelSettings(isVisible: true),
+          primaryXAxis: const CategoryAxis(),
+          legend: const Legend(
+            isVisible: false,
           ),
-        ],
-      ),
+          tooltipBehavior: TooltipBehavior(enable: true),
+          series: <CartesianSeries<Musicdata, double>>[
+            LineSeries<Musicdata, double>(
+                dataSource: chartData,
+                xValueMapper: (Musicdata m, _) => m.music,
+                yValueMapper: (Musicdata m, _) => m.bpm,
+                color: Colors.red,
+                dataLabelSettings: const DataLabelSettings(isVisible: false))
+          ]),
     );
   }
-}
-
-class SalesData {
-  SalesData(this.year, this.sales);
-
-  final String year;
-  final double sales;
 }
