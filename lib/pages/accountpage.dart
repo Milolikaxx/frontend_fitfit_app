@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/pages/editprofile.dart';
+import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -10,6 +13,14 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  late UserLoginPostResponse user;
+  @override
+  void initState() {
+    user = context.read<AppData>().user;
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -28,13 +39,13 @@ class _AccountPageState extends State<AccountPage> {
             ]),
         body: Column(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
                 radius: 50.0,
-                backgroundImage: AssetImage('assets/images/runner.png')),
+                backgroundImage: NetworkImage('${user.imageProfile}')),
             const SizedBox(height: 10),
-            const Text(
-              "name name",
-              style: TextStyle(
+            Text(
+              '${user.name}',
+              style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.white),
@@ -126,41 +137,46 @@ class _AccountPageState extends State<AccountPage> {
         child: Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: 47,
-                  height: 47,
-                  decoration: const ShapeDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          "https://i.pinimg.com/736x/af/2d/bc/af2dbc00320f21026d87f3820d13429e.jpg"),
-                      fit: BoxFit.cover,
-                    ),
-                    shape: OvalBorder(),
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                const Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
-                    Text(
-                      'Gojo Satoru',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                    Container(
+                      width: 47,
+                      height: 47,
+                      decoration: const ShapeDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              "https://i.pinimg.com/736x/af/2d/bc/af2dbc00320f21026d87f3820d13429e.jpg"),
+                          fit: BoxFit.cover,
+                        ),
+                        shape: OvalBorder(),
                       ),
                     ),
-                    Text(
-                      '1 h',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    const Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Gojo Satoru',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          '1 h',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
