@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   late UserLoginPostResponse user;
   late var loadData;
   late WorkoutProfileService wpService;
+  String lvText = "";
   @override
   void initState() {
     super.initState();
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
     // trip = tripGetResponseFromJson(value.body);
     // log(value.body);
     liseWorkoutPdrofile = await wpService.getMorkoutProfile(user.uid!);
+
     // setState(() {
     //   trip = tripGetResponseFromJson(value.body);
     // });
@@ -45,7 +47,7 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           backgroundColor: const Color(0xFFF8721D),
           automaticallyImplyLeading: false,
-          leading:  CircleAvatar(
+          leading: CircleAvatar(
             backgroundImage: NetworkImage(
               '${user.imageProfile}',
             ),
@@ -72,7 +74,8 @@ class _HomePageState extends State<HomePage> {
                   ? ListView.builder(
                       itemCount: liseWorkoutPdrofile.length,
                       itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
                         child: workoutProfileCard(liseWorkoutPdrofile[index]),
                       ),
                     )
@@ -87,23 +90,44 @@ class _HomePageState extends State<HomePage> {
 
   workoutProfileCard(WorkoutProfileGetResponse liseWorkoutPdrofile) {
     return Container(
-        width: 350,
-        height: 250,
-        decoration: ShapeDecoration(
-          color: const Color(0x66CCCCCC),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          image: const DecorationImage(image: AssetImage('assets/images/preImgPlaylist.png'),
+      width: 350,
+      height: 180,
+      decoration: ShapeDecoration(
+        color: const Color(0x66CCCCCC),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        image: const DecorationImage(
+          image: AssetImage('assets/images/dream_TradingCard.jpg'),
           fit: BoxFit.cover,
-          ),
         ),
-        child: Column(
-          children: [
-            Text(liseWorkoutPdrofile.exerciseType,style: const TextStyle(fontSize: 20, color: Colors.white),)
-          ],
-        ),
-        );
+      ),
+      child: Column(
+        children: [
+          (liseWorkoutPdrofile.levelExercise == 5)
+              ? Text(
+                  '${liseWorkoutPdrofile.exerciseType} : ${liseWorkoutPdrofile.duration}นาที : Lv.${liseWorkoutPdrofile.levelExercise} หนักมาก',
+                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                )
+              : (liseWorkoutPdrofile.levelExercise == 4)
+                  ? Text(
+                      '${liseWorkoutPdrofile.exerciseType} : ${liseWorkoutPdrofile.duration}นาที : Lv.${liseWorkoutPdrofile.levelExercise} หนัก',
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                    )
+                  : (liseWorkoutPdrofile.levelExercise == 3 ) ? Text(
+                      '${liseWorkoutPdrofile.exerciseType} : ${liseWorkoutPdrofile.duration}นาที : Lv.${liseWorkoutPdrofile.levelExercise} ปานกลาง ',
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                    ): (liseWorkoutPdrofile.levelExercise == 2 ) ? Text(
+                      '${liseWorkoutPdrofile.exerciseType} : ${liseWorkoutPdrofile.duration}นาที : Lv.${liseWorkoutPdrofile.levelExercise} เบา ',
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                    ): (liseWorkoutPdrofile.levelExercise == 1 ) ? Text(
+                      '${liseWorkoutPdrofile.exerciseType} : ${liseWorkoutPdrofile.duration}นาที : Lv.${liseWorkoutPdrofile.levelExercise} เบามาก',
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                    ) : const Text("")
+          
+        ],
+      ),
+    );
   }
 
   // //ปุ่ม Sign Out การออกจากระบบ

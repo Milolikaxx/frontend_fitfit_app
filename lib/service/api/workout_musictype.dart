@@ -12,4 +12,7 @@ abstract class WorkoutMusicTypeService {
 
   @POST("/wpmt/save")
   Future<int> saveWPMT(@Body() WorkoutMusicTypePostRequest saveWpMt);
+
+  //  @GET("/workprofile/user/{id}")
+  // Future<List<WorkoutProfileGetResponse>> getMorkoutProfile(@Path() int id);
 }
