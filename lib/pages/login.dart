@@ -43,7 +43,6 @@ class _LoginPageState extends State<LoginPage> {
           image: DecorationImage(
             image: AssetImage('assets/images/bglogin.png'),
             fit: BoxFit.cover,
-            
           ),
         ),
         child: SingleChildScrollView(
@@ -110,6 +109,21 @@ class _LoginPageState extends State<LoginPage> {
                                       color: Colors.white, width: 2),
                                   borderRadius: BorderRadius.circular(18),
                                 ),
+                                     errorBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.red,
+                                      width: 2), // สีเส้นขอบเมื่อมี error
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.red,
+                                      width:
+                                          2), // สีเส้นขอบเมื่อโฟกัสและมี error
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                                errorStyle: const TextStyle(
+                                    color: Colors.white), // สีข้อความ validator
                               ),
                             ),
                           ),
@@ -146,6 +160,21 @@ class _LoginPageState extends State<LoginPage> {
                                         color: Colors.white, width: 2),
                                     borderRadius: BorderRadius.circular(18),
                                   ),
+                                      errorBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: Colors.red,
+                                        width: 2), // สีเส้นขอบเมื่อมี error
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: Colors.red,
+                                        width:
+                                            2), // สีเส้นขอบเมื่อโฟกัสและมี error
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  errorStyle:
+                                      const TextStyle(color: Colors.white),
                                   suffixIcon: IconButton(
                                     color: Colors.white,
                                     icon: Icon(_isPasswordVisible
@@ -286,7 +315,6 @@ class _LoginPageState extends State<LoginPage> {
       try {
         UserLoginPostResponse res = await userService.login(loginObj);
         if (res.uid != 0) {
-
           if (context.mounted) {
             context.read<AppData>().user = res;
           }
@@ -299,7 +327,8 @@ class _LoginPageState extends State<LoginPage> {
         log(e.toString());
       }
     } else {
-      Get.snackbar('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลให้ครบ');
+      Get.snackbar('ข้อมูลไม่ครบหรือไม่ถูกต้อง',
+          'กรุณากรอกข้อมูลให้ครบและกรอกข้อมูลให้ถูกต้อง');
     }
   }
 
