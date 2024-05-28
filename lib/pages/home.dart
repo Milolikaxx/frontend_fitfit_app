@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/model/response/workoutProfileMusicType_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
@@ -14,11 +17,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // GoogleSignInAccount? user;
-  List<WorkoutProfileGetResponse> liseWorkoutPdrofile = [];
+  List<WorkoutProfileGetResponse> profiles = [];
+  List<List<WorkoutProfileMusicTypeGetResponse>> profileInfos = [];
   late UserLoginPostResponse user;
   late var loadData;
   late WorkoutProfileService wpService;
   String lvText = "";
+  List<String> musicType = [];
   @override
   void initState() {
     super.initState();
@@ -32,7 +37,15 @@ class _HomePageState extends State<HomePage> {
     // var value = await http.get(Uri.parse(url));
     // trip = tripGetResponseFromJson(value.body);
     // log(value.body);
-    liseWorkoutPdrofile = await wpService.getMorkoutProfile(user.uid!);
+    profiles = await wpService.getWorkoutProfile(user.uid!);
+    for (var profile in profiles) {
+      var profileInfo = await wpService.getListWorkoutProfile(profile.wpid);
+      profileInfos.add(profileInfo);
+      log(profileInfo.length.toString());
+      // for (var profile in profiles) {
+      //   log(profile.workoutMusictype.musicType.name);
+      // }
+    }
 
     // setState(() {
     //   trip = tripGetResponseFromJson(value.body);
@@ -69,13 +82,13 @@ class _HomePageState extends State<HomePage> {
               if (snapshot.connectionState != ConnectionState.done) {
                 return const CircularProgressIndicator();
               }
-              return liseWorkoutPdrofile.isNotEmpty
+              return profiles.isNotEmpty
                   ? ListView.builder(
-                      itemCount: liseWorkoutPdrofile.length,
+                      itemCount: profiles.length,
                       itemBuilder: (context, index) => Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),
-                        child: workoutProfileCard(liseWorkoutPdrofile[index]),
+                        child: workoutProfileCard(profiles[index], profileInfos[index]),
                       ),
                     )
                   : const Center(
@@ -87,7 +100,18 @@ class _HomePageState extends State<HomePage> {
             }));
   }
 
-  workoutProfileCard(WorkoutProfileGetResponse liseWorkoutPdrofile) {
+  Widget getTextName(List<WorkoutProfileMusicTypeGetResponse> profileInfos) {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: profileInfos
+            .map((p) => Text(
+                  p.workoutMusictype.musicType.name,
+                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                ))
+            .toList());
+  }
+
+  workoutProfileCard(WorkoutProfileGetResponse data,List<WorkoutProfileMusicTypeGetResponse> profileInfo) {
     return Container(
       width: 350,
       height: 180,
@@ -103,27 +127,36 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Column(
         children: [
-          (liseWorkoutPdrofile.levelExercise == 5)
+          (data.levelExercise == 5)
               ? Text(
-                  '${liseWorkoutPdrofile.exerciseType} : ${liseWorkoutPdrofile.duration}นาที : Lv.${liseWorkoutPdrofile.levelExercise} หนักมาก',
+                  '${data.exerciseType} : ${data.duration}นาที : Lv.${data.levelExercise} หนักมาก',
                   style: const TextStyle(fontSize: 20, color: Colors.white),
                 )
-              : (liseWorkoutPdrofile.levelExercise == 4)
+              : (data.levelExercise == 4)
                   ? Text(
-                      '${liseWorkoutPdrofile.exerciseType} : ${liseWorkoutPdrofile.duration}นาที : Lv.${liseWorkoutPdrofile.levelExercise} หนัก',
+                      '${data.exerciseType} : ${data.duration} นาที : Lv.${data.levelExercise} หนัก',
                       style: const TextStyle(fontSize: 20, color: Colors.white),
                     )
-                  : (liseWorkoutPdrofile.levelExercise == 3 ) ? Text(
-                      '${liseWorkoutPdrofile.exerciseType} : ${liseWorkoutPdrofile.duration}นาที : Lv.${liseWorkoutPdrofile.levelExercise} ปานกลาง ',
-                      style: const TextStyle(fontSize: 20, color: Colors.white),
-                    ): (liseWorkoutPdrofile.levelExercise == 2 ) ? Text(
-                      '${liseWorkoutPdrofile.exerciseType} : ${liseWorkoutPdrofile.duration}นาที : Lv.${liseWorkoutPdrofile.levelExercise} เบา ',
-                      style: const TextStyle(fontSize: 20, color: Colors.white),
-                    ): (liseWorkoutPdrofile.levelExercise == 1 ) ? Text(
-                      '${liseWorkoutPdrofile.exerciseType} : ${liseWorkoutPdrofile.duration}นาที : Lv.${liseWorkoutPdrofile.levelExercise} เบามาก',
-                      style: const TextStyle(fontSize: 20, color: Colors.white),
-                    ) : const Text("")
-          
+                  : (data.levelExercise == 3)
+                      ? Text(
+                          '${data.exerciseType} : ${data.duration}นาที : Lv.${data.levelExercise} ปานกลาง ',
+                          style: const TextStyle(
+                              fontSize: 20, color: Colors.white),
+                        )
+                      : (data.levelExercise == 2)
+                          ? Text(
+                              '${data.exerciseType} : ${data.duration}นาที : Lv.${data.levelExercise} เบา ',
+                              style: const TextStyle(
+                                  fontSize: 20, color: Colors.white),
+                            )
+                          : (data.levelExercise == 1)
+                              ? Text(
+                                  '${data.exerciseType} : ${data.duration}นาที : Lv.${data.levelExercise} เบามาก',
+                                  style: const TextStyle(
+                                      fontSize: 20, color: Colors.white),
+                                )
+                              : const Text(""),
+          getTextName(profileInfo)
         ],
       ),
     );

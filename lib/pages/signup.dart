@@ -123,7 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                             // label: const Text('วันเกิด'),
-                            hintText: 'วันเกิด',
+                            // hintText: 'วันเกิด',
                             hintStyle: const TextStyle(color: Colors.white),
                             enabledBorder: OutlineInputBorder(
                               borderSide: const BorderSide(
@@ -148,11 +148,13 @@ class _SignUpPageState extends State<SignUpPage> {
                               borderRadius: BorderRadius.circular(18),
                             ),
                             errorStyle: const TextStyle(color: Colors.white),
-                            suffixIcon: const FaIcon(
-                                  FontAwesomeIcons.calendar,
-                                  color: Colors.white,
-                                  size: 20,
-                                )),
+                            suffixIcon: const Center(
+                              child: FaIcon(
+                                    FontAwesomeIcons.calendar,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                            )),
                         readOnly:
                             true, //set it true, so that user will not able to edit text
                         onTap: () async {
