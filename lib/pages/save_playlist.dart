@@ -9,7 +9,7 @@ class SavePlaylistPage extends StatefulWidget {
 
 class _SavePlaylistPageState extends State<SavePlaylistPage> {
   var imgPick = "";
-  bool _isClicked = false;
+  // bool _isClicked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

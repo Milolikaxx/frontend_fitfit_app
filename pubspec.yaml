@@ -52,7 +52,11 @@ dependencies:
   retrofit_generator: ^8.1.0
   json_serializable: ^6.8.0
   syncfusion_flutter_charts: ^25.2.3+1
-
+  buddhist_datetime_dateformat: 
+    path: libraries/buddhist_datetime_dateformat_sns
+  font_awesome_flutter: ^10.7.0
+  flutter_smart_dialog: ^4.9.0+6
+  ndialog: ^4.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
