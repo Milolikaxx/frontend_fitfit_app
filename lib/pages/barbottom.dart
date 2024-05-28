@@ -13,7 +13,7 @@ class Barbottom extends StatefulWidget {
 }
 
 class _BarbottomState extends State<Barbottom> {
- int currentInx = 0;
+  int currentInx = 0;
 
   final tabs = [
     const HomePage(),
@@ -25,7 +25,7 @@ class _BarbottomState extends State<Barbottom> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: true,
       // onPopInvoked: (didPop) async {
       //   if (didPop) {
       //     return;
@@ -42,7 +42,7 @@ class _BarbottomState extends State<Barbottom> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home_sharp),
               label: 'หน้าแรก',
-              backgroundColor:  Color(0xFFF8721D),
+              backgroundColor: Color(0xFFF8721D),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.public),
@@ -50,11 +50,14 @@ class _BarbottomState extends State<Barbottom> {
               backgroundColor: Color(0xFFF8721D),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline,size: 30,) ,
+              icon: Icon(
+                Icons.add_circle_outline,
+                size: 30,
+              ),
               label: 'เพิ่ม',
               backgroundColor: Color(0xFFF8721D),
             ),
-            BottomNavigationBarItem( 
+            BottomNavigationBarItem(
               icon: Icon(Icons.history),
               label: 'ประวัติ',
               backgroundColor: Color(0xFFF8721D),
