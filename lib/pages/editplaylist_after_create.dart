@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/pages/save_playlist.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -56,8 +57,9 @@ class _EditPlaylistAfterCreatePageState
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(
-          Icons.shuffle_rounded,
+        child: const  FaIcon(
+          FontAwesomeIcons.shuffle,
+          size: 20,
           color: Colors.white,
         ),
         onPressed: () {
@@ -202,13 +204,19 @@ class _EditPlaylistAfterCreatePageState
                             ),
                             child: IconButton(
                               padding: EdgeInsets.zero,
-                              icon: const Icon(Icons.shuffle_rounded,size: 20,),
+                              icon: const  FaIcon(
+                                FontAwesomeIcons.shuffle,
+                                size: 16,
+                              ),
                               color: Colors.white, 
                               onPressed: () {
                                 // Add your onPressed code here!
                                 // print('IconButton pressed');
                               },
                             ),
+                          ),
+                          SizedBox(
+                            width: 5,
                           ),
                           Container(
                             width: 30,

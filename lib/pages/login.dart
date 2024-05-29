@@ -312,6 +312,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState?.validate() ?? true) {
       UserLoginPostRequest loginObj = UserLoginPostRequest(
           email: emailController.text, password: passwordController.text);
+          // startLoading(context);
       try {
         UserLoginPostResponse res = await userService.login(loginObj);
         if (res.uid != 0) {
