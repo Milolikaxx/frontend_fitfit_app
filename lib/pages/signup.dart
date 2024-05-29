@@ -148,13 +148,11 @@ class _SignUpPageState extends State<SignUpPage> {
                               borderRadius: BorderRadius.circular(18),
                             ),
                             errorStyle: const TextStyle(color: Colors.white),
-                            suffixIcon: const Center(
-                              child: FaIcon(
-                                    FontAwesomeIcons.calendar,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                            )),
+                            suffixIcon: const FaIcon(
+                                  FontAwesomeIcons.calendar,
+                                  color: Colors.white,
+                                  size: 20,
+                                )),
                         readOnly:
                             true, //set it true, so that user will not able to edit text
                         onTap: () async {
@@ -168,29 +166,19 @@ class _SignUpPageState extends State<SignUpPage> {
                               styleDatePicker: MaterialRoundedDatePickerStyle(
                                 textStyleButtonPositive:
                                     Get.textTheme.bodyLarge!.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
+                                        color:    const Color(0xFFF8721D)),
                                 textStyleButtonNegative:
                                     Get.textTheme.bodyLarge!.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
+                                        color:    const Color(0xFFF8721D)),
                                 textStyleDayOnCalendarSelected:
                                     Get.textTheme.bodyMedium!.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
+                                        color:    Colors.white),
                                 textStyleDayButton: Get.textTheme.titleLarge!
                                     .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
+                                        color:    Colors.white),
                                 textStyleYearButton: Get.textTheme.titleLarge!
                                     .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
+                                        color:  Colors.white),
                               ),
                               theme: Theme.of(context));
 

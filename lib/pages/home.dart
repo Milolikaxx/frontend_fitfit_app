@@ -80,39 +80,60 @@ class _HomePageState extends State<HomePage> {
             future: loadData,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
-              return profiles.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: profiles.length,
-                      itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        child: workoutProfileCard(profiles[index], profileInfos[index]),
+              return RefreshIndicator(
+                 onRefresh: () async {
+                  setState(() {
+                    loadData = loadDataAsync();
+                  });
+                },
+                child: profiles.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: profiles.length,
+                        itemBuilder: (context, index) => Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          child: workoutProfileCard(
+                              profiles[index], profileInfos[index]),
+                        ),
+                      )
+                    : const Center(
+                        child: Text(
+                          'ยังไม่มีโปรโฟล์ออกกำลังกาย',
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
                       ),
-                    )
-                  : const Center(
-                      child: Text(
-                        'ยังไม่มีโปรโฟล์ออกกำลังกาย',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    );
+              );
             }));
   }
 
   Widget getTextName(List<WorkoutProfileMusicTypeGetResponse> profileInfos) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      
         children: profileInfos
-            .map((p) => Text(
-                  p.workoutMusictype.musicType.name,
+            .asMap()
+            .map((index, p) {
+              String text = p.workoutMusictype.musicType.name;
+              if (index != profileInfos.length - 1) {
+                text += " : ";
+              }
+              return MapEntry(
+                index,
+                Text(
+                  text,
                   style: const TextStyle(fontSize: 20, color: Colors.white),
-                ))
+                ),
+              );
+            })
+            .values
             .toList());
   }
 
-  workoutProfileCard(WorkoutProfileGetResponse data,List<WorkoutProfileMusicTypeGetResponse> profileInfo) {
+  workoutProfileCard(WorkoutProfileGetResponse data,
+      List<WorkoutProfileMusicTypeGetResponse> profileInfo) {
     return Container(
+      alignment: Alignment.bottomLeft,
       width: 350,
       height: 180,
       decoration: ShapeDecoration(
@@ -126,6 +147,8 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           (data.levelExercise == 5)
               ? Text(
