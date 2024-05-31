@@ -46,7 +46,8 @@ class _WorkoutProfileService implements WorkoutProfileService {
   }
 
   @override
-  Future<List<WorkoutProfileGetResponse>> getWorkoutProfile(int id) async {
+  Future<List<WorkoutProfileGetResponse>> getListWorkoutProfileByUid(
+      int id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -71,37 +72,6 @@ class _WorkoutProfileService implements WorkoutProfileService {
     var value = _result.data!
         .map((dynamic i) =>
             WorkoutProfileGetResponse.fromJson(i as Map<String, dynamic>))
-        .toList();
-    return value;
-  }
-
-  @override
-  Future<List<WorkoutProfileMusicTypeGetResponse>> getListWorkoutProfile(
-      int id) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<WorkoutProfileMusicTypeGetResponse>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/workprofile/list/${id}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var value = _result.data!
-        .map((dynamic i) => WorkoutProfileMusicTypeGetResponse.fromJson(
-            i as Map<String, dynamic>))
         .toList();
     return value;
   }

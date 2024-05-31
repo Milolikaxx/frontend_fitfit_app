@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
-import 'package:frontend_fitfit_app/model/response/workoutProfileMusicType_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
@@ -18,12 +17,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // GoogleSignInAccount? user;
   List<WorkoutProfileGetResponse> profiles = [];
-  List<List<WorkoutProfileMusicTypeGetResponse>> profileInfos = [];
+  // List<List<WorkoutProfileMusicTypeGetResponse>> profileInfos = [];
   late UserLoginPostResponse user;
   late var loadData;
   late WorkoutProfileService wpService;
   String lvText = "";
-  List<String> musicType = [];
   @override
   void initState() {
     super.initState();
@@ -37,15 +35,8 @@ class _HomePageState extends State<HomePage> {
     // var value = await http.get(Uri.parse(url));
     // trip = tripGetResponseFromJson(value.body);
     // log(value.body);
-    profiles = await wpService.getWorkoutProfile(user.uid!);
-    for (var profile in profiles) {
-      var profileInfo = await wpService.getListWorkoutProfile(profile.wpid);
-      profileInfos.add(profileInfo);
-      log(profileInfo.length.toString());
-      // for (var profile in profiles) {
-      //   log(profile.workoutMusictype.musicType.name);
-      // }
-    }
+    profiles = await wpService.getListWorkoutProfileByUid(user.uid!);
+    log(profiles.length.toString());
 
     // setState(() {
     //   trip = tripGetResponseFromJson(value.body);
@@ -83,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                 return const Center(child: CircularProgressIndicator());
               }
               return RefreshIndicator(
-                 onRefresh: () async {
+                onRefresh: () async {
                   setState(() {
                     loadData = loadDataAsync();
                   });
@@ -94,8 +85,7 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (context, index) => Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
-                          child: workoutProfileCard(
-                              profiles[index], profileInfos[index]),
+                          child: workoutProfileCard(profiles[index]),
                         ),
                       )
                     : const Center(
@@ -108,30 +98,39 @@ class _HomePageState extends State<HomePage> {
             }));
   }
 
-  Widget getTextName(List<WorkoutProfileMusicTypeGetResponse> profileInfos) {
+  Widget getTextName(List<WorkoutMusictype> musicTypes) {
     return Row(
-      
-        children: profileInfos
+
+        children: musicTypes
             .asMap()
-            .map((index, p) {
-              String text = p.workoutMusictype.musicType.name;
-              if (index != profileInfos.length - 1) {
+            .map((index, musicType) {
+              String text = musicType.musicType.name;
+              if (index != musicTypes.length - 1) {
                 text += " : ";
               }
               return MapEntry(
                 index,
                 Text(
                   text,
-                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                  style: const TextStyle(
+                    fontSize: 20, color: Colors.white,
+                    shadows: <Shadow>[
+                      Shadow(
+                        offset: Offset(1, 1),
+                        blurRadius: 8.0,
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
                 ),
               );
             })
             .values
-            .toList());
+            .toList()
+        );
   }
 
-  workoutProfileCard(WorkoutProfileGetResponse data,
-      List<WorkoutProfileMusicTypeGetResponse> profileInfo) {
+  workoutProfileCard(WorkoutProfileGetResponse profile) {
     return Container(
       alignment: Alignment.bottomLeft,
       width: 350,
@@ -150,36 +149,80 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          (data.levelExercise == 5)
+          (profile.levelExercise == 5)
               ? Text(
-                  '${data.exerciseType} : ${data.duration}นาที : Lv.${data.levelExercise} หนักมาก',
-                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                  '${profile.exerciseType} : ${profile.duration}นาที : Lv.${profile.levelExercise} หนักมาก',
+                  style: const TextStyle(
+                    fontSize: 20, color: Colors.white,
+                    shadows: <Shadow>[
+                      Shadow(
+                        offset: Offset(1, 1),
+                        blurRadius: 8.0,
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
                 )
-              : (data.levelExercise == 4)
+              : (profile.levelExercise == 4)
                   ? Text(
-                      '${data.exerciseType} : ${data.duration} นาที : Lv.${data.levelExercise} หนัก',
-                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                      '${profile.exerciseType} : ${profile.duration} นาที : Lv.${profile.levelExercise} หนัก',
+                      style: const TextStyle(
+                    fontSize: 20, color: Colors.white,
+                    shadows: <Shadow>[
+                      Shadow(
+                        offset: Offset(1, 1),
+                        blurRadius: 8.0,
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
                     )
-                  : (data.levelExercise == 3)
+                  : (profile.levelExercise == 3)
                       ? Text(
-                          '${data.exerciseType} : ${data.duration}นาที : Lv.${data.levelExercise} ปานกลาง ',
+                          '${profile.exerciseType} : ${profile.duration}นาที : Lv.${profile.levelExercise} ปานกลาง ',
                           style: const TextStyle(
-                              fontSize: 20, color: Colors.white),
+                            fontSize: 20,
+                            color: Colors.white,
+                            shadows: <Shadow>[
+                              Shadow(
+                                offset: Offset(1, 1),
+                                blurRadius: 8.0,
+                                color: Colors.black,
+                              ),
+                            ],
+                          ),
                         )
-                      : (data.levelExercise == 2)
+                      : (profile.levelExercise == 2)
                           ? Text(
-                              '${data.exerciseType} : ${data.duration}นาที : Lv.${data.levelExercise} เบา ',
+                              '${profile.exerciseType} : ${profile.duration}นาที : Lv.${profile.levelExercise} เบา ',
                               style: const TextStyle(
-                                  fontSize: 20, color: Colors.white),
+                                fontSize: 20,
+                                color: Colors.white,
+                                shadows: <Shadow>[
+                                  Shadow(
+                                    offset: Offset(1, 1),
+                                    blurRadius: 8.0,
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              ),
                             )
-                          : (data.levelExercise == 1)
+                          : (profile.levelExercise == 1)
                               ? Text(
-                                  '${data.exerciseType} : ${data.duration}นาที : Lv.${data.levelExercise} เบามาก',
+                                  '${profile.exerciseType} : ${profile.duration}นาที : Lv.${profile.levelExercise} เบามาก',
                                   style: const TextStyle(
-                                      fontSize: 20, color: Colors.white),
-                                )
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                    shadows: <Shadow>[
+                                      Shadow(
+                                        offset: Offset(1, 1),
+                                        blurRadius: 8.0,
+                                        color: Colors.black,
+                                      ),
+                                    ],
+                                  ),                                )
                               : const Text(""),
-          getTextName(profileInfo)
+          getTextName(profile.workoutMusictype)
         ],
       ),
     );
