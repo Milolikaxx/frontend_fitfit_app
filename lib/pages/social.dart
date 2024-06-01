@@ -13,7 +13,7 @@ class _SocailPageState extends State<SocailPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 0, 0, 0),
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         title: const Text(
           "Feeds",
           style: TextStyle(color: Colors.white),
@@ -247,7 +247,7 @@ class _SocailPageState extends State<SocailPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Row(
+                  child:  const Row(
                     children: [
                       Image(
                         image: NetworkImage(
@@ -263,6 +263,7 @@ class _SocailPageState extends State<SocailPage> {
                               style: TextStyle(fontSize: 16, color: Colors.black)),
                           Text("playlist by Gojo",
                               style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            
                         ],
                       )
                     ],

@@ -3,8 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
+import 'package:frontend_fitfit_app/pages/save_playlist.dart';
+import 'package:frontend_fitfit_app/pages/showworkoutprofile.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,7 +25,6 @@ class _HomePageState extends State<HomePage> {
   late UserLoginPostResponse user;
   late var loadData;
   late WorkoutProfileService wpService;
-  String lvText = "";
   @override
   void initState() {
     super.initState();
@@ -31,16 +34,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   loadDataAsync() async {
-    // String url = 'http://202.28.34.197/tripbooking/trip/${widget.idx}';
-    // var value = await http.get(Uri.parse(url));
-    // trip = tripGetResponseFromJson(value.body);
-    // log(value.body);
     profiles = await wpService.getListWorkoutProfileByUid(user.uid!);
     log(profiles.length.toString());
-
-    // setState(() {
-    //   trip = tripGetResponseFromJson(value.body);
-    // });
   }
 
   @override
@@ -84,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                         itemCount: profiles.length,
                         itemBuilder: (context, index) => Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
+                              horizontal: 20, vertical: 8),
                           child: workoutProfileCard(profiles[index]),
                         ),
                       )
@@ -130,100 +125,72 @@ class _HomePageState extends State<HomePage> {
         );
   }
 
-  workoutProfileCard(WorkoutProfileGetResponse profile) {
-    return Container(
-      alignment: Alignment.bottomLeft,
-      width: 350,
-      height: 180,
-      decoration: ShapeDecoration(
-        color: const Color(0x66CCCCCC),
-        shape: RoundedRectangleBorder(
+ workoutProfileCard(WorkoutProfileGetResponse profile) {
+    String levelDescription;
+    switch (profile.levelExercise) {
+      case 5:
+        levelDescription = 'หนักมาก';
+        break;
+      case 4:
+        levelDescription = 'หนัก';
+        break;
+      case 3:
+        levelDescription = 'ปานกลาง';
+        break;
+      case 2:
+        levelDescription = 'เบา';
+        break;
+      case 1:
+        levelDescription = 'เบามาก';
+        break;
+      default:
+        levelDescription = '';
+    }
+    // Color cardColor = Colors.white;
+    return InkWell(
+       onTap: () {
+       Get.to(() => ShowWorkoutProfilePage(profile.wpid));
+        // setState(() {
+        //    cardColor = Colors.orange;
+        // });
+      },
+      child: Card(
+      //  color: cardColor,
+        child: Container(
+          alignment: Alignment.bottomLeft,
+          width: 350,
+          height: 180,
+          decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
+            image: const DecorationImage(
+              image: AssetImage('assets/images/dream_TradingCard.jpg'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                profile.levelExercise > 0
+                    ? '${profile.exerciseType} : ${profile.duration} นาที : Lv.${profile.levelExercise} $levelDescription'
+                    : '',
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                  shadows: <Shadow>[
+                    Shadow(
+                      offset: Offset(1, 1),
+                      blurRadius: 8.0,
+                      color: Colors.black,
+                    ),
+                  ],
+                ),
+              ),
+              getTextName(profile.workoutMusictype)
+            ],
+          ),
         ),
-        image: const DecorationImage(
-          image: AssetImage('assets/images/dream_TradingCard.jpg'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          (profile.levelExercise == 5)
-              ? Text(
-                  '${profile.exerciseType} : ${profile.duration}นาที : Lv.${profile.levelExercise} หนักมาก',
-                  style: const TextStyle(
-                    fontSize: 20, color: Colors.white,
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(1, 1),
-                        blurRadius: 8.0,
-                        color: Colors.black,
-                      ),
-                    ],
-                  ),
-                )
-              : (profile.levelExercise == 4)
-                  ? Text(
-                      '${profile.exerciseType} : ${profile.duration} นาที : Lv.${profile.levelExercise} หนัก',
-                      style: const TextStyle(
-                    fontSize: 20, color: Colors.white,
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(1, 1),
-                        blurRadius: 8.0,
-                        color: Colors.black,
-                      ),
-                    ],
-                  ),
-                    )
-                  : (profile.levelExercise == 3)
-                      ? Text(
-                          '${profile.exerciseType} : ${profile.duration}นาที : Lv.${profile.levelExercise} ปานกลาง ',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            shadows: <Shadow>[
-                              Shadow(
-                                offset: Offset(1, 1),
-                                blurRadius: 8.0,
-                                color: Colors.black,
-                              ),
-                            ],
-                          ),
-                        )
-                      : (profile.levelExercise == 2)
-                          ? Text(
-                              '${profile.exerciseType} : ${profile.duration}นาที : Lv.${profile.levelExercise} เบา ',
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                shadows: <Shadow>[
-                                  Shadow(
-                                    offset: Offset(1, 1),
-                                    blurRadius: 8.0,
-                                    color: Colors.black,
-                                  ),
-                                ],
-                              ),
-                            )
-                          : (profile.levelExercise == 1)
-                              ? Text(
-                                  '${profile.exerciseType} : ${profile.duration}นาที : Lv.${profile.levelExercise} เบามาก',
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.white,
-                                    shadows: <Shadow>[
-                                      Shadow(
-                                        offset: Offset(1, 1),
-                                        blurRadius: 8.0,
-                                        color: Colors.black,
-                                      ),
-                                    ],
-                                  ),                                )
-                              : const Text(""),
-          getTextName(profile.workoutMusictype)
-        ],
       ),
     );
   }
