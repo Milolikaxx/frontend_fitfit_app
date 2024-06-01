@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:frontend_fitfit_app/model/request/user_register_post_req.dart';
@@ -12,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -21,6 +24,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   var nameController = TextEditingController();
   var emailController = TextEditingController();
   var dateController = TextEditingController();
@@ -28,7 +32,8 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _isconPasswordVisible = false;
   final confirmPasswordController = TextEditingController();
   var passwordController = TextEditingController();
-  var imgPick = "";
+  String imgPick = "";
+  Uint8List? imageBytes;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime selectedBirthDate = DateTime.now();
   late UserService userService;
@@ -149,10 +154,10 @@ class _SignUpPageState extends State<SignUpPage> {
                             ),
                             errorStyle: const TextStyle(color: Colors.white),
                             suffixIcon: const FaIcon(
-                                  FontAwesomeIcons.calendar,
-                                  color: Colors.white,
-                                  size: 20,
-                                )),
+                              FontAwesomeIcons.calendar,
+                              color: Colors.white,
+                              size: 20,
+                            )),
                         readOnly:
                             true, //set it true, so that user will not able to edit text
                         onTap: () async {
@@ -164,21 +169,19 @@ class _SignUpPageState extends State<SignUpPage> {
                               borderRadius: 10,
                               height: 300,
                               styleDatePicker: MaterialRoundedDatePickerStyle(
-                                textStyleButtonPositive:
-                                    Get.textTheme.bodyLarge!.copyWith(
-                                        color:    const Color(0xFFF8721D)),
-                                textStyleButtonNegative:
-                                    Get.textTheme.bodyLarge!.copyWith(
-                                        color:    const Color(0xFFF8721D)),
-                                textStyleDayOnCalendarSelected:
-                                    Get.textTheme.bodyMedium!.copyWith(
-                                        color:    Colors.white),
+                                textStyleButtonPositive: Get
+                                    .textTheme.bodyLarge!
+                                    .copyWith(color: const Color(0xFFF8721D)),
+                                textStyleButtonNegative: Get
+                                    .textTheme.bodyLarge!
+                                    .copyWith(color: const Color(0xFFF8721D)),
+                                textStyleDayOnCalendarSelected: Get
+                                    .textTheme.bodyMedium!
+                                    .copyWith(color: Colors.white),
                                 textStyleDayButton: Get.textTheme.titleLarge!
-                                    .copyWith(
-                                        color:    Colors.white),
+                                    .copyWith(color: Colors.white),
                                 textStyleYearButton: Get.textTheme.titleLarge!
-                                    .copyWith(
-                                        color:  Colors.white),
+                                    .copyWith(color: Colors.white),
                               ),
                               theme: Theme.of(context));
 
@@ -452,16 +455,17 @@ class _SignUpPageState extends State<SignUpPage> {
     String bStr = "${birthdayStr.split(".")[0]}z";
     DateTime birthdayDateTime = DateTime.parse(bStr);
     log(birthdayDateTime.toIso8601String());
+    log(imgPick);
     if (_formKey.currentState?.validate() ?? true) {
-      if (passwordController.text != confirmPasswordController.text) {
+      if (passwordController.text == confirmPasswordController.text) {
         if (imgPick != "") {
           UserRegisterPostRequest registerObj = UserRegisterPostRequest(
-              name: nameController.text,
-              birthday: birthdayDateTime,
-              email: emailController.text,
-              password: passwordController.text,
-              imageProfile: imgPick,
-             );
+            name: nameController.text,
+            birthday: birthdayDateTime,
+            email: emailController.text,
+            password: passwordController.text,
+            imageProfile: imgPick,
+          );
           try {
             int res = await userService.register(registerObj);
             if (res == 0) {
@@ -473,31 +477,31 @@ class _SignUpPageState extends State<SignUpPage> {
           } catch (e) {
             log(e.toString());
           }
-        }
-      } else {
-        UserRegisterPostRequest registerObj = UserRegisterPostRequest(
+        } else {
+          UserRegisterPostRequest registerObj = UserRegisterPostRequest(
             name: nameController.text,
             birthday: birthdayDateTime,
             email: emailController.text,
             password: passwordController.text,
             imageProfile:
                 "http://202.28.34.197:8888/contents/ac11379f-1be1-46fe-ae0d-0c41ff876e24.png",
-            );
-        try {
-          int res = await userService.register(registerObj);
-          if (res == 1) {
-            log('สมัครสมาชิกสำเร็จ ');
-            Get.snackbar('สมัครสมาชิกสำเร็จ', '');
-          } else if (res == 2) {
-            Get.snackbar('อีเมลนี้มีอยู่แล้ว', 'กรุณากรอกอีเมลใหม่');
-          } else if (res == 3) {
-            Get.snackbar('ชื่อนี้มีอยู่แล้ว', 'กรุณากรอกชื่อๆใหม่');
-          } else {
-            log('สมัครสมาชิกไม่สำเร็จ ');
-            Get.snackbar('ข้อมูลไม่ถูกต้อง', 'กรุณากรอกข้อมูลให้ถูกต้อง');
+          );
+          try {
+            int res = await userService.register(registerObj);
+            if (res == 1) {
+              log('สมัครสมาชิกสำเร็จ ');
+              Get.snackbar('สมัครสมาชิกสำเร็จ', '');
+            } else if (res == 2) {
+              Get.snackbar('อีเมลนี้มีอยู่แล้ว', 'กรุณากรอกอีเมลใหม่');
+            } else if (res == 3) {
+              Get.snackbar('ชื่อนี้มีอยู่แล้ว', 'กรุณากรอกชื่อๆใหม่');
+            } else {
+              log('สมัครสมาชิกไม่สำเร็จ ');
+              Get.snackbar('ข้อมูลไม่ถูกต้อง', 'กรุณากรอกข้อมูลให้ถูกต้อง');
+            }
+          } catch (e) {
+            log(e.toString());
           }
-        } catch (e) {
-          log(e.toString());
         }
       }
     } else if (_formKey.currentState?.validate() ?? false) {
@@ -586,29 +590,38 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  File? _image;
   void pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      var filePath = image.path;
-      var fileName = image.name;
-      if (filePath.isNotEmpty && fileName.isNotEmpty) {
-        var formData = FormData.fromMap({
-          'file': await MultipartFile.fromFile(
-            filePath,
-            filename: fileName,
-          )
-        });
-
-        var result = await Dio()
-            .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
-        if (result.statusCode == 201) {
-          log(result.data['fileUrl']);
+      setState(() {
+        _image = File(image.path);
+      });
+      try {
+        FirebaseStorage storage = FirebaseStorage.instance;
+        Reference ref = storage.ref().child('uploadsImg/${image.name}');
+        UploadTask uploadTask = ref.putFile(_image!);
+        await uploadTask.whenComplete(() async {
+          String downloadURL = await ref.getDownloadURL();
+          log('File uploaded at $downloadURL');
           setState(() {
-            imgPick = result.data['fileUrl'];
+            imgPick = downloadURL;
           });
-        }
+          log("url$imgPick");
+        });
+      } catch (e) {
+        log(e.toString());
       }
+
+      // var result = await Dio()
+      //     .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
+      // if (result.statusCode == 201) {
+      //   log(result.data['fileUrl']);
+      //   setState(() {
+      //     imgPick = result.data['fileUrl'];
+      //   });
+      // }
     }
   }
 }

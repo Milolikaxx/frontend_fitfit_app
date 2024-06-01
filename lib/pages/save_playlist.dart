@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,7 +14,7 @@ class SavePlaylistPage extends StatefulWidget {
 }
 
 class _SavePlaylistPageState extends State<SavePlaylistPage> {
-    var imgPick = "";
+  var imgPick = "";
   // bool _isClicked = false;
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(left: 50,right: 50,top: 60),
+          padding: const EdgeInsets.only(left: 50, right: 50, top: 60),
           child: Column(
             children: [
               const Row(
@@ -49,35 +51,34 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 padding: const EdgeInsets.only(top: 20),
                 child: TextFormField(
                   // controller: emailController,
-                
+
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'กรุณากรอกชื่อรายการเพลงของคุณ';
-                    }else if (value.length >50 ){
+                    } else if (value.length > 50) {
                       return 'กรุณากรอกชื่อรายการเพลงของคุณ';
                     }
-                    
+
                     return null;
                   },
                   style: const TextStyle(color: Colors.white),
                   decoration: const InputDecoration(
                     hintText: 'ชื่อรายการเพลง',
                     hintStyle: TextStyle(color: Colors.white),
-                    prefixIcon: Image(image: AssetImage("assets/images/playlist.png")),
+                    prefixIcon:
+                        Image(image: AssetImage("assets/images/playlist.png")),
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.white, width: 2),
-                      
                     ),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.white, width: 2),
-                      
                     ),
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 40,bottom: 50),
-                 child: (imgPick != "") ? playlistImg() : noImg(),
+                padding: const EdgeInsets.only(top: 40, bottom: 50),
+                child: (imgPick != "") ? playlistImg() : noImg(),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
@@ -89,12 +90,13 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                         // Get.to(() => const SignUpPage());
                       },
                       style: ButtonStyle(
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(const Size(300, 50)),
+                        minimumSize: MaterialStateProperty.all<Size>(
+                            const Size(300, 50)),
                         backgroundColor: MaterialStateProperty.all<Color>(
                             const Color(0xFFF8721D)),
                         // textStyle: MaterialStateProperty.all(TextStyle(fontSize: 18, color: Colors.white)),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -118,14 +120,15 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                         // Get.to(() => const LoginPage());
                       },
                       style: ButtonStyle(
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(const Size(300, 50)),
+                        minimumSize: MaterialStateProperty.all<Size>(
+                            const Size(300, 50)),
                         side: MaterialStateProperty.all<BorderSide>(
                             const BorderSide(
                           color: Colors.white,
                           width: 2.0,
                         )),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -145,6 +148,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
       ),
     );
   }
+
   Widget noImg() {
     return Stack(
       children: [
@@ -153,7 +157,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
           height: 200,
           decoration: const BoxDecoration(
               // border: Border.all(width: 3, color: Colors.white),
-             borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
               shape: BoxShape.rectangle,
               image: DecorationImage(
                   fit: BoxFit.cover,
@@ -181,13 +185,14 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
       ],
     );
   }
+
   Widget playlistImg() {
     return Stack(
       children: [
         Container(
           width: 300,
           height: 200,
-          decoration:  BoxDecoration(
+          decoration: BoxDecoration(
               // border: Border.all(width: 3, color: Colors.white),
               borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               shape: BoxShape.rectangle,
@@ -203,7 +208,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(width: 4, color: Colors.white),
-                  color:const Color(0xFFF8721D)),
+                  color: const Color(0xFFF8721D)),
               child: IconButton(
                 padding: EdgeInsets.zero,
                 color: Colors.white,
@@ -216,30 +221,38 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
       ],
     );
   }
-  
-   void pickImage() async {
+
+  File? _image;
+  void pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      var filePath = image.path;
-      var fileName = image.name;
-      if (filePath.isNotEmpty && fileName.isNotEmpty) {
-        var formData = FormData.fromMap({
-          'file': await MultipartFile.fromFile(
-            filePath,
-            filename: fileName,
-          )
-        });
-
-        var result = await Dio()
-            .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
-        if (result.statusCode == 201) {
-          log(result.data['fileUrl']);
+      setState(() {
+        _image = File(image.path);
+      });
+      try {
+        FirebaseStorage storage = FirebaseStorage.instance;
+        Reference ref = storage.ref().child('uploadsImg/${image.name}');
+        UploadTask uploadTask = ref.putFile(_image!);
+        await uploadTask.whenComplete(() async {
+          String downloadURL = await ref.getDownloadURL();
+          log('File uploaded at $downloadURL');
           setState(() {
-            imgPick = result.data['fileUrl'];
+            imgPick = downloadURL;
           });
-        }
+        });
+      } catch (e) {
+        log(e.toString());
       }
+
+      // var result = await Dio()
+      //     .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
+      // if (result.statusCode == 201) {
+      //   log(result.data['fileUrl']);
+      //   setState(() {
+      //     imgPick = result.data['fileUrl'];
+      //   });
+      // }
     }
   }
 }
