@@ -1,4 +1,8 @@
+import 'dart:developer';
+import 'package:dio/dio.dart';
+import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SavePlaylistPage extends StatefulWidget {
   const SavePlaylistPage({super.key});
@@ -8,7 +12,7 @@ class SavePlaylistPage extends StatefulWidget {
 }
 
 class _SavePlaylistPageState extends State<SavePlaylistPage> {
-  var imgPick = "";
+    var imgPick = "";
   // bool _isClicked = false;
   @override
   Widget build(BuildContext context) {
@@ -169,7 +173,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 padding: EdgeInsets.zero,
                 color: Colors.white,
                 onPressed: () {
-                  // pickImage();
+                  pickImage();
                 },
                 icon: const Icon(Icons.add),
               ),
@@ -204,12 +208,38 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 padding: EdgeInsets.zero,
                 color: Colors.white,
                 onPressed: () {
-                  // pickImage();
+                  pickImage();
                 },
                 icon: const Icon(Icons.edit),
               ),
             ))
       ],
     );
+  }
+  
+   void pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      var filePath = image.path;
+      var fileName = image.name;
+      if (filePath.isNotEmpty && fileName.isNotEmpty) {
+        var formData = FormData.fromMap({
+          'file': await MultipartFile.fromFile(
+            filePath,
+            filename: fileName,
+          )
+        });
+
+        var result = await Dio()
+            .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
+        if (result.statusCode == 201) {
+          log(result.data['fileUrl']);
+          setState(() {
+            imgPick = result.data['fileUrl'];
+          });
+        }
+      }
+    }
   }
 }

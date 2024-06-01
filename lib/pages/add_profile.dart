@@ -25,15 +25,7 @@ class AddProfilePage extends StatefulWidget {
 
 class _AddProfilePageState extends State<AddProfilePage> {
   String dropdownValue = 'การเดิน';
-  late List<MusictypeGetResponse> tagMusictype = [
-    // Musictype(id: 1, name: "เพลงไทย"),
-    // Musictype(id: 2, name: "เพลงลูกทุ่ง"),
-    // Musictype(id: 3, name: "เพลงสากล"),
-    // Musictype(id: 4, name: "เพลงเกาหลี"),
-    // Musictype(id: 5, name: "เพลงญี่ปุ่น"),
-    // Musictype(id: 6, name: "เพลงจีน"),
-  ];
-  // final _multiSelectKey = GlobalKey<FormFieldState>();
+  late List<MusictypeGetResponse> tagMusictype = [];
   List<MusictypeGetResponse> selectedTags = [];
   int duration = 10;
   int lv = 1;
@@ -165,7 +157,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
                               child: DropdownButton<String>(
                                 value: dropdownValue,
                                 alignment: Alignment.center,
-                                dropdownColor: Color.fromARGB(255, 0, 0, 0),
+                                dropdownColor:
+                                    const Color.fromARGB(255, 0, 0, 0),
                                 icon: const Icon(
                                   Icons.keyboard_arrow_down_rounded,
                                   color: Colors.white,
@@ -251,54 +244,50 @@ class _AddProfilePageState extends State<AddProfilePage> {
                       const SizedBox(
                         height: 50,
                       ),
-                     SingleChildScrollView(
-                       scrollDirection: Axis.horizontal,
-                       child: Center(
-                         child: Row(
-                          
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Center(
+                          child: Row(
                             children: [
                               const Icon(Icons.music_note_rounded,
                                   color: Colors.white, size: 35),
-                               MultiSelectDialogField(
-                                 title: const Text('เลือกแนวเพลงที่คุณชอบ'),
-                                 dialogHeight: 350,
-                                 items: tagMusictype
-                                     .map((e) =>
-                                         MultiSelectItem<MusictypeGetResponse>(
-                                             e, e.name))
-                                     .toList(),
-                                 // initialValue: selectedTags,
-                                 onConfirm: (values) {
-                                   selectedTags = values;
-                                   // log(values.toString());
-                                 },
-                                 selectedItemsTextStyle:
-                                     const TextStyle(color: Colors.black),
-                                 buttonIcon: const Icon(
-                                   Icons.keyboard_arrow_down_rounded,
-                                   color: Colors.white,
-                                   size: 32,
-                                 ),
-                                 buttonText: const Text(
-                                   "เลือกแนวเพลงที่คุณชอบ",
-                                   style: TextStyle(
-                                       color: Colors.white,
-                                       fontSize: 20,
-                                       fontWeight: FontWeight.w600),
-                                  
-                                 ),
-                            
+                              MultiSelectDialogField(
+                                title: const Text('เลือกแนวเพลงที่คุณชอบ'),
+                                dialogHeight: 350,
+                                items: tagMusictype
+                                    .map((e) =>
+                                        MultiSelectItem<MusictypeGetResponse>(
+                                            e, e.name))
+                                    .toList(),
+                                // initialValue: selectedTags,
+                                onConfirm: (values) {
+                                  selectedTags = values;
+                                  // log(values.toString());
+                                },
+                                selectedItemsTextStyle:
+                                    const TextStyle(color: Colors.black),
+                                buttonIcon: const Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  color: Colors.white,
+                                  size: 32,
+                                ),
+                                buttonText: const Text(
+                                  "เลือกแนวเพลงที่คุณชอบ",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600),
+                                ),
+
                                 checkColor: Colors
                                     .white, // เปลี่ยนสีของ checkbox เมื่อถูกเลือก
-                                selectedColor:  const Color(
+                                selectedColor: const Color(
                                     0xFFF8721D), // เปลี่ยนสีของรายการที่ถูกเลือก
-                                 
-                               ),
-                               
+                              ),
                             ],
                           ),
-                       ),
-                     ),
+                        ),
+                      ),
                       const SizedBox(
                         height: 50,
                       ),
@@ -323,9 +312,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
                             style: TextStyle(fontSize: 18, color: Colors.white),
                           ),
                         ),
-                        
                       ),
-                       Padding(
+                      Padding(
                         padding: const EdgeInsets.only(bottom: 50),
                         child: ElevatedButton(
                           onPressed: editPlaylist,
@@ -353,9 +341,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
               );
             }));
   }
-void editPlaylist() {
-   Get.to(() => const EditPlaylistAfterCreatePage());
-}
+
+  void editPlaylist() {
+    Get.to(() => const EditPlaylistAfterCreatePage());
+  }
+
   Future<void> addProfile() async {
     log("เวลาออกกำลังกาย $duration");
     log("ประเภทออกกำลงักาย  $dropdownValue");
@@ -363,7 +353,10 @@ void editPlaylist() {
     for (var element in selectedTags) {
       log(element.mtid.toString());
     }
-
+    // ignore: unrelated_type_equality_checks
+    if (selectedTags == []) {
+       Get.snackbar('กรุณาเลือกแนวเพลง', '');
+    }
     WorkoutProfilePostRequest wpObj = WorkoutProfilePostRequest(
         uid: user.uid!,
         levelExercise: lv,
