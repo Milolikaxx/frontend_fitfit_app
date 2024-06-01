@@ -59,6 +59,7 @@ dependencies:
   ndialog: ^4.3.0
   flutter_localizations:
     sdk: flutter
+  firebase_storage: ^11.6.9
 dev_dependencies:
   flutter_test:
     sdk: flutter
