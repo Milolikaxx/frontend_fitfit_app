@@ -466,13 +466,48 @@ class _SignUpPageState extends State<SignUpPage> {
             password: passwordController.text,
             imageProfile: imgPick,
           );
+
           try {
             int res = await userService.register(registerObj);
-            if (res == 0) {
+            if (res == 1) {
+              // ignore: use_build_context_synchronously
+              showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                        title: const Text('สมัครสมาชิกสำเร็จ'),
+                        // content: const Text('AlertDialog description'),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            onPressed: () {
+                              Get.to(() => const LoginPage());
+                            },
+                            style: ButtonStyle(
+                              minimumSize: MaterialStateProperty.all<Size>(
+                                  const Size(330, 50)),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color(0xFFF8721D)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              'ตกลง',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ));
+            } else if (res == 2) {
+              Get.snackbar('อีเมลนี้มีอยู่แล้ว', 'กรุณากรอกอีเมลใหม่');
+            } else if (res == 3) {
+              Get.snackbar('ชื่อนี้มีอยู่แล้ว', 'กรุณากรอกชื่อๆใหม่');
+            } else {
               log('สมัครสมาชิกไม่สำเร็จ ');
               Get.snackbar('ข้อมูลไม่ถูกต้อง', 'กรุณากรอกข้อมูลให้ถูกต้อง');
-            } else {
-              Get.snackbar('สมัครสมาชิกสำเร็จ', '');
             }
           } catch (e) {
             log(e.toString());
@@ -489,8 +524,37 @@ class _SignUpPageState extends State<SignUpPage> {
           try {
             int res = await userService.register(registerObj);
             if (res == 1) {
-              log('สมัครสมาชิกสำเร็จ ');
-              Get.snackbar('สมัครสมาชิกสำเร็จ', '');
+              // ignore: use_build_context_synchronously
+              showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                        title: const Text('สมัครสมาชิกสำเร็จ'),
+                        // content: const Text('AlertDialog description'),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            onPressed: () {
+                              Get.to(() => const LoginPage());
+                            },
+                            style: ButtonStyle(
+                              minimumSize: MaterialStateProperty.all<Size>(
+                                  const Size(330, 50)),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color(0xFFF8721D)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              'ตกลง',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ));
             } else if (res == 2) {
               Get.snackbar('อีเมลนี้มีอยู่แล้ว', 'กรุณากรอกอีเมลใหม่');
             } else if (res == 3) {
@@ -608,7 +672,7 @@ class _SignUpPageState extends State<SignUpPage> {
           setState(() {
             imgPick = downloadURL;
           });
-          log("url$imgPick");
+          log("url $imgPick");
         });
       } catch (e) {
         log(e.toString());

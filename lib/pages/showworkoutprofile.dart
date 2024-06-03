@@ -13,9 +13,11 @@ class ShowWorkoutProfilePage extends StatefulWidget {
   State<ShowWorkoutProfilePage> createState() => _ShowWorkoutProfilePageState();
 }
 
+enum Menu { preview, share, remove, edit }
+
 class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   // GoogleSignInAccount? user;
-  late List<WorkoutProfileGetResponse> profile = [];
+  late WorkoutProfileGetResponse profile ;
   late var loadData;
   late WorkoutProfileService wpService;
   @override
@@ -26,7 +28,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   }
 
   loadDataAsync() async {
-    profile = await wpService.getListWorkoutProfileByUid(widget.idx);
+    profile = await wpService.getProfileByWpid(widget.idx);
     // log(profile..toString());
 
     // setState(() {
@@ -58,7 +60,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
 
               return Column(
                 children: [
-                  cardDetailsWp(profile.first),
+                  cardDetailsWp(profile),
                   playlist(height, width)
                 ],
               );
@@ -247,7 +249,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
 
   Widget playlistAll() {
     return Padding(
-      padding: const EdgeInsets.only(top: 5),
+      padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: Container(
         width: 350,
         decoration: const BoxDecoration(
@@ -259,7 +261,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
           children: [
             Container(
               width: 100,
-              height: 145,
+              height: 100,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: NetworkImage(
@@ -271,7 +273,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                     bottomLeft: Radius.circular(4)),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Flexible(
@@ -280,81 +282,51 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                 children: [
                   const Text("playlist name",
                       style: TextStyle(
-                          fontFamily: 'Raleway',
                           color: Color(0xffffffff),
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           fontStyle: FontStyle.normal,
                           overflow: TextOverflow.clip)),
-              
-                    Column(
-                      children: [
-                        ElevatedButton(
-                        onPressed: () {
-                          // Get.to(() => const LoginPage());
-                        },
-                        style: ButtonStyle(
-                          minimumSize:
-                              MaterialStateProperty.all<Size>(const Size(10, 10)),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              const Color(0xFFF8721D)),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          'เลือก',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                                          ),
-                                            ElevatedButton(
-                        onPressed: () {
-                          // Get.to(() => const LoginPage());
-                        },
-                        style: ButtonStyle(
-                          minimumSize: MaterialStateProperty.all<Size>(
-                              const Size(10, 10)),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              const Color(0xFFF8721D)),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          'ลบ',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                        
-                      ),
-                        ElevatedButton(
-                        onPressed: () {
-                          // Get.to(() => const LoginPage());
-                        },
-                        style: ButtonStyle(
-                          minimumSize: MaterialStateProperty.all<Size>(
-                              const Size(10, 10)),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              const Color(0xFFF8721D)),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          'แก้ไข',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                      ),
-                      ],
+                  PopupMenuButton<Menu>(
+                    icon: const Icon(
+                      Icons.more_vert,
+                      color: Colors.white,
                     ),
+                    onSelected: (Menu item) {},
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<Menu>>[
+                      const PopupMenuItem<Menu>(
+                        value: Menu.preview,
+                        child: ListTile(
+                          leading: Icon(Icons.visibility_outlined),
+                          title: Text('ดูเพลงในเพลย์ลิสต์'),
+                        ),
+                      ),
+                      const PopupMenuItem<Menu>(
+                        value: Menu.share,
+                        child: ListTile(
+                          leading: Icon(Icons.share_outlined),
+                          title: Text('แชร์'),
+                        ),
+                      ),
+
+                      // const PopupMenuDivider(),
+                      const PopupMenuItem<Menu>(
+                        value: Menu.remove,
+                        child: ListTile(
+                          leading: Icon(Icons.delete_outline),
+                          title: Text('ลบ'),
+                        ),
+                      ),
+                      const PopupMenuItem<Menu>(
+                        value: Menu.edit,
+                        child: ListTile(
+                          leading: Icon(Icons.edit_outlined),
+                          title: Text('แก้ไข'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

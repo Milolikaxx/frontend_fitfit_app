@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/api/musictype.dart';
+import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/api/user.dart';
 import 'package:frontend_fitfit_app/service/api/workout_musictype.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
@@ -9,7 +10,7 @@ import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 class AppData with ChangeNotifier {
   //Api baseurl
   // String baseUrl = "http://202.28.34.197:8020";
-  String baseUrl = "http://192.168.1.10:8080";
+  String baseUrl = "http://192.168.1.8:8080";
   // String baseUrl = "http://192.168.1.44:8080";
 
   late UserLoginPostResponse user = UserLoginPostResponse();
@@ -20,4 +21,5 @@ class AppData with ChangeNotifier {
   WorkoutProfileService get workoutProfile =>
       WorkoutProfileService(Dio(), baseUrl: baseUrl);
   MusicTypeService get musicType => MusicTypeService(Dio(), baseUrl: baseUrl);
+    PlaylistDetailService  get playlistDetail  => PlaylistDetailService(Dio(), baseUrl: baseUrl);
 }
