@@ -21,22 +21,14 @@ class PlaylistAfterCreatePage extends StatefulWidget {
 }
 
 class Musicdata {
-  final double music;
-  final double bpm;
+  final double musictime;
+  final int bpm;
 
-  Musicdata(this.music, this.bpm);
+  Musicdata(this.musictime, this.bpm);
 }
 
 class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
-  List<Musicdata> chartData = [
-    Musicdata(3.48, 135),
-    Musicdata(3.59, 172),
-    Musicdata(4.03, 144),
-    Musicdata(3.27, 160),
-    Musicdata(4.51, 131),
-    Musicdata(4.40, 141),
-    Musicdata(3.35, 110),
-  ];
+  List<Musicdata> chartData = [];
   List<MusicGetResponse> music = [];
   late PlaylistDetailService playlistDetailServ;
   // ignore: prefer_typing_uninitialized_variables
@@ -53,6 +45,8 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
     log(music.length.toString());
     for (var m in music) {
       log(m.name);
+      chartData.add(Musicdata(m.duration, m.bpm));
+      
     }
   }
 
@@ -104,9 +98,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                 return const Center(child: CircularProgressIndicator());
               }
               return RefreshIndicator(
-                  onRefresh: () async {
-                    
-                  },
+                  onRefresh: () async {},
                   child: Column(
                     children: [
                       musicGraph(),
@@ -114,7 +106,9 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          SizedBox(width: 45,),
+                          SizedBox(
+                            width: 45,
+                          ),
                           Text("Title"),
                           Padding(
                             padding: EdgeInsets.only(right: 35),
@@ -132,10 +126,9 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   Widget listMusic() {
     return Expanded(
       child: ListView.builder(
-                        itemCount: music.isEmpty ? 0 : music.length,
-                        itemBuilder: (context, index) => 
-                          musicInfo(music[index]),
-                        ),
+        itemCount: music.isEmpty ? 0 : music.length,
+        itemBuilder: (context, index) => musicInfo(music[index]),
+      ),
     );
   }
 
@@ -217,7 +210,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
           series: <CartesianSeries<Musicdata, double>>[
             LineSeries<Musicdata, double>(
                 dataSource: chartData,
-                xValueMapper: (Musicdata m, _) => m.music,
+                xValueMapper: (Musicdata m, _) => m.musictime,
                 yValueMapper: (Musicdata m, _) => m.bpm,
                 color: Colors.red,
                 dataLabelSettings: const DataLabelSettings(isVisible: false))
