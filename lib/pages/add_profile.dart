@@ -38,8 +38,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
   @override
   void initState() {
     super.initState();
-    musictypeService = context.read<AppData>().musicType;
-    wpService = context.read<AppData>().workoutProfile;
+    musictypeService = context.read<AppData>().musicTypeService;
+    wpService = context.read<AppData>().workoutProfileService;
     wpMusictypeService = context.read<AppData>().workoutMusicType;
     user = context.read<AppData>().user;
     loadData = loadDataAsync();
@@ -262,7 +262,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                                 // initialValue: selectedTags,
                                 onConfirm: (values) {
                                   selectedTags = values;
-                                  // log(values.toString());
+                                  log(values.toString());
                                 },
                                 selectedItemsTextStyle:
                                     const TextStyle(color: Colors.black),
@@ -316,7 +316,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 50),
                         child: ElevatedButton(
-                          onPressed: editPlaylist,
+                          onPressed: () {},
                           style: ButtonStyle(
                             minimumSize: MaterialStateProperty.all<Size>(
                                 const Size(200, 50)),
@@ -342,10 +342,6 @@ class _AddProfilePageState extends State<AddProfilePage> {
             }));
   }
 
-  void editPlaylist() {
-    Get.to(() => const EditPlaylistAfterCreatePage());
-  }
-
   Future<void> addProfile() async {
     log("เวลาออกกำลังกาย $duration");
     log("ประเภทออกกำลงักาย  $dropdownValue");
@@ -353,37 +349,42 @@ class _AddProfilePageState extends State<AddProfilePage> {
     for (var element in selectedTags) {
       log(element.mtid.toString());
     }
-    // ignore: unrelated_type_equality_checks
+
     if (selectedTags == []) {
-       Get.snackbar('กรุณาเลือกแนวเพลง', '');
-    }
-    WorkoutProfilePostRequest wpObj = WorkoutProfilePostRequest(
-        uid: user.uid!,
-        levelExercise: lv,
-        duration: duration,
-        exerciseType: dropdownValue);
-    try {
-      int res = await wpService.saveWP(wpObj);
-      if (res != 0) {
-        log(res.toString());
-        for (var element in selectedTags) {
-          log(element.mtid.toString());
-          WorkoutMusicTypePostRequest wpMtObj =
-              WorkoutMusicTypePostRequest(wpid: res, mtid: element.mtid);
-          try {
-            int response = await wpMusictypeService.saveWPMT(wpMtObj);
-            if (response > 0) {
-              log('เพิ่มแนวเพลงโปรไฟล์ออกกำลังกายสำเร็จ');
+      Get.snackbar('กรุณาเลือกแนวเพลง', '');
+    } else {
+      WorkoutProfilePostRequest wpObj = WorkoutProfilePostRequest(
+          uid: user.uid!,
+          levelExercise: lv,
+          duration: duration,
+          exerciseType: dropdownValue);
+      try {
+        int res = await wpService.saveWP(wpObj);
+        if (res != 0) {
+          log(res.toString());
+          for (var element in selectedTags) {
+            log(element.mtid.toString());
+            WorkoutMusicTypePostRequest wpMtObj =
+                WorkoutMusicTypePostRequest(wpid: res, mtid: element.mtid);
+            try {
+              int response = await wpMusictypeService.saveWPMT(wpMtObj);
+              if (response > 0) {
+                log('เพิ่มแนวเพลงโปรไฟล์ออกกำลังกายสำเร็จ');
+              }
+            } catch (e) {
+              log(e.toString());
             }
-          } catch (e) {
-            log(e.toString());
           }
+          log('เพิ่มโปรไฟล์ออกกำลังกายสำเร็จ');
+          var profile = await wpService.getProfileByWpid(res);
+          if (profile.uid > 0 ){
+            Get.to(() => PlaylistAfterCreatePage(res,profile.duration));
+          }
+          
         }
-        log('เพิ่มโปรไฟล์ออกกำลังกายสำเร็จ');
-        Get.to(() =>  PlaylistAfterCreatePage(res));
+      } catch (e) {
+        log(e.toString());
       }
-    } catch (e) {
-      log(e.toString());
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/api/musictype.dart';
+import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/api/user.dart';
 import 'package:frontend_fitfit_app/service/api/workout_musictype.dart';
@@ -18,9 +19,11 @@ class AppData with ChangeNotifier {
   UserService get userService => UserService(Dio(), baseUrl: baseUrl);
   WorkoutMusicTypeService get workoutMusicType =>
       WorkoutMusicTypeService(Dio(), baseUrl: baseUrl);
-  WorkoutProfileService get workoutProfile =>
+  WorkoutProfileService get workoutProfileService =>
       WorkoutProfileService(Dio(), baseUrl: baseUrl);
-  MusicTypeService get musicType => MusicTypeService(Dio(), baseUrl: baseUrl);
-  PlaylistDetailService get playlistDetail =>
+  MusicTypeService get musicTypeService => MusicTypeService(Dio(), baseUrl: baseUrl);
+  PlaylistDetailService get playlistDetailService =>
       PlaylistDetailService(Dio(), baseUrl: baseUrl);
+      PlaylistService get playlistService =>
+      PlaylistService(Dio(), baseUrl: baseUrl);
 }

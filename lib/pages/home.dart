@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     user = context.read<AppData>().user;
-    wpService = context.read<AppData>().workoutProfile;
+    wpService = context.read<AppData>().workoutProfileService;
     loadData = loadDataAsync();
   }
 

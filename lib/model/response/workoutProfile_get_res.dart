@@ -45,6 +45,8 @@ class WorkoutProfileGetResponse {
             json["WorkoutMusictype"].map((x) => WorkoutMusictype.fromJson(x))),
       );
 
+  get isNotEmpty => null;
+
   Map<String, dynamic> toJson() => {
         "Wpid": wpid,
         "Uid": uid,

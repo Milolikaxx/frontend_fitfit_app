@@ -4,8 +4,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
+import 'package:frontend_fitfit_app/pages/editplaylist_after_create.dart';
 import 'package:frontend_fitfit_app/pages/save_playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
+import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +16,8 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class PlaylistAfterCreatePage extends StatefulWidget {
   int idx = 0;
-  PlaylistAfterCreatePage(this.idx, {super.key});
+  int timeEx= 0;
+  PlaylistAfterCreatePage(this.idx,this.timeEx, {super.key});
 
   @override
   State<PlaylistAfterCreatePage> createState() =>
@@ -33,10 +37,11 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   late PlaylistDetailService playlistDetailServ;
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
+  late WorkoutProfileService wpService;
   @override
   void initState() {
     super.initState();
-    playlistDetailServ = context.read<AppData>().playlistDetail;
+    playlistDetailServ = context.read<AppData>().playlistDetailService;
     loadData = loadDataAsync();
   }
 
@@ -47,6 +52,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
       log(m.name);
       chartData.add(Musicdata(m.duration, m.bpm));
     }
+    
   }
 
   @override
@@ -61,10 +67,10 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
               Navigator.pop(context);
             },
           ),
-          title: const Center(
+          title: Center(
             child: Text(
-              "เวลา 40 นาที",
-              style: TextStyle(color: Colors.black),
+              "${widget.timeEx} นาที",
+              style: const TextStyle(color: Colors.black),
             ),
           ),
           actions: [
@@ -80,8 +86,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
             color: Colors.white,
           ),
           onPressed: () {
-            // Action when button is pressed
-            setState(() {});
+            Get.to(() => EditPlaylistAfterCreatePage(music,widget.idx, widget.timeEx));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -102,7 +107,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                     children: [
                       musicGraph(),
                       const Padding(
-                        padding: EdgeInsets.only(left: 100,right: 35),
+                        padding: EdgeInsets.only(left: 100, right: 35),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -131,21 +136,23 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   }
 
   void savePlaylist() {
-    Get.to(() => const SavePlaylistPage());
+    Get.to(() =>  SavePlaylistPage(music,widget.idx,widget.timeEx));
   }
 
   Widget musicInfo(MusicGetResponse music) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Image(
                 image: NetworkImage(music.musicImage),
-                width: 75,
-                height: 75,
+                width: 65,
+                height: 65,
                 fit: BoxFit.cover,
               ),
               Padding(
@@ -155,7 +162,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      music.name,
+                       formatMusicName(music.name),
                       style: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,
@@ -163,17 +170,17 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                     ),
                     Text(
                       music.artist,
-                      style: const TextStyle(color: Color.fromARGB(161, 0, 0, 0)),
+                      style:
+                          const TextStyle(color: Color.fromARGB(161, 0, 0, 0)),
                     ),
                   ],
                 ),
               ),
-              
             ],
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment
-                .start, // เปลี่ยนจาก CrossAxisAlignment.end เป็น CrossAxisAlignment.start
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 music.duration.toString(),
@@ -191,7 +198,17 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
       ),
     );
   }
-
+String formatMusicName(String name) {
+    // Remove .mp extension
+    if (name.endsWith('.mp')) {
+      name = name.substring(0, name.length - 3);
+    }
+    // Truncate to 10 characters and add ellipsis if necessary
+    if (name.length > 30) {
+      return '${name.substring(0, 30)}..';
+    }
+    return name;
+  }
   Widget musicGraph() {
     return SizedBox(
       height: 250,
@@ -211,4 +228,6 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
           ]),
     );
   }
+
+
 }

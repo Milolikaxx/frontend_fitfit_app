@@ -62,7 +62,7 @@ class _PlaylistDetailService implements PlaylistDetailService {
     )
         .compose(
           _dio.options,
-          '/addmusic',
+          '/playlist_detail/addmusic',
           queryParameters: queryParameters,
           data: _data,
         )
