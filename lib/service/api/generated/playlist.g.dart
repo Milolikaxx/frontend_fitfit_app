@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../playlist_detail.dart';
+part of '../playlist.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,8 +8,8 @@ part of '../playlist_detail.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _PlaylistDetailService implements PlaylistDetailService {
-  _PlaylistDetailService(
+class _PlaylistService implements PlaylistService {
+  _PlaylistService(
     this._dio, {
     this.baseUrl,
   });
@@ -19,42 +19,12 @@ class _PlaylistDetailService implements PlaylistDetailService {
   String? baseUrl;
 
   @override
-  Future<List<MusicGetResponse>> getMusicDetailGen(int id) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _result = await _dio
-        .fetch<List<dynamic>>(_setStreamType<List<MusicGetResponse>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/playlist_detail/musiclist/${id}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var value = _result.data!
-        .map(
-            (dynamic i) => MusicGetResponse.fromJson(i as Map<String, dynamic>))
-        .toList();
-    return value;
-  }
-
-  @override
-  Future<int> addMusicToPlaylist(PlaylsitDetailPostRequest addMusic) async {
+  Future<int> addPlaylsit(PlaylsitPostRequest add) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(addMusic.toJson());
+    _data.addAll(add.toJson());
     final _result = await _dio.fetch<int>(_setStreamType<int>(Options(
       method: 'POST',
       headers: _headers,
@@ -62,7 +32,7 @@ class _PlaylistDetailService implements PlaylistDetailService {
     )
         .compose(
           _dio.options,
-          '/addmusic',
+          '/playlist/save',
           queryParameters: queryParameters,
           data: _data,
         )

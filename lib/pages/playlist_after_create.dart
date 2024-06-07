@@ -46,7 +46,6 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
     for (var m in music) {
       log(m.name);
       chartData.add(Musicdata(m.duration, m.bpm));
-      
     }
   }
 
@@ -102,22 +101,21 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                   child: Column(
                     children: [
                       musicGraph(),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          SizedBox(
-                            width: 45,
-                          ),
-                          Text("Title"),
-                          Padding(
-                            padding: EdgeInsets.only(right: 35),
-                            child: Icon(Icons.access_time_rounded,
+                      const Padding(
+                        padding: EdgeInsets.only(left: 100,right: 35),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Title"),
+                            Icon(Icons.access_time_rounded,
                                 color: Colors.black),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       listMusic(),
+                      const SizedBox(
+                        height: 50,
+                      )
                     ],
                   ));
             }));
@@ -137,26 +135,23 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   }
 
   Widget musicInfo(MusicGetResponse music) {
-    return Container(
-      decoration: const BoxDecoration(
-          // color: Color.fromARGB(255, 162, 162, 162), // สีแดง
-          ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image(
-                  image: NetworkImage(music.musicImage),
-                  width: 75,
-                  height: 75,
-                  fit: BoxFit.cover,
-                ),
-                const SizedBox(width: 10),
-                Column(
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Image(
+                image: NetworkImage(music.musicImage),
+                width: 75,
+                height: 75,
+                fit: BoxFit.cover,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -168,32 +163,31 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                     ),
                     Text(
                       music.artist,
-                      style:
-                          const TextStyle(color: Color.fromARGB(161, 0, 0, 0)),
+                      style: const TextStyle(color: Color.fromARGB(161, 0, 0, 0)),
                     ),
                   ],
                 ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment
-                      .start, // เปลี่ยนจาก CrossAxisAlignment.end เป็น CrossAxisAlignment.start
-                  children: [
-                    Text(
-                      music.duration.toString(),
-                      style: const TextStyle(
-                          color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
-                    ),
-                    Text(
-                      music.bpm.toString(),
-                      style: const TextStyle(
-                          color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+              
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment
+                .start, // เปลี่ยนจาก CrossAxisAlignment.end เป็น CrossAxisAlignment.start
+            children: [
+              Text(
+                music.duration.toString(),
+                style: const TextStyle(
+                    color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
+              ),
+              Text(
+                "${music.bpm} bpm",
+                style: const TextStyle(
+                    color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
