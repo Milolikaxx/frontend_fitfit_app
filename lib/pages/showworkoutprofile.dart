@@ -23,7 +23,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   @override
   void initState() {
     super.initState();
-    wpService = context.read<AppData>().workoutProfile;
+    wpService = context.read<AppData>().workoutProfileService;
     loadData = loadDataAsync();
   }
 

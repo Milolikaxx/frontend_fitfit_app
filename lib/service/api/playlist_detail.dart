@@ -16,7 +16,7 @@ abstract class PlaylistDetailService {
     @Path() int id,
   );
 
-  @POST("/addmusic")
+  @POST("/playlist_detail/addmusic")
   Future<int> addMusicToPlaylist(
      @Body() PlaylsitDetailPostRequest addMusic
   );

@@ -2,12 +2,25 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:frontend_fitfit_app/model/request/playlsit_detail_post_req.dart';
+import 'package:frontend_fitfit_app/model/request/playlsit_post_req.dart';
+import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
+import 'package:frontend_fitfit_app/pages/barbottom.dart';
+import 'package:frontend_fitfit_app/pages/home.dart';
+import 'package:frontend_fitfit_app/service/api/playlist.dart';
+import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
+import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class SavePlaylistPage extends StatefulWidget {
-  const SavePlaylistPage({super.key});
+  List<MusicGetResponse> music = [];
+  int idx = 0;
+  int time = 0;
+  SavePlaylistPage(this.music, this.idx, this.time, {super.key});
 
   @override
   State<SavePlaylistPage> createState() => _SavePlaylistPageState();
@@ -16,6 +29,17 @@ class SavePlaylistPage extends StatefulWidget {
 class _SavePlaylistPageState extends State<SavePlaylistPage> {
   var imgPick = "";
   // bool _isClicked = false;
+  final namePlController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late PlaylistService playlsitService;
+  late PlaylistDetailService playlsitDeService;
+  @override
+  void initState() {
+    super.initState();
+    playlsitDeService = context.read<AppData>().playlistDetailService;
+    playlsitService = context.read<AppData>().playlistService;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,8 +74,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: TextFormField(
-                  // controller: emailController,
-
+                  controller: namePlController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'กรุณากรอกชื่อรายการเพลงของคุณ';
@@ -86,9 +109,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        // Get.to(() => const SignUpPage());
-                      },
+                      onPressed: save,
                       style: ButtonStyle(
                         minimumSize: MaterialStateProperty.all<Size>(
                             const Size(300, 50)),
@@ -147,6 +168,43 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
         ),
       ),
     );
+  }
+
+  Future<void> save() async {
+    PlaylsitPostRequest plObj = PlaylsitPostRequest(
+        wpid: widget.idx,
+        playlistName: namePlController.text,
+        durationPlaylist: widget.time,
+        imagePlaylist: imgPick);
+    try {
+      int res = await playlsitService.addPlaylsit(plObj);
+      if (res > 0) {
+        log('เพิ่มเพลย์ลิสต์สำเร็จ');
+        for (var m in widget.music) {
+          log(m.name);
+          log(m.mid.toString());
+          PlaylsitDetailPostRequest addMusicToPL =
+              PlaylsitDetailPostRequest(pid: res, mid: m.mid);
+          try {
+            int resAddmusic =
+                await playlsitDeService.addMusicToPlaylist(addMusicToPL);
+            if (resAddmusic != 0) {
+              log('เพิ่มเพลงในเพลย์ลิสต์สำเร็จ');
+            } else {
+              log('เพิ่มเพลงในเพลย์ลิสต์ไม่สำเร็จ');
+            }
+           
+          } catch (e) {
+            log(e.toString());
+          }
+        } 
+        Get.to(const Barbottom());
+      } else {
+        log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Widget noImg() {
