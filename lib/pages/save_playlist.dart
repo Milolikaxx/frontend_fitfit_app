@@ -171,39 +171,77 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
   }
 
   Future<void> save() async {
-    PlaylsitPostRequest plObj = PlaylsitPostRequest(
-        wpid: widget.idx,
-        playlistName: namePlController.text,
-        durationPlaylist: widget.time,
-        imagePlaylist: imgPick);
-    try {
-      int res = await playlsitService.addPlaylsit(plObj);
-      if (res > 0) {
-        log('เพิ่มเพลย์ลิสต์สำเร็จ');
-        for (var m in widget.music) {
-          log(m.name);
-          log(m.mid.toString());
-          PlaylsitDetailPostRequest addMusicToPL =
-              PlaylsitDetailPostRequest(pid: res, mid: m.mid);
-          try {
-            int resAddmusic =
-                await playlsitDeService.addMusicToPlaylist(addMusicToPL);
-            if (resAddmusic != 0) {
-              log('เพิ่มเพลงในเพลย์ลิสต์สำเร็จ');
-            } else {
-              log('เพิ่มเพลงในเพลย์ลิสต์ไม่สำเร็จ');
+    if (_formKey.currentState?.validate() ?? true) {
+      if (imgPick != "") {
+        PlaylsitPostRequest plObj = PlaylsitPostRequest(
+            wpid: widget.idx,
+            playlistName: namePlController.text,
+            durationPlaylist: widget.time,
+            imagePlaylist: "http://202.28.34.197:8888/contents/fc032ca0-1f03-4b21-baf3-b97bd04e88b7.jpg");
+        try {
+          int res = await playlsitService.addPlaylsit(plObj);
+          if (res > 0) {
+            log('เพิ่มเพลย์ลิสต์สำเร็จ');
+            for (var m in widget.music) {
+              log(m.name);
+              log(m.mid.toString());
+              PlaylsitDetailPostRequest addMusicToPL =
+                  PlaylsitDetailPostRequest(pid: res, mid: m.mid);
+              try {
+                int resAddmusic =
+                    await playlsitDeService.addMusicToPlaylist(addMusicToPL);
+                if (resAddmusic != 0) {
+                  log('เพิ่มเพลงในเพลย์ลิสต์สำเร็จ');
+                } else {
+                  log('เพิ่มเพลงในเพลย์ลิสต์ไม่สำเร็จ');
+                }
+              } catch (e) {
+                log(e.toString());
+              }
             }
-           
-          } catch (e) {
-            log(e.toString());
+            Get.to(const Barbottom());
+          } else {
+            log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
           }
-        } 
-        Get.to(const Barbottom());
-      } else {
-        log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
+        } catch (e) {
+          log(e.toString());
+        }
+      }else {
+        PlaylsitPostRequest plObj = PlaylsitPostRequest(
+            wpid: widget.idx,
+            playlistName: namePlController.text,
+            durationPlaylist: widget.time,
+            imagePlaylist:
+                imgPick);
+        try {
+          int res = await playlsitService.addPlaylsit(plObj);
+          if (res > 0) {
+            log('เพิ่มเพลย์ลิสต์สำเร็จ');
+            for (var m in widget.music) {
+              log(m.name);
+              log(m.mid.toString());
+              PlaylsitDetailPostRequest addMusicToPL =
+                  PlaylsitDetailPostRequest(pid: res, mid: m.mid);
+              try {
+                int resAddmusic =
+                    await playlsitDeService.addMusicToPlaylist(addMusicToPL);
+                if (resAddmusic != 0) {
+                  log('เพิ่มเพลงในเพลย์ลิสต์สำเร็จ');
+                } else {
+                  log('เพิ่มเพลงในเพลย์ลิสต์ไม่สำเร็จ');
+                }
+              } catch (e) {
+                log(e.toString());
+              }
+            }
+            Get.to(const Barbottom());
+          } else {
+            log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
+          }
+        } catch (e) {
+          log(e.toString());
+        }
       }
-    } catch (e) {
-      log(e.toString());
     }
   }
 
@@ -219,7 +257,8 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
               shape: BoxShape.rectangle,
               image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: AssetImage('assets/images/preImgPlaylist.png'))),
+                  alignment: Alignment.topCenter,
+                  image: AssetImage('assets/images/1.jpg'))),
         ),
         Positioned(
             bottom: 80, // Adjust this value to move the button up/down

@@ -654,6 +654,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  //firebase
   File? _image;
   void pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -677,15 +678,31 @@ class _SignUpPageState extends State<SignUpPage> {
       } catch (e) {
         log(e.toString());
       }
-
-      // var result = await Dio()
-      //     .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
-      // if (result.statusCode == 201) {
-      //   log(result.data['fileUrl']);
-      //   setState(() {
-      //     imgPick = result.data['fileUrl'];
-      //   });
-      // }
     }
   }
+  // void pickImage() async {
+  //   final ImagePicker picker = ImagePicker();
+  //   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+  //   if (image != null) {
+  //     var filePath = image.path;
+  //     var fileName = image.name;
+  //     if (filePath.isNotEmpty && fileName.isNotEmpty) {
+  //       var formData = FormData.fromMap({
+  //         'file': await MultipartFile.fromFile(
+  //           filePath,
+  //           filename: fileName,
+  //         )
+  //       });
+
+  //       var result = await Dio()
+  //           .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
+  //       if (result.statusCode == 201) {
+  //         log(result.data['fileUrl']);
+  //         setState(() {
+  //           imgPick = result.data['fileUrl'];
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
 }

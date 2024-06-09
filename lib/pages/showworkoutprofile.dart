@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
+import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:provider/provider.dart';
@@ -17,29 +21,35 @@ enum Menu { preview, share, remove, edit }
 
 class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   // GoogleSignInAccount? user;
-  late WorkoutProfileGetResponse profile ;
+  late WorkoutProfileGetResponse profile;
   late var loadData;
   late WorkoutProfileService wpService;
+  late PlaylistService playlsitService;
+  List<PlaylsitlInWorkoutprofileGetResponse> playlistWp = [];
   @override
   void initState() {
     super.initState();
     wpService = context.read<AppData>().workoutProfileService;
+    playlsitService = context.read<AppData>().playlistService;
     loadData = loadDataAsync();
   }
 
   loadDataAsync() async {
-    profile = await wpService.getProfileByWpid(widget.idx);
-    // log(profile..toString());
-
-    // setState(() {
-    //   trip = tripGetResponseFromJson(value.body);
-    // });
+    try {
+      profile = await wpService.getProfileByWpid(widget.idx);
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      log(profile.wpid.toString());
+      playlistWp = await playlsitService.getPlaylistByWpid(profile.wpid);
+      log(playlistWp.first.playlistName);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    // double width = MediaQuery.of(context).size.width;
+    // double height = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
@@ -55,13 +65,28 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
             future: loadData,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
 
               return Column(
                 children: [
                   cardDetailsWp(profile),
-                  playlist(height, width)
+                  const SizedBox(
+                    height: 10,
+                  ),
+                   (playlistWp.isNotEmpty) ? const Text(
+                    'เพลย์ลิสต์เพลงของฉัน',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  )  :  const Text(""),
+                  (playlistWp.isNotEmpty) ? listMusic() : const Text('ยังไม่มีเพลย์ลิสต์เพลง',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold)),
+                  
                 ],
               );
             }));
@@ -209,52 +234,24 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
             .toList());
   }
 
-  Widget playlist(height, width) {
+  Widget listMusic() {
     return Expanded(
-      child: Container(
-          height: height,
-          width: width,
-          decoration: const BoxDecoration(
-            color: Colors.black,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text(
-                    'เพลย์ลิสต์เพลงของฉัน',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  playlistAll(),
-                  playlistAll(),
-                  playlistAll(),
-                  playlistAll(),
-                  playlistAll(),
-                  playlistAll(),
-                  playlistAll(),
-                  playlistAll(),
-                ],
-              ),
-            ),
-          )),
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+        itemCount: playlistWp.isEmpty ? 0 : playlistWp.length,
+        itemBuilder: (context, index) => playlistAll(playlistWp[index]),
+      ),
     );
   }
 
-  Widget playlistAll() {
+  Widget playlistAll(PlaylsitlInWorkoutprofileGetResponse pl) {
     return Padding(
       padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: Container(
         width: 350,
         decoration: const BoxDecoration(
           color: Color(0xff2E2F33),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
         padding: const EdgeInsets.only(right: 20),
         child: Row(
@@ -262,13 +259,12 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
             Container(
               width: 100,
               height: 100,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(
-                      "https://i.pinimg.com/736x/55/36/4d/55364dbe7efe7052c33df1e3a7a9614f.jpg"),
+                  image: NetworkImage(pl.imagePlaylist),
                   fit: BoxFit.cover,
                 ),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(4),
                     bottomLeft: Radius.circular(4)),
               ),
@@ -280,8 +276,8 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("playlist name",
-                      style: TextStyle(
+                  Text(pl.playlistName,
+                      style: const TextStyle(
                           color: Color(0xffffffff),
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
