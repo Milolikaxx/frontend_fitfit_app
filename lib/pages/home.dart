@@ -1,10 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
 import 'package:frontend_fitfit_app/pages/save_playlist.dart';
 import 'package:frontend_fitfit_app/pages/showworkoutprofile.dart';
+import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
@@ -25,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   late UserLoginPostResponse user;
   late var loadData;
   late WorkoutProfileService wpService;
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +39,7 @@ class _HomePageState extends State<HomePage> {
   loadDataAsync() async {
     profiles = await wpService.getListWorkoutProfileByUid(user.uid!);
     log(profiles.length.toString());
+ 
   }
 
   @override
@@ -95,7 +99,6 @@ class _HomePageState extends State<HomePage> {
 
   Widget getTextName(List<WorkoutMusictype> musicTypes) {
     return Row(
-
         children: musicTypes
             .asMap()
             .map((index, musicType) {
@@ -108,7 +111,8 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   text,
                   style: const TextStyle(
-                    fontSize: 20, color: Colors.white,
+                    fontSize: 20,
+                    color: Colors.white,
                     shadows: <Shadow>[
                       Shadow(
                         offset: Offset(1, 1),
@@ -121,11 +125,10 @@ class _HomePageState extends State<HomePage> {
               );
             })
             .values
-            .toList()
-        );
+            .toList());
   }
 
- workoutProfileCard(WorkoutProfileGetResponse profile) {
+  workoutProfileCard(WorkoutProfileGetResponse profile) {
     String levelDescription;
     switch (profile.levelExercise) {
       case 5:
@@ -148,22 +151,22 @@ class _HomePageState extends State<HomePage> {
     }
     // Color cardColor = Colors.white;
     return InkWell(
-       onTap: () {
-       Get.to(() => ShowWorkoutProfilePage(profile.wpid));
+      onTap: () {
+        Get.to(() => ShowWorkoutProfilePage(profile.wpid));
         // setState(() {
         //    cardColor = Colors.orange;
         // });
       },
       child: Card(
-      //  color: cardColor,
+        //  color: cardColor,
         child: Container(
           alignment: Alignment.bottomLeft,
           width: 350,
           height: 180,
           decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(10),
             image: const DecorationImage(
-              image: AssetImage('assets/images/dream_TradingCard.jpg'),
+              image: AssetImage('assets/images/bgprofile.jpg'),
               fit: BoxFit.cover,
             ),
           ),

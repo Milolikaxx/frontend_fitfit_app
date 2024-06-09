@@ -16,8 +16,8 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class PlaylistAfterCreatePage extends StatefulWidget {
   int idx = 0;
-  int timeEx= 0;
-  PlaylistAfterCreatePage(this.idx,this.timeEx, {super.key});
+  int timeEx = 0;
+  PlaylistAfterCreatePage(this.idx, this.timeEx, {super.key});
 
   @override
   State<PlaylistAfterCreatePage> createState() =>
@@ -52,7 +52,6 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
       log(m.name);
       chartData.add(Musicdata(m.duration, m.bpm));
     }
-    
   }
 
   @override
@@ -86,7 +85,8 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
             color: Colors.white,
           ),
           onPressed: () {
-            Get.to(() => EditPlaylistAfterCreatePage(music,widget.idx, widget.timeEx));
+            Get.to(() =>
+                EditPlaylistAfterCreatePage(music, widget.idx, widget.timeEx));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -102,7 +102,9 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                 return const Center(child: CircularProgressIndicator());
               }
               return RefreshIndicator(
-                  onRefresh: () async {},
+                  onRefresh: () async {
+                    // loadData = loadDataAsync();
+                  },
                   child: Column(
                     children: [
                       musicGraph(),
@@ -118,9 +120,6 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                         ),
                       ),
                       listMusic(),
-                      const SizedBox(
-                        height: 50,
-                      )
                     ],
                   ));
             }));
@@ -129,6 +128,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   Widget listMusic() {
     return Expanded(
       child: ListView.builder(
+        padding: const EdgeInsets.only(bottom: 60),
         itemCount: music.isEmpty ? 0 : music.length,
         itemBuilder: (context, index) => musicInfo(music[index]),
       ),
@@ -136,7 +136,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   }
 
   void savePlaylist() {
-    Get.to(() =>  SavePlaylistPage(music,widget.idx,widget.timeEx));
+    Get.to(() => SavePlaylistPage(music, widget.idx, widget.timeEx));
   }
 
   Widget musicInfo(MusicGetResponse music) {
@@ -162,7 +162,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                       formatMusicName(music.name),
+                      formatMusicName(music.name),
                       style: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,
@@ -198,7 +198,8 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
       ),
     );
   }
-String formatMusicName(String name) {
+
+  String formatMusicName(String name) {
     // Remove .mp extension
     if (name.endsWith('.mp')) {
       name = name.substring(0, name.length - 3);
@@ -209,6 +210,7 @@ String formatMusicName(String name) {
     }
     return name;
   }
+
   Widget musicGraph() {
     return SizedBox(
       height: 250,
@@ -228,6 +230,4 @@ String formatMusicName(String name) {
           ]),
     );
   }
-
-
 }
