@@ -202,11 +202,11 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   String formatMusicName(String name) {
     // Remove .mp extension
     if (name.endsWith('.mp')) {
-      name = name.substring(0, name.length - 3);
+      name = name.substring(0,name.length - 3);
     }
     // Truncate to 10 characters and add ellipsis if necessary
-    if (name.length > 30) {
-      return '${name.substring(0, 30)}..';
+    if (name.length > 25) {
+      return '${name.substring(0, 25)}..';
     }
     return name;
   }

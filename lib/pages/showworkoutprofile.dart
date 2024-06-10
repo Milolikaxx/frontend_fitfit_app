@@ -81,7 +81,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                         fontSize: 18,
                         fontWeight: FontWeight.bold),
                   )  :  const Text(""),
-                  (playlistWp.isNotEmpty) ? listMusic() : const Text('ยังไม่มีเพลย์ลิสต์เพลง',
+                  (playlistWp.isNotEmpty) ? list() : const Text('ยังไม่มีเพลย์ลิสต์เพลง',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -234,7 +234,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
             .toList());
   }
 
-  Widget listMusic() {
+  Widget list() {
     return Expanded(
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
