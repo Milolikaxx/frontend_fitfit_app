@@ -1,12 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_detail_post_req.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
-import 'package:frontend_fitfit_app/pages/home.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
@@ -77,10 +75,13 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                   controller: namePlController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
+                      log('no');
                       return 'กรุณากรอกชื่อรายการเพลงของคุณ';
-                    } else if (value.length > 50) {
-                      return 'กรุณากรอกชื่อรายการเพลงของคุณ';
-                    }
+                    } 
+
+                    if (value.length > 50) {
+                      return 'กรุณากรอกชื่อรายการเพลงของคุณที่มีความยาวไม่เกิน 50 ตัวอักษร';
+                    } 
 
                     return null;
                   },
@@ -172,12 +173,13 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
 
   Future<void> save() async {
     if (_formKey.currentState?.validate() ?? true) {
-      if (imgPick != "") {
+      if (imgPick == "") {
         PlaylsitPostRequest plObj = PlaylsitPostRequest(
             wpid: widget.idx,
             playlistName: namePlController.text,
             durationPlaylist: widget.time,
-            imagePlaylist: "http://202.28.34.197:8888/contents/fc032ca0-1f03-4b21-baf3-b97bd04e88b7.jpg");
+            imagePlaylist:
+                "http://202.28.34.197:8888/contents/fc032ca0-1f03-4b21-baf3-b97bd04e88b7.jpg");
         try {
           int res = await playlsitService.addPlaylsit(plObj);
           if (res > 0) {
@@ -206,13 +208,12 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
         } catch (e) {
           log(e.toString());
         }
-      }else {
+      } else {
         PlaylsitPostRequest plObj = PlaylsitPostRequest(
             wpid: widget.idx,
             playlistName: namePlController.text,
             durationPlaylist: widget.time,
-            imagePlaylist:
-                imgPick);
+            imagePlaylist: imgPick);
         try {
           int res = await playlsitService.addPlaylsit(plObj);
           if (res > 0) {

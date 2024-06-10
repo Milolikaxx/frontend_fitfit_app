@@ -263,6 +263,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
                                 onConfirm: (values) {
                                   selectedTags = values;
                                   log(values.toString());
+                                  setState(() {
+                                    
+                                  });
                                 },
                                 selectedItemsTextStyle:
                                     const TextStyle(color: Colors.black),
@@ -286,8 +289,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
                               ),
                             ],
                           ),
+                        
                         ),
+                      
                       ),
+                     (selectedTags.isEmpty) ? const Text("***กรุณาเลือกแนวเพลง",style: TextStyle(fontSize: 16, color: Colors.white)) : Container(),
                       const SizedBox(
                         height: 50,
                       ),
@@ -328,8 +334,10 @@ class _AddProfilePageState extends State<AddProfilePage> {
       log(element.mtid.toString());
     }
 
-    if (selectedTags == []) {
-      Get.snackbar('กรุณาเลือกแนวเพลง', '');
+    if (selectedTags.isEmpty) {
+     setState(() {
+       
+     });
     } else {
       WorkoutProfilePostRequest wpObj = WorkoutProfilePostRequest(
           uid: user.uid!,

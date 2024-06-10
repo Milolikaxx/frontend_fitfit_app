@@ -1,16 +1,11 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
-import 'package:frontend_fitfit_app/pages/save_playlist.dart';
 import 'package:frontend_fitfit_app/pages/showworkoutprofile.dart';
-import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
