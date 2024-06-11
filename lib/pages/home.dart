@@ -15,6 +15,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+enum Menu { preview, remove }
+
 class _HomePageState extends State<HomePage> {
   // GoogleSignInAccount? user;
   List<WorkoutProfileGetResponse> profiles = [];
@@ -34,7 +36,6 @@ class _HomePageState extends State<HomePage> {
   loadDataAsync() async {
     profiles = await wpService.getListWorkoutProfileByUid(user.uid!);
     log(profiles.length.toString());
- 
   }
 
   @override
@@ -155,7 +156,6 @@ class _HomePageState extends State<HomePage> {
       child: Card(
         //  color: cardColor,
         child: Container(
-          alignment: Alignment.bottomLeft,
           width: 350,
           height: 180,
           decoration: BoxDecoration(
@@ -165,27 +165,70 @@ class _HomePageState extends State<HomePage> {
               fit: BoxFit.cover,
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              Text(
-                profile.levelExercise > 0
-                    ? '${profile.exerciseType} : ${profile.duration} นาที : Lv.${profile.levelExercise} $levelDescription'
-                    : '',
-                style: const TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  shadows: <Shadow>[
-                    Shadow(
-                      offset: Offset(1, 1),
-                      blurRadius: 8.0,
-                      color: Colors.black,
+              // PopupMenuButton positioned at the top right
+              Positioned(
+                top: -7,
+                right: -15,
+                child: PopupMenuButton<Menu>(
+                  icon: const Icon(
+                    Icons.more_vert,
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    shadows: <Shadow>[
+                      Shadow(
+                        offset: Offset(1, 1),
+                        blurRadius: 5.0,
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
+                  onSelected: (Menu item) {},
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+                    const PopupMenuItem<Menu>(
+                      value: Menu.preview,
+                      child: ListTile(
+                        leading: Icon(Icons.visibility_outlined),
+                        title: Text('ดูเพลงในเพลย์ลิสต์'),
+                      ),
+                    ),
+                    const PopupMenuItem<Menu>(
+                      value: Menu.remove,
+                      child: ListTile(
+                        leading: Icon(Icons.delete_outline),
+                        title: Text('ลบ'),
+                      ),
                     ),
                   ],
                 ),
               ),
-              getTextName(profile.workoutMusictype)
+              // Existing Column positioned at the bottom left
+              Positioned(
+                bottom: 10,
+                left: 10,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      profile.levelExercise > 0
+                          ? '${profile.exerciseType} : ${profile.duration} นาที : Lv.${profile.levelExercise} $levelDescription'
+                          : '',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        shadows: <Shadow>[
+                          Shadow(
+                            offset: Offset(1, 1),
+                            blurRadius: 8.0,
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
+                    ),
+                    getTextName(profile.workoutMusictype),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
