@@ -187,12 +187,13 @@ class _HomePageState extends State<HomePage> {
                     switch (item) {
                       case Menu.remove:
                         try {
-                          final responseCode = await wpService
+                          int responseCode = await wpService
                               .deleteWorkoutProfileByWpid(profile.wpid);
                           log(responseCode.toString());
-                          if (responseCode == 1) {
+                          if (responseCode == 1) { 
+                            log("Profile deleted successfully. Response code: $responseCode");
                             setState(() {
-                              log("Profile deleted successfully. Response code: $responseCode");
+                               loadData = loadDataAsync();
                             });
                           } else {
                             log("Failed to delete profile. Response code: $responseCode");
@@ -215,20 +216,52 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            Column(
-              children: [
-                Row(
-                  // crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const FaIcon(
-                      FontAwesomeIcons.personRunning,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        '${profile.exerciseType} ${profile.duration} นาที',
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                children: [
+                  Row(
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const FaIcon(
+                        FontAwesomeIcons.personRunning,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '${profile.exerciseType} ${profile.duration} นาที',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            shadows: <Shadow>[
+                              Shadow(
+                                offset: Offset(1, 1),
+                                blurRadius: 8.0,
+                                color: Colors.black,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const FaIcon(
+                        FontAwesomeIcons.chartColumn,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        profile.levelExercise > 0
+                            ? 'Lv.${profile.levelExercise} $levelDescription'
+                            : '',
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.white,
@@ -241,56 +274,27 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                Row(
-                  // crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const FaIcon(
-                      FontAwesomeIcons.chartColumn,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      profile.levelExercise > 0
-                          ? 'Lv.${profile.levelExercise} $levelDescription'
-                          : '',
-                      style: const TextStyle(
-                        fontSize: 16,
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const FaIcon(
+                        FontAwesomeIcons.music,
                         color: Colors.white,
-                        shadows: <Shadow>[
-                          Shadow(
-                            offset: Offset(1, 1),
-                            blurRadius: 8.0,
-                            color: Colors.black,
-                          ),
-                        ],
+                        size: 16,
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  // crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const FaIcon(
-                      FontAwesomeIcons.music,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    getTextMusicName(profile.workoutMusictype)
-                  ],
-                ),
-              ],
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      getTextMusicName(profile.workoutMusictype)
+                    ],
+                  ),
+                ],
+              ),
             )
           ]),
         ),
