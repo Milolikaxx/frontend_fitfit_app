@@ -14,9 +14,12 @@ abstract class WorkoutProfileService {
   Future<int> saveWP(@Body() WorkoutProfilePostRequest saveWp);
 
   @GET("/workprofile/{id}")
-  Future<WorkoutProfileGetResponse> getProfileByWpid(
-      @Path() int id);
+  Future<WorkoutProfileGetResponse> getProfileByWpid(@Path() int id);
 
   @GET("/workprofile/user/{id}")
-  Future<List<WorkoutProfileGetResponse>> getListWorkoutProfileByUid(@Path() int id);
+  Future<List<WorkoutProfileGetResponse>> getListWorkoutProfileByUid(
+      @Path() int id);
+
+  @DELETE("/workprofile/delprofile/{id}")
+  Future<int> deleteWorkoutProfileByWpid(int id);
 }

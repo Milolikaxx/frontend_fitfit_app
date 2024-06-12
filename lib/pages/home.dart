@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-enum Menu { preview, remove }
+enum Menu { remove }
 
 class _HomePageState extends State<HomePage> {
   // GoogleSignInAccount? user;
@@ -75,8 +75,7 @@ class _HomePageState extends State<HomePage> {
                     loadData = loadDataAsync();
                   });
                 },
-                child:
-                 profiles.isNotEmpty
+                child: profiles.isNotEmpty
                     ? ListView.builder(
                         itemCount: profiles.length,
                         itemBuilder: (context, index) => Padding(
@@ -184,7 +183,26 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  onSelected: (Menu item) {},
+                  onSelected: (Menu item) async {
+                    switch (item) {
+                      case Menu.remove:
+                        try {
+                          final responseCode = await wpService
+                              .deleteWorkoutProfileByWpid(profile.wpid);
+                          log(responseCode.toString());
+                          if (responseCode == 1) {
+                            setState(() {
+                              log("Profile deleted successfully. Response code: $responseCode");
+                            });
+                          } else {
+                            log("Failed to delete profile. Response code: $responseCode");
+                          }
+                        } catch (e) {
+                          log("Error: $e");
+                        }
+                        break;
+                    }
+                  },
                   itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
                     const PopupMenuItem<Menu>(
                       value: Menu.remove,
@@ -197,9 +215,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-           Column(
+            Column(
               children: [
-                  Row(
+                Row(
                   // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const FaIcon(
