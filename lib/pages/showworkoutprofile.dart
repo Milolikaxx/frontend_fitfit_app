@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
+import 'package:frontend_fitfit_app/pages/music_playlsitpage.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class ShowWorkoutProfilePage extends StatefulWidget {
@@ -74,19 +76,22 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                   const SizedBox(
                     height: 10,
                   ),
-                   (playlistWp.isNotEmpty) ? const Text(
-                    'เพลย์ลิสต์เพลงของฉัน',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  )  :  const Text(""),
-                  (playlistWp.isNotEmpty) ? list() : const Text('ยังไม่มีเพลย์ลิสต์เพลง',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
-                  
+                  (playlistWp.isNotEmpty)
+                      ? const Text(
+                          'เพลย์ลิสต์เพลงของฉัน',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        )
+                      : const Text(""),
+                  (playlistWp.isNotEmpty)
+                      ? list()
+                      : const Text('ยังไม่มีเพลย์ลิสต์เพลง',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
                 ],
               );
             }));
@@ -237,7 +242,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   Widget list() {
     return Expanded(
       child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
         itemCount: playlistWp.isEmpty ? 0 : playlistWp.length,
         itemBuilder: (context, index) => playlistAll(playlistWp[index]),
       ),
@@ -288,7 +293,22 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                       Icons.more_vert,
                       color: Colors.white,
                     ),
-                    onSelected: (Menu item) {},
+                    onSelected: (Menu item) {
+                      switch (item) {
+                        case Menu.preview:
+                         Get.to(() => MusicPlaylistPage(pl.pid));
+                          break;
+                        case Menu.share:
+                         
+                          break;
+                        case Menu.remove:
+                          
+                          break;
+                        case Menu.edit:
+                         
+                          break;
+                      }
+                    },
                     itemBuilder: (BuildContext context) =>
                         <PopupMenuEntry<Menu>>[
                       const PopupMenuItem<Menu>(
