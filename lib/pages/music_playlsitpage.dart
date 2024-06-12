@@ -4,24 +4,22 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
-import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
-import 'package:frontend_fitfit_app/pages/editplaylist_after_create.dart';
-import 'package:frontend_fitfit_app/pages/save_playlist.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class PlaylistAfterCreatePage extends StatefulWidget {
+class MusicPlaylistPage extends StatefulWidget {
   int idx = 0;
-  int timeEx = 0;
-  PlaylistAfterCreatePage(this.idx, this.timeEx, {super.key});
+
+  MusicPlaylistPage(this.idx, {super.key});
 
   @override
-  State<PlaylistAfterCreatePage> createState() =>
-      _PlaylistAfterCreatePageState();
+  State<MusicPlaylistPage> createState() => _PlaylistAfterCreatePageState();
 }
 
 class Musicdata {
@@ -31,53 +29,43 @@ class Musicdata {
   Musicdata(this.musictime, this.bpm);
 }
 
-class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
+class _PlaylistAfterCreatePageState extends State<MusicPlaylistPage> {
   List<Musicdata> chartData = [];
-  List<MusicGetResponse> music = [];
-  late PlaylistDetailService playlistDetailServ;
+  late PlaylsitMusicGetResponse music_pl;
+  late PlaylistService playlistService;
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
-  late WorkoutProfileService wpService;
+  late UserLoginPostResponse user;
   @override
   void initState() {
     super.initState();
-    playlistDetailServ = context.read<AppData>().playlistDetailService;
+    playlistService = context.read<AppData>().playlistService;
+    user = context.read<AppData>().user;
     loadData = loadDataAsync();
   }
 
   loadDataAsync() async {
-    music = await playlistDetailServ.getMusicDetailGen(widget.idx);
-    log(music.length.toString());
-  
-  for (var m in music) {
-      log(m.name);
-      chartData.add(Musicdata(m.duration, m.bpm));
-    }  }
+    music_pl = await playlistService.getPlaylistMusicByPid(widget.idx);
+    for (var m in music_pl.playlistDetail) {
+      chartData.add(Musicdata(m.music.duration, m.music.bpm));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // double width = MediaQuery.of(context).size.width;
-    // double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          backgroundColor: Colors.black,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          title: Center(
-            child: Text(
-              "${widget.timeEx} นาที",
-              style: const TextStyle(color: Colors.black),
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.save_rounded, color: Colors.black),
-              onPressed: savePlaylist,
-            ),
-          ],
         ),
         floatingActionButton: FloatingActionButton(
           child: const Icon(
@@ -85,8 +73,8 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
             color: Colors.white,
           ),
           onPressed: () {
-            Get.to(() =>
-                EditPlaylistAfterCreatePage(music, widget.idx, widget.timeEx));
+            // Get.to(() =>
+            //     EditPlaylistAfterCreatePage(music, widget.idx, widget.timeEx));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -103,10 +91,36 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
               }
               return RefreshIndicator(
                   onRefresh: () async {
-                    // loadData = loadDataAsync();
+                    loadData = loadDataAsync();
                   },
                   child: Column(
                     children: [
+                      Container(
+                        width: width,
+                        height: 250,
+                        color: Colors.black,
+                        child: Column(
+                          children: [
+                            Image.network(
+                              music_pl.imagePlaylist,
+                              width: 200,
+                            ),
+                            Text(
+                              "${music_pl.playlistName} ",
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 20),
+                            ),
+                            Text(
+                              "playlsit by ${user.name} ",
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       musicGraph(),
                       const Padding(
                         padding: EdgeInsets.only(left: 100, right: 35),
@@ -129,17 +143,16 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
     return Expanded(
       child: ListView.builder(
         padding: const EdgeInsets.only(bottom: 60),
-        itemCount: music.isEmpty ? 0 : music.length,
-        itemBuilder: (context, index) => musicInfo(music[index]),
+        itemCount: music_pl.playlistDetail.isEmpty
+            ? 0
+            : music_pl.playlistDetail.length,
+        itemBuilder: (context, index) =>
+            musicInfo(music_pl.playlistDetail[index]),
       ),
     );
   }
 
-  void savePlaylist() {
-    Get.to(() => SavePlaylistPage(music, widget.idx, widget.timeEx));
-  }
-
-  Widget musicInfo(MusicGetResponse music) {
+  Widget musicInfo(PlaylistDetail playlistDetail) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Row(
@@ -150,7 +163,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Image(
-                image: NetworkImage(music.musicImage),
+                image: NetworkImage(playlistDetail.music.musicImage),
                 width: 65,
                 height: 65,
                 fit: BoxFit.cover,
@@ -162,14 +175,14 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      formatMusicName(music.name),
+                      formatMusicName(playlistDetail.music.name),
                       style: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w800),
                     ),
                     Text(
-                      music.artist,
+                      playlistDetail.music.artist,
                       style:
                           const TextStyle(color: Color.fromARGB(161, 0, 0, 0)),
                     ),
@@ -183,12 +196,12 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                music.duration.toString(),
+                playlistDetail.music.duration.toString(),
                 style: const TextStyle(
                     color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
               ),
               Text(
-                "${music.bpm} bpm",
+                "${playlistDetail.music.bpm} bpm",
                 style: const TextStyle(
                     color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
               ),
@@ -202,7 +215,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   String formatMusicName(String name) {
     // Remove .mp extension
     if (name.endsWith('.mp')) {
-      name = name.substring(0,name.length - 3);
+      name = name.substring(0, name.length - 3);
     }
     // Truncate to 10 characters and add ellipsis if necessary
     if (name.length > 25) {
@@ -212,22 +225,19 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   }
 
   Widget musicGraph() {
-    return SizedBox(
-      height: 250,
-      child: SfCartesianChart(
-          primaryXAxis: const CategoryAxis(),
-          legend: const Legend(
-            isVisible: false,
-          ),
-          tooltipBehavior: TooltipBehavior(enable: true),
-          series: <CartesianSeries<Musicdata, double>>[
-            LineSeries<Musicdata, double>(
-                dataSource: chartData,
-                xValueMapper: (Musicdata m, _) => m.musictime,
-                yValueMapper: (Musicdata m, _) => m.bpm,
-                color: Colors.red,
-                dataLabelSettings: const DataLabelSettings(isVisible: false))
-          ]),
-    );
+    return SfCartesianChart(
+        primaryXAxis: const CategoryAxis(),
+        legend: const Legend(
+          isVisible: false,
+        ),
+        tooltipBehavior: TooltipBehavior(enable: true),
+        series: <CartesianSeries<Musicdata, double>>[
+          LineSeries<Musicdata, double>(
+              dataSource: chartData,
+              xValueMapper: (Musicdata m, _) => m.musictime,
+              yValueMapper: (Musicdata m, _) => m.bpm,
+              color: Colors.red,
+              dataLabelSettings: const DataLabelSettings(isVisible: false))
+        ]);
   }
 }

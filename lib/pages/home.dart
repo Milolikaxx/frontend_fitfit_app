@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
 import 'package:frontend_fitfit_app/pages/showworkoutprofile.dart';
@@ -74,7 +75,8 @@ class _HomePageState extends State<HomePage> {
                     loadData = loadDataAsync();
                   });
                 },
-                child: profiles.isNotEmpty
+                child:
+                 profiles.isNotEmpty
                     ? ListView.builder(
                         itemCount: profiles.length,
                         itemBuilder: (context, index) => Padding(
@@ -93,7 +95,7 @@ class _HomePageState extends State<HomePage> {
             }));
   }
 
-  Widget getTextName(List<WorkoutMusictype> musicTypes) {
+  Widget getTextMusicName(List<WorkoutMusictype> musicTypes) {
     return Row(
         children: musicTypes
             .asMap()
@@ -107,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   text,
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 16,
                     color: Colors.white,
                     shadows: <Shadow>[
                       Shadow(
@@ -165,13 +167,12 @@ class _HomePageState extends State<HomePage> {
               fit: BoxFit.cover,
             ),
           ),
-          child: Stack(
-            children: [
-              // PopupMenuButton positioned at the top right
-              Positioned(
-                top: -7,
-                right: -15,
-                child: PopupMenuButton<Menu>(
+          child: Column(children: [
+            // PopupMenuButton positioned at the top right
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                PopupMenuButton<Menu>(
                   icon: const Icon(
                     Icons.more_vert,
                     color: Color.fromARGB(255, 255, 255, 255),
@@ -186,13 +187,6 @@ class _HomePageState extends State<HomePage> {
                   onSelected: (Menu item) {},
                   itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
                     const PopupMenuItem<Menu>(
-                      value: Menu.preview,
-                      child: ListTile(
-                        leading: Icon(Icons.visibility_outlined),
-                        title: Text('ดูเพลงในเพลย์ลิสต์'),
-                      ),
-                    ),
-                    const PopupMenuItem<Menu>(
                       value: Menu.remove,
                       child: ListTile(
                         leading: Icon(Icons.delete_outline),
@@ -201,20 +195,54 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-              ),
-              // Existing Column positioned at the bottom left
-              Positioned(
-                bottom: 10,
-                left: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              ],
+            ),
+           Column(
+              children: [
+                  Row(
+                  // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    const FaIcon(
+                      FontAwesomeIcons.personRunning,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        '${profile.exerciseType} ${profile.duration} นาที',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          shadows: <Shadow>[
+                            Shadow(
+                              offset: Offset(1, 1),
+                              blurRadius: 8.0,
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  // crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const FaIcon(
+                      FontAwesomeIcons.chartColumn,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
                     Text(
                       profile.levelExercise > 0
-                          ? '${profile.exerciseType} : ${profile.duration} นาที : Lv.${profile.levelExercise} $levelDescription'
+                          ? 'Lv.${profile.levelExercise} $levelDescription'
                           : '',
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 16,
                         color: Colors.white,
                         shadows: <Shadow>[
                           Shadow(
@@ -225,12 +253,28 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    getTextName(profile.workoutMusictype),
                   ],
                 ),
-              ),
-            ],
-          ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  // crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const FaIcon(
+                      FontAwesomeIcons.music,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    getTextMusicName(profile.workoutMusictype)
+                  ],
+                ),
+              ],
+            )
+          ]),
         ),
       ),
     );
