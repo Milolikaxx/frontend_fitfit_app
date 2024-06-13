@@ -19,7 +19,7 @@ class MusicPlaylistPage extends StatefulWidget {
   MusicPlaylistPage(this.idx, {super.key});
 
   @override
-  State<MusicPlaylistPage> createState() => _PlaylistAfterCreatePageState();
+  State<MusicPlaylistPage> createState() => _MusicPlaylistPageState();
 }
 
 class Musicdata {
@@ -29,7 +29,7 @@ class Musicdata {
   Musicdata(this.musictime, this.bpm);
 }
 
-class _PlaylistAfterCreatePageState extends State<MusicPlaylistPage> {
+class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   List<Musicdata> chartData = [];
   late PlaylsitMusicGetResponse music_pl;
   late PlaylistService playlistService;

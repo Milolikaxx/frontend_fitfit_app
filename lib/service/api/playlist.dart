@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:frontend_fitfit_app/model/request/playlist_put_req.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
@@ -20,5 +21,10 @@ abstract class PlaylistService {
   @GET("/playlist/{id}")
   Future<PlaylsitMusicGetResponse> getPlaylistMusicByPid(
     @Path() int id,
+  );
+
+  @POST("/playlist/update/{id}")
+  Future<int> editPlaylist(
+    @Body() PlaylsitPutRequest edit, @Path() int pid
   );
 }

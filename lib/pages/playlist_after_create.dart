@@ -5,7 +5,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
-import 'package:frontend_fitfit_app/pages/editplaylist_after_create.dart';
+import 'package:frontend_fitfit_app/pages/editplaylistmusic_after_create.dart';
 import 'package:frontend_fitfit_app/pages/save_playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
@@ -86,7 +86,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
           ),
           onPressed: () {
             Get.to(() =>
-                EditPlaylistAfterCreatePage(music, widget.idx, widget.timeEx));
+                EditPlaylistMusicAfterCreatePage(music, widget.idx, widget.timeEx));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
