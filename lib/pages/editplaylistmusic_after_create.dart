@@ -8,15 +8,15 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 // ignore: must_be_immutable
-class EditPlaylistAfterCreatePage extends StatefulWidget {
+class EditPlaylistMusicAfterCreatePage extends StatefulWidget {
   List<MusicGetResponse> music = [];
   int idx = 0;
   int timeEx = 0;
-  EditPlaylistAfterCreatePage(this.music, this.idx,this.timeEx ,{super.key});
+  EditPlaylistMusicAfterCreatePage(this.music, this.idx,this.timeEx ,{super.key});
 
   @override
-  State<EditPlaylistAfterCreatePage> createState() =>
-      _EditPlaylistAfterCreatePageState();
+  State<EditPlaylistMusicAfterCreatePage> createState() =>
+      _EditPlaylistMusicAfterCreatePageState();
 }
 
 class Musicdata {
@@ -26,8 +26,8 @@ class Musicdata {
   Musicdata(this.musictime, this.bpm);
 }
 
-class _EditPlaylistAfterCreatePageState
-    extends State<EditPlaylistAfterCreatePage> {
+class _EditPlaylistMusicAfterCreatePageState
+    extends State<EditPlaylistMusicAfterCreatePage> {
   List<Musicdata> chartData = [];
 
   // ignore: prefer_typing_uninitialized_variables

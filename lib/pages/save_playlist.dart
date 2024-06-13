@@ -53,7 +53,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(left: 50, right: 50, top: 60),
+          padding: const EdgeInsets.symmetric(horizontal: 40 ,vertical: 50),
           child: Column(
             children: [
               const Row(

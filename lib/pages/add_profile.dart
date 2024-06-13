@@ -5,7 +5,7 @@ import 'package:frontend_fitfit_app/model/request/workoutMusicType_post_req.dart
 import 'package:frontend_fitfit_app/model/request/workoutProfile_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/musictype_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
-import 'package:frontend_fitfit_app/pages/editplaylist_after_create.dart';
+import 'package:frontend_fitfit_app/pages/editplaylistmusic_after_create.dart';
 import 'package:frontend_fitfit_app/pages/playlist_after_create.dart';
 import 'package:frontend_fitfit_app/service/api/musictype.dart';
 import 'package:frontend_fitfit_app/service/api/workout_musictype.dart';

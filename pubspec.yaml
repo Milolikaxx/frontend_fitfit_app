@@ -60,6 +60,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   firebase_storage: ^11.6.9
+  readmore: ^3.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

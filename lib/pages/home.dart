@@ -95,17 +95,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getTextMusicName(List<WorkoutMusictype> musicTypes) {
-    return Row(
-        children: musicTypes
-            .asMap()
-            .map((index, musicType) {
-              String text = musicType.musicType.name;
-              if (index != musicTypes.length - 1) {
-                text += " : ";
-              }
-              return MapEntry(
-                index,
-                Text(
+    return Wrap(
+      children: musicTypes
+          .asMap()
+          .map((index, musicType) {
+            String text = musicType.musicType.name;
+            if (index != musicTypes.length - 1) {
+              text += " : ";
+            }
+
+            return MapEntry(
+              index,
+              Flexible(
+                child: Text(
                   text,
                   style: const TextStyle(
                     fontSize: 16,
@@ -113,16 +115,19 @@ class _HomePageState extends State<HomePage> {
                     shadows: <Shadow>[
                       Shadow(
                         offset: Offset(1, 1),
-                        blurRadius: 8.0,
+                        blurRadius: 5.0,
                         color: Colors.black,
                       ),
                     ],
                   ),
+                  
                 ),
-              );
-            })
-            .values
-            .toList());
+              ),
+            );
+          })
+          .values
+          .toList(),
+    );
   }
 
   workoutProfileCard(WorkoutProfileGetResponse profile) {
@@ -290,7 +295,12 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         width: 10,
                       ),
-                      getTextMusicName(profile.workoutMusictype)
+                    Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: getTextMusicName(profile.workoutMusictype),
+                        ),
+                      ),
                     ],
                   ),
                 ],

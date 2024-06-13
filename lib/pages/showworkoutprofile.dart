@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
+import 'package:frontend_fitfit_app/pages/edit_playlsitpage.dart';
 import 'package:frontend_fitfit_app/pages/music_playlsitpage.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
@@ -305,7 +306,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                           
                           break;
                         case Menu.edit:
-                         
+                          Get.to(() => EditPlaylistPage(pl.pid));
                           break;
                       }
                     },
