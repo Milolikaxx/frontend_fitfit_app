@@ -64,38 +64,45 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
             },
           ),
         ),
-        body: FutureBuilder(
-            future: loadData,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(child: CircularProgressIndicator());
-              }
+        body: RefreshIndicator(
+          onRefresh: () async {
+            setState(() {
+              loadData = loadDataAsync();
+            });
+          },
+          child: FutureBuilder(
+              future: loadData,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              return Column(
-                children: [
-                  cardDetailsWp(profile),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  (playlistWp.isNotEmpty)
-                      ? const Text(
-                          'เพลย์ลิสต์เพลงของฉัน',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        )
-                      : const Text(""),
-                  (playlistWp.isNotEmpty)
-                      ? list()
-                      : const Text('ยังไม่มีเพลย์ลิสต์เพลง',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold)),
-                ],
-              );
-            }));
+                return Column(
+                  children: [
+                    cardDetailsWp(profile),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    (playlistWp.isNotEmpty)
+                        ? const Text(
+                            'เพลย์ลิสต์เพลงของฉัน',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          )
+                        : const Text(""),
+                    (playlistWp.isNotEmpty)
+                        ? list()
+                        : const Text('ยังไม่มีเพลย์ลิสต์เพลง',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold)),
+                  ],
+                );
+              }),
+        ));
   }
 
   Widget cardDetailsWp(WorkoutProfileGetResponse profile) {
@@ -297,13 +304,12 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                     onSelected: (Menu item) {
                       switch (item) {
                         case Menu.preview:
-                         Get.to(() => MusicPlaylistPage(pl.pid));
+                          Get.to(() => MusicPlaylistPage(pl.pid));
                           break;
                         case Menu.share:
-                         
                           break;
                         case Menu.remove:
-                          
+                          delPlaylist(pl.pid);
                           break;
                         case Menu.edit:
                           Get.to(() => EditPlaylistPage(pl.pid));
@@ -326,7 +332,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                           title: Text('แชร์'),
                         ),
                       ),
-
+                  
                       // const PopupMenuDivider(),
                       const PopupMenuItem<Menu>(
                         value: Menu.remove,
@@ -351,5 +357,23 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
         ),
       ),
     );
+  }
+
+  Future<void> delPlaylist(pid) async {
+    try {
+      log(pid.toString());
+      int res = await playlsitService.deletePlaylsit(pid);
+      log(res.toString());
+      if (res == 1) {
+        log("deleted successfully. Response code: $res");
+        setState(() {
+          loadData = loadDataAsync();
+        });
+      } else {
+        log("Failed . Response code: $res");
+      }
+    } catch (e) {
+      log("Error: $e");
+    }
   }
 }

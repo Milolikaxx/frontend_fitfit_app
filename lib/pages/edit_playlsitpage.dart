@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:frontend_fitfit_app/model/request/playlist_put_req.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
+import 'package:frontend_fitfit_app/pages/showworkoutprofile.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -187,10 +188,12 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                 : namePlController.text,
             imagePlaylist: dePlaylist.imagePlaylist);
         try {
-          int res = await playlsitService.editPlaylist(editPl,widget.pid);
+          int res = await playlsitService.editPlaylist(widget.pid,editPl);
           if (res > 0) {
             log('แก้ไขเพลย์ลิสต์สำเร็จ');
-          
+             // ignore: use_build_context_synchronously
+             Navigator.pop(context);
+          // Get.to(() => ShowWorkoutProfilePage(dePlaylist.wpid));
     
           } else {
             log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
@@ -205,9 +208,12 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                 : namePlController.text,
             imagePlaylist: imgPick);
         try {
-          int res = await playlsitService.editPlaylist(editPl,dePlaylist.pid );
+          int res = await playlsitService.editPlaylist(dePlaylist.pid,editPl );
           if (res > 0 ) {
             log('แก้ไขเพลย์ลิสต์สำเร็จ');
+             // ignore: use_build_context_synchronously
+             Navigator.pop(context);
+            //  Get.to(() => ShowWorkoutProfilePage(dePlaylist.wpid));
           } else {
             log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
           }

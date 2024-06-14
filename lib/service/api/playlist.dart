@@ -23,8 +23,11 @@ abstract class PlaylistService {
     @Path() int id,
   );
 
-  @POST("/playlist/update/{id}")
+  @PUT("/playlist/update/{id}")
   Future<int> editPlaylist(
-    @Body() PlaylsitPutRequest edit, @Path() int pid
+    @Path() int id, @Body() PlaylsitPutRequest edit
   );
+
+  @DELETE("/playlist/del/{id}")
+  Future<int> deletePlaylsit(@Path() int id);
 }
