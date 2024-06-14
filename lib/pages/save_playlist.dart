@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_detail_post_req.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
@@ -53,7 +54,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40 ,vertical: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
           child: Column(
             children: [
               const Row(
@@ -73,18 +74,21 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 padding: const EdgeInsets.only(top: 20),
                 child: TextFormField(
                   controller: namePlController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      log('no');
-                      return 'กรุณากรอกชื่อรายการเพลงของคุณ';
-                    } 
+                  // validator: (value) {
+                  //   if (value == null || value.isEmpty) {
+                  //     log('no');
+                  //     return 'กรุณากรอกชื่อรายการเพลงของคุณ';
+                  //   }
 
-                    if (value.length > 50) {
-                      return 'กรุณากรอกชื่อรายการเพลงของคุณที่มีความยาวไม่เกิน 50 ตัวอักษร';
-                    } 
+                  //   if (value.length > 50) {
+                  //     return 'กรุณากรอกชื่อรายการเพลงของคุณที่มีความยาวไม่เกิน 50 ตัวอักษร';
+                  //   }
 
-                    return null;
-                  },
+                  //   return null;
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: '* ชื่อต้องไม่เป็นค่าว่าง'),
+                  ]).call,
+
                   style: const TextStyle(color: Colors.white),
                   decoration: const InputDecoration(
                     hintText: 'ชื่อรายการเพลง',
@@ -97,6 +101,20 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.white, width: 2),
                     ),
+                  
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.red,
+                          width: 2), // สีเส้นขอบเมื่อมี error
+                     
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.red,
+                          width: 2), // สีเส้นขอบเมื่อโฟกัสและมี error
+                     
+                    ),
+                    errorStyle: TextStyle(color: Colors.white),
                   ),
                 ),
               ),

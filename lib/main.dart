@@ -42,6 +42,26 @@ class MyApp extends StatelessWidget {
           selectionColor: Colors.white,
           selectionHandleColor: Colors.white,
         ),
+        inputDecorationTheme: InputDecorationTheme(
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.white, width: 2),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.white, width: 2),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.red, width: 2),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.red, width: 2),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          errorStyle: const TextStyle(color: Colors.white),
+        ),
+         
       ),
     );
   }

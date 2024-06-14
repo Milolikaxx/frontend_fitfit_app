@@ -45,7 +45,6 @@ class _SignUpPageState extends State<SignUpPage> {
     // var formatter = DateFormat.yMMMd();
     // var dateInBuddhistCalendarFormat =
     //     formatter.formatInBuddhistCalendarThai(DateTime.now());
-    dateController.text = "วันเกิด";
   }
 
   @override
@@ -91,32 +90,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           return null;
                         },
                         style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'ชื่อในระบบ',
-                          hintStyle: const TextStyle(color: Colors.white),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(color: Colors.white, width: 2),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(color: Colors.white, width: 2),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.red,
-                                width: 2), // สีเส้นขอบเมื่อมี error
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.red,
-                                width: 2), // สีเส้นขอบเมื่อโฟกัสและมี error
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          errorStyle: const TextStyle(color: Colors.white),
+                          hintStyle: TextStyle(color: Colors.white),
+                          
                         ),
                       ),
                     ),
@@ -124,75 +101,24 @@ class _SignUpPageState extends State<SignUpPage> {
                       padding: const EdgeInsets.only(top: 10, bottom: 10),
                       child: TextFormField(
                         controller: dateController,
-
                         style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             // label: const Text('วันเกิด'),
-                            // hintText: 'วันเกิด',
-                            hintStyle: const TextStyle(color: Colors.white),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.white, width: 2),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.white, width: 2),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.red,
-                                  width: 2), // สีเส้นขอบเมื่อมี error
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.red,
-                                  width: 2), // สีเส้นขอบเมื่อโฟกัสและมี error
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            errorStyle: const TextStyle(color: Colors.white),
-                            suffixIcon: const FaIcon(
-                              FontAwesomeIcons.calendar,
-                              color: Colors.white,
-                              size: 20,
+                            hintText: 'วันเกิด',
+                            hintStyle: TextStyle(color: Colors.white),
+                            
+                            suffixIcon: Padding(
+                              padding: EdgeInsets.all(15),
+                              child: FaIcon(
+                                FontAwesomeIcons.calendar,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                             )),
                         readOnly:
                             true, //set it true, so that user will not able to edit text
                         onTap: () async {
-                          DateTime? newDateTime = await showRoundedDatePicker(
-                              era: EraMode.BUDDHIST_YEAR,
-                              context: context,
-                              initialDate: selectedBirthDate,
-                              firstDate: DateTime(DateTime.now().year - 100),
-                              borderRadius: 10,
-                              height: 300,
-                              styleDatePicker: MaterialRoundedDatePickerStyle(
-                                textStyleButtonPositive: Get
-                                    .textTheme.bodyLarge!
-                                    .copyWith(color: const Color(0xFFF8721D)),
-                                textStyleButtonNegative: Get
-                                    .textTheme.bodyLarge!
-                                    .copyWith(color: const Color(0xFFF8721D)),
-                                textStyleDayOnCalendarSelected: Get
-                                    .textTheme.bodyMedium!
-                                    .copyWith(color: Colors.white),
-                                textStyleDayButton: Get.textTheme.titleLarge!
-                                    .copyWith(color: Colors.white),
-                                textStyleYearButton: Get.textTheme.titleLarge!
-                                    .copyWith(color: Colors.white),
-                              ),
-                              theme: Theme.of(context));
-
-                          if (newDateTime != null) {
-                            selectedBirthDate = newDateTime;
-                            var formatter = DateFormat.yMMMd();
-                            var dateInBuddhistCalendarFormat =
-                                formatter.formatInBuddhistCalendarThai(
-                                    selectedBirthDate);
-                            dateController.text = dateInBuddhistCalendarFormat;
-                          }
+                          calendar();
                         },
                       ),
                     ),
@@ -215,32 +141,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           return null;
                         },
                         style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'อีเมล',
-                          hintStyle: const TextStyle(color: Colors.white),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(color: Colors.white, width: 2),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(color: Colors.white, width: 2),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.red,
-                                width: 2), // สีเส้นขอบเมื่อมี error
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.red,
-                                width: 2), // สีเส้นขอบเมื่อโฟกัสและมี error
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          errorStyle: const TextStyle(color: Colors.white),
+                          hintStyle: TextStyle(color: Colors.white),
+                         
                         ),
                       ),
                     ),
@@ -263,29 +167,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         decoration: InputDecoration(
                             hintText: 'รหัสผ่าน',
                             hintStyle: const TextStyle(color: Colors.white),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.white, width: 2),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.white, width: 2),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.red,
-                                  width: 2), // สีเส้นขอบเมื่อมี error
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.red,
-                                  width: 2), // สีเส้นขอบเมื่อโฟกัสและมี error
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            errorStyle: const TextStyle(color: Colors.white),
+                           
                             suffixIcon: IconButton(
                               color: Colors.white,
                               icon: Icon(_isPasswordVisible
@@ -318,29 +200,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         decoration: InputDecoration(
                             hintText: 'ยืนยันรหัสผ่าน',
                             hintStyle: const TextStyle(color: Colors.white),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.white, width: 2),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.white, width: 2),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.red,
-                                  width: 2), // สีเส้นขอบเมื่อมี error
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.red,
-                                  width: 2), // สีเส้นขอบเมื่อโฟกัสและมี error
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            errorStyle: const TextStyle(color: Colors.white),
                             suffixIcon: IconButton(
                               color: Colors.white,
                               icon: Icon(_isconPasswordVisible
@@ -679,6 +538,45 @@ class _SignUpPageState extends State<SignUpPage> {
         log(e.toString());
       }
     }
+  }
+
+  Future<void> calendar() async {
+    DateTime? newDateTime = await showRoundedDatePicker(
+        era: EraMode.BUDDHIST_YEAR,
+        context: context,
+        initialDate: selectedBirthDate,
+        // firstDate: DateTime(DateTime.now().year - 100),
+        borderRadius: 10,
+        height: 300,
+        styleDatePicker: MaterialRoundedDatePickerStyle(
+          textStyleButtonPositive:
+              Get.textTheme.bodyLarge!.copyWith(color: const Color(0xFFF8721D)),
+          textStyleButtonNegative:
+              Get.textTheme.bodyLarge!.copyWith(color: const Color(0xFFF8721D)),
+          textStyleDayOnCalendarSelected:
+              Get.textTheme.bodyMedium!.copyWith(color: Colors.white),
+          textStyleDayButton:
+              Get.textTheme.titleLarge!.copyWith(color: Colors.white),
+          textStyleYearButton:
+              Get.textTheme.titleLarge!.copyWith(color: Colors.white),
+          decorationDateSelected: const BoxDecoration(
+            color: Color(0xFFF8721D), // This is the orange color
+            shape: BoxShape.circle,
+          ),
+        ),
+        theme: ThemeData(
+          primaryColor: const Color(0xFFF8721D),
+        )
+        );
+
+    if (newDateTime != null) {
+      selectedBirthDate = newDateTime;
+      var formatter = DateFormat.yMMMd();
+      var dateInBuddhistCalendarFormat =
+          formatter.formatInBuddhistCalendarThai(selectedBirthDate);
+      dateController.text = "วันเกิด $dateInBuddhistCalendarFormat";
+    }
+  
   }
   // void pickImage() async {
   //   final ImagePicker picker = ImagePicker();

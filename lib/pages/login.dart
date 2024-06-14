@@ -92,38 +92,14 @@ class _LoginPageState extends State<LoginPage> {
                                 return null;
                               },
                               style: const TextStyle(color: Colors.white),
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: 'อีเมล',
-                                hintStyle: const TextStyle(color: Colors.white),
-                                prefixIcon: const Icon(
+                                hintStyle: TextStyle(color: Colors.white),
+                                prefixIcon: Icon(
                                   Icons.email_outlined,
                                   color: Colors.white,
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.white, width: 2),
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.white, width: 2),
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                     errorBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.red,
-                                      width: 2), // สีเส้นขอบเมื่อมี error
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.red,
-                                      width:
-                                          2), // สีเส้นขอบเมื่อโฟกัสและมี error
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                errorStyle: const TextStyle(
-                                    color: Colors.white), // สีข้อความ validator
+                                
                               ),
                             ),
                           ),
@@ -150,31 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                                   prefixIcon: const Icon(
                                       Icons.lock_outline_rounded,
                                       color: Colors.white),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        color: Colors.white, width: 2),
-                                    borderRadius: BorderRadius.circular(18),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        color: Colors.white, width: 2),
-                                    borderRadius: BorderRadius.circular(18),
-                                  ),
-                                      errorBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        color: Colors.red,
-                                        width: 2), // สีเส้นขอบเมื่อมี error
-                                    borderRadius: BorderRadius.circular(18),
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        color: Colors.red,
-                                        width:
-                                            2), // สีเส้นขอบเมื่อโฟกัสและมี error
-                                    borderRadius: BorderRadius.circular(18),
-                                  ),
-                                  errorStyle:
-                                      const TextStyle(color: Colors.white),
+                                 
                                   suffixIcon: IconButton(
                                     color: Colors.white,
                                     icon: Icon(_isPasswordVisible

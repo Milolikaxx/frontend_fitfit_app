@@ -105,8 +105,8 @@ class _PlaylistService implements PlaylistService {
 
   @override
   Future<int> editPlaylist(
+    int id,
     PlaylsitPutRequest edit,
-    int pid,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -114,13 +114,39 @@ class _PlaylistService implements PlaylistService {
     final _data = <String, dynamic>{};
     _data.addAll(edit.toJson());
     final _result = await _dio.fetch<int>(_setStreamType<int>(Options(
-      method: 'POST',
+      method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          '/playlist/update/{id}',
+          '/playlist/update/${id}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+    final value = _result.data!;
+    return value;
+  }
+
+  @override
+  Future<int> deletePlaylsit(int id) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<int>(_setStreamType<int>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/playlist/del/${id}',
           queryParameters: queryParameters,
           data: _data,
         )

@@ -188,22 +188,7 @@ class _HomePageState extends State<HomePage> {
                   onSelected: (Menu item) async {
                     switch (item) {
                       case Menu.remove:
-                        try {
-                          log(profile.wpid.toString());
-                          var responseCode = await wpService
-                              .deleteWorkoutProfileByWpid(profile.wpid);
-                          log(responseCode.toString());
-                          if (responseCode == 1) {
-                            log("Profile deleted successfully. Response code: $responseCode");
-                            setState(() {
-                              loadData = loadDataAsync();
-                            });
-                          } else {
-                            log("Failed to delete profile. Response code: $responseCode");
-                          }
-                        } catch (e) {
-                          log("Error: $e");
-                        }
+                        delProfile(profile.wpid);
                         break;
                     }
                   },
@@ -310,6 +295,24 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> delProfile(wpid) async {
+    try {
+      log(wpid.toString());
+      var responseCode =
+          await wpService.deleteWorkoutProfileByWpid(wpid);
+      log(responseCode.toString());
+      if (responseCode == 1) {
+        log("Profile deleted successfully. Response code: $responseCode");
+        setState(() {
+          loadData = loadDataAsync();
+        });
+      } else {
+        log("Failed to delete profile. Response code: $responseCode");
+      }
+    } catch (e) {
+      log("Error: $e");
+    }
+  }
   // //ปุ่ม Sign Out การออกจากระบบ
   // Widget _googleSignInButton() {
   //   return Center(
