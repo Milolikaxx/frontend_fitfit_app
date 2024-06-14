@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getTextMusicName(List<WorkoutMusictype> musicTypes) {
-    return Wrap(
+    return Row(
       children: musicTypes
           .asMap()
           .map((index, musicType) {
@@ -106,20 +106,18 @@ class _HomePageState extends State<HomePage> {
 
             return MapEntry(
               index,
-              Flexible(
-                child: Text(
-                  text,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                    shadows: <Shadow>[
-                      Shadow(
-                        offset: Offset(1, 1),
-                        blurRadius: 5.0,
-                        color: Colors.black,
-                      ),
-                    ],
-                  ),
+              Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  shadows: <Shadow>[
+                    Shadow(
+                      offset: Offset(1, 1),
+                      blurRadius: 5.0,
+                      color: Colors.black,
+                    ),
+                  ],
                 ),
               ),
             );
