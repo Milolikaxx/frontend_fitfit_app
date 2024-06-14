@@ -21,5 +21,5 @@ abstract class WorkoutProfileService {
       @Path() int id);
 
   @DELETE("/workprofile/delprofile/{id}")
-  Future<WorkoutProfileGetResponse> deleteWorkoutProfileByWpid(int id);
+  Future<int> deleteWorkoutProfileByWpid(@Path() int id);
 }
