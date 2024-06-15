@@ -5,13 +5,14 @@ import 'package:frontend_fitfit_app/model/request/workoutMusicType_post_req.dart
 import 'package:frontend_fitfit_app/model/request/workoutProfile_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/musictype_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
-import 'package:frontend_fitfit_app/pages/editplaylistmusic_after_create.dart';
-import 'package:frontend_fitfit_app/pages/playlist_after_create.dart';
+import 'package:frontend_fitfit_app/pages/playlistAfterCreate/editplaylistmusic_after_create.dart';
+import 'package:frontend_fitfit_app/pages/playlistAfterCreate/playlist_after_create.dart';
 import 'package:frontend_fitfit_app/service/api/musictype.dart';
 import 'package:frontend_fitfit_app/service/api/workout_musictype.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
@@ -68,8 +69,14 @@ class _AddProfilePageState extends State<AddProfilePage> {
             future: loadData,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-                return const CircularProgressIndicator();
+               return Center(
+                   child: LoadingAnimationWidget.beat(
+                    color: Colors.white,
+                    size: 50,
+                  ),
+                );
               }
+             
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10, top: 50),

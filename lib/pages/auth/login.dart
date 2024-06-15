@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/request/user_login_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
+import 'package:frontend_fitfit_app/pages/register/signup.dart';
 
-import 'package:frontend_fitfit_app/pages/signup.dart';
+
 import 'package:frontend_fitfit_app/service/api/user.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';

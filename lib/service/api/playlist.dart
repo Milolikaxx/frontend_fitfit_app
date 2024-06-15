@@ -15,11 +15,15 @@ abstract class PlaylistService {
   Future<int> addPlaylsit(@Body() PlaylsitPostRequest add);
 
   @GET("/playlist/wp/{id}")
-  Future<List<PlaylsitlInWorkoutprofileGetResponse>> getPlaylistByWpid(
+  Future<List<PlaylistInWorkoutprofileGetResponse>> getPlaylistByWpid(
     @Path() int id,
   );
   @GET("/playlist/{id}")
   Future<PlaylsitMusicGetResponse> getPlaylistMusicByPid(
+    @Path() int id,
+  );
+@GET("/playlist/nomusic/{id}")
+  Future<PlaylistInWorkoutprofileGetResponse> getPlaylistWithOutMusicByPid(
     @Path() int id,
   );
 
