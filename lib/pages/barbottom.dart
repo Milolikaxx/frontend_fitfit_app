@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_fitfit_app/pages/accountpage.dart';
-import 'package:frontend_fitfit_app/pages/add_profile.dart';
-import 'package:frontend_fitfit_app/pages/exercise.dart';
-import 'package:frontend_fitfit_app/pages/home.dart';
-import 'package:frontend_fitfit_app/pages/social.dart';
+import 'package:frontend_fitfit_app/pages/user/accountpage.dart';
+import 'package:frontend_fitfit_app/pages/workoutProfile/add_profile.dart';
+import 'package:frontend_fitfit_app/pages/exerciseHistory/exercise.dart';
+import 'package:frontend_fitfit_app/pages/home/home.dart';
+import 'package:frontend_fitfit_app/pages/socail/social.dart';
 
 class Barbottom extends StatefulWidget {
   const Barbottom({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
-import 'package:frontend_fitfit_app/pages/accountpage.dart';
-import 'package:frontend_fitfit_app/pages/editpasswordpage.dart';
+import 'package:frontend_fitfit_app/pages/user/accountpage.dart';
+import 'package:frontend_fitfit_app/pages/user/editpasswordpage.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart';

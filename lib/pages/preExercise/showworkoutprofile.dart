@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
-import 'package:frontend_fitfit_app/pages/edit_playlsitpage.dart';
-import 'package:frontend_fitfit_app/pages/music_playlsitpage.dart';
+import 'package:frontend_fitfit_app/pages/playlsit/edit_playlsitpage.dart';
+import 'package:frontend_fitfit_app/pages/playlsitMusic/music_playlsitpage.dart';
+import 'package:frontend_fitfit_app/pages/share/post.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class ShowWorkoutProfilePage extends StatefulWidget {
   int idx = 0;
   ShowWorkoutProfilePage(this.idx, {super.key});
@@ -28,7 +31,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   late var loadData;
   late WorkoutProfileService wpService;
   late PlaylistService playlsitService;
-  List<PlaylsitlInWorkoutprofileGetResponse> playlistWp = [];
+  List<PlaylistInWorkoutprofileGetResponse> playlistWp = [];
   @override
   void initState() {
     super.initState();
@@ -65,6 +68,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
           ),
         ),
         body: RefreshIndicator(
+          color: const Color(0xFFF8721D),
           onRefresh: () async {
             setState(() {
               loadData = loadDataAsync();
@@ -74,7 +78,12 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
               future: loadData,
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: LoadingAnimationWidget.beat(
+                      color: Colors.white,
+                      size: 50,
+                    ),
+                  );
                 }
 
                 return Column(
@@ -257,7 +266,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
     );
   }
 
-  Widget playlistAll(PlaylsitlInWorkoutprofileGetResponse pl) {
+  Widget playlistAll(PlaylistInWorkoutprofileGetResponse pl) {
     return Padding(
       padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: Container(
@@ -307,6 +316,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                           Get.to(() => MusicPlaylistPage(pl.pid));
                           break;
                         case Menu.share:
+                          Get.to(() => const PostPage());
                           break;
                         case Menu.remove:
                           delPlaylist(pl.pid);
@@ -332,7 +342,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                           title: Text('แชร์'),
                         ),
                       ),
-                  
+
                       // const PopupMenuDivider(),
                       const PopupMenuItem<Menu>(
                         value: Menu.remove,

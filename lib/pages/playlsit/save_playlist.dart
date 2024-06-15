@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_detail_post_req.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
@@ -74,22 +73,17 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 padding: const EdgeInsets.only(top: 20),
                 child: TextFormField(
                   controller: namePlController,
-                  // validator: (value) {
-                  //   if (value == null || value.isEmpty) {
-                  //     log('no');
-                  //     return 'กรุณากรอกชื่อรายการเพลงของคุณ';
-                  //   }
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      log('no');
+                      return 'กรุณากรอกชื่อรายการเพลงของคุณ';
+                    }
 
-                  //   if (value.length > 50) {
-                  //     return 'กรุณากรอกชื่อรายการเพลงของคุณที่มีความยาวไม่เกิน 50 ตัวอักษร';
-                  //   }
-
-                  //   return null;
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: '* ชื่อต้องไม่เป็นค่าว่าง'),
-                  ]).call,
+                    return null;
+                 },
 
                   style: const TextStyle(color: Colors.white),
+                   maxLength: 50,
                   decoration: const InputDecoration(
                     hintText: 'ชื่อรายการเพลง',
                     hintStyle: TextStyle(color: Colors.white),

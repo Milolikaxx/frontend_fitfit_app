@@ -5,12 +5,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
-import 'package:frontend_fitfit_app/pages/editplaylistmusic_after_create.dart';
-import 'package:frontend_fitfit_app/pages/save_playlist.dart';
+import 'package:frontend_fitfit_app/pages/playlistAfterCreate/editplaylistmusic_after_create.dart';
+import 'package:frontend_fitfit_app/pages/playlsit/save_playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -99,29 +100,38 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
             future: loadData,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                  child: LoadingAnimationWidget.beat(
+                    color: Colors.black,
+                    size: 50,
+                  ),
+                );
               }
               return RefreshIndicator(
-                  onRefresh: () async {
-                    // loadData = loadDataAsync();
-                  },
-                  child: Column(
-                    children: [
-                      musicGraph(),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 100, right: 35),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Title"),
-                            Icon(Icons.access_time_rounded,
-                                color: Colors.black),
-                          ],
-                        ),
+                color: const Color(0xFFF8721D),
+                onRefresh: () async {
+                  setState(() {
+                    loadData = loadDataAsync();
+                  });
+                },
+                child: Column(
+                  children: [
+                    musicGraph(),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 100, right: 35),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Title"),
+                          Icon(Icons.access_time_rounded,
+                              color: Colors.black),
+                        ],
                       ),
-                      listMusic(),
-                    ],
-                  ));
+                    ),
+                    listMusic(),
+                  ],
+                ),
+              );
             }));
   }
 

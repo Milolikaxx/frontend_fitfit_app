@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:frontend_fitfit_app/model/request/playlist_put_req.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
-import 'package:frontend_fitfit_app/pages/showworkoutprofile.dart';
+import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
+import 'package:frontend_fitfit_app/pages/preExercise/showworkoutprofile.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -25,7 +26,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
   final namePlController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late PlaylistService playlsitService;
-  late PlaylsitMusicGetResponse dePlaylist;
+  late PlaylistInWorkoutprofileGetResponse dePlaylist;
   late var loadData;
   @override
   void initState() {
@@ -35,7 +36,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
   }
 
   loadDataAsync() async {
-    dePlaylist = await playlsitService.getPlaylistMusicByPid(widget.pid);
+    dePlaylist = await playlsitService.getPlaylistWithOutMusicByPid(widget.pid);
   }
 
   @override
@@ -57,11 +58,18 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
               if (snapshot.connectionState != ConnectionState.done) {
                 return const Center(child: CircularProgressIndicator());
               }
-              return uiEditPlaylist(dePlaylist);
+              return RefreshIndicator(
+                  color: const Color(0xFFF8721D),
+                  onRefresh: () async {
+                    setState(() {
+                      loadData = loadDataAsync();
+                    });
+                  },
+                  child: uiEditPlaylist(dePlaylist));
             }));
   }
 
-  Widget uiEditPlaylist(PlaylsitMusicGetResponse dePlaylist) {
+  Widget uiEditPlaylist(PlaylistInWorkoutprofileGetResponse dePlaylist) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),

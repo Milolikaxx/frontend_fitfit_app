@@ -8,7 +8,7 @@ import 'package:frontend_fitfit_app/service/api/user.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:flutter/material.dart';
-import 'package:frontend_fitfit_app/pages/login.dart';
+import 'package:frontend_fitfit_app/pages/auth/login.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

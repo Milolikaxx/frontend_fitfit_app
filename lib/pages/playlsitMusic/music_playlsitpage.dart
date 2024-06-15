@@ -10,6 +10,7 @@ import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -87,11 +88,19 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
             future: loadData,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                  child: LoadingAnimationWidget.beat(
+                    color: Colors.black,
+                    size: 50,
+                  ),
+                );
               }
-              return RefreshIndicator(
+              return  RefreshIndicator(
+                  color: const Color(0xFFF8721D),
                   onRefresh: () async {
-                    loadData = loadDataAsync();
+                    setState(() {
+                      loadData = loadDataAsync();
+                    });
                   },
                   child: Column(
                     children: [

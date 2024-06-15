@@ -3,8 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
-import 'package:frontend_fitfit_app/pages/save_playlist.dart';
+import 'package:frontend_fitfit_app/pages/playlsit/save_playlist.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 // ignore: must_be_immutable
@@ -89,9 +90,15 @@ class _EditPlaylistMusicAfterCreatePageState
             future: loadData,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                  child: LoadingAnimationWidget.beat(
+                    color: Colors.black,
+                    size: 50,
+                  ),
+                );
               }
               return RefreshIndicator(
+                  color: const Color(0xFFF8721D), 
                   onRefresh: () async {},
                   child: Column(
                     children: [

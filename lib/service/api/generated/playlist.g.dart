@@ -46,14 +46,14 @@ class _PlaylistService implements PlaylistService {
   }
 
   @override
-  Future<List<PlaylsitlInWorkoutprofileGetResponse>> getPlaylistByWpid(
+  Future<List<PlaylistInWorkoutprofileGetResponse>> getPlaylistByWpid(
       int id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<PlaylsitlInWorkoutprofileGetResponse>>(Options(
+        _setStreamType<List<PlaylistInWorkoutprofileGetResponse>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -70,7 +70,7 @@ class _PlaylistService implements PlaylistService {
               baseUrl,
             ))));
     var value = _result.data!
-        .map((dynamic i) => PlaylsitlInWorkoutprofileGetResponse.fromJson(
+        .map((dynamic i) => PlaylistInWorkoutprofileGetResponse.fromJson(
             i as Map<String, dynamic>))
         .toList();
     return value;
@@ -100,6 +100,34 @@ class _PlaylistService implements PlaylistService {
               baseUrl,
             ))));
     final value = PlaylsitMusicGetResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<PlaylistInWorkoutprofileGetResponse> getPlaylistWithOutMusicByPid(
+      int id) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<PlaylistInWorkoutprofileGetResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/playlist/nomusic/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = PlaylistInWorkoutprofileGetResponse.fromJson(_result.data!);
     return value;
   }
 

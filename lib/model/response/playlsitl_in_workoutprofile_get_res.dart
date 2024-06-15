@@ -4,17 +4,17 @@
 
 import 'dart:convert';
 
-List<PlaylsitlInWorkoutprofileGetResponse>
+List<PlaylistInWorkoutprofileGetResponse>
     playlsitlInWorkoutprofileGetResponseFromJson(String str) =>
-        List<PlaylsitlInWorkoutprofileGetResponse>.from(json
+        List<PlaylistInWorkoutprofileGetResponse>.from(json
             .decode(str)
-            .map((x) => PlaylsitlInWorkoutprofileGetResponse.fromJson(x)));
+            .map((x) => PlaylistInWorkoutprofileGetResponse.fromJson(x)));
 
 String playlsitlInWorkoutprofileGetResponseToJson(
-        List<PlaylsitlInWorkoutprofileGetResponse> data) =>
+        List<PlaylistInWorkoutprofileGetResponse> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class PlaylsitlInWorkoutprofileGetResponse {
+class PlaylistInWorkoutprofileGetResponse {
   int pid;
   int wpid;
   String playlistName;
@@ -24,7 +24,7 @@ class PlaylsitlInWorkoutprofileGetResponse {
   DateTime updatedAt;
   dynamic playlistDetail;
 
-  PlaylsitlInWorkoutprofileGetResponse({
+  PlaylistInWorkoutprofileGetResponse({
     required this.pid,
     required this.wpid,
     required this.playlistName,
@@ -35,9 +35,9 @@ class PlaylsitlInWorkoutprofileGetResponse {
     required this.playlistDetail,
   });
 
-  factory PlaylsitlInWorkoutprofileGetResponse.fromJson(
+  factory PlaylistInWorkoutprofileGetResponse.fromJson(
           Map<String, dynamic> json) =>
-      PlaylsitlInWorkoutprofileGetResponse(
+      PlaylistInWorkoutprofileGetResponse(
         pid: json["Pid"],
         wpid: json["Wpid"],
         playlistName: json["PlaylistName"],

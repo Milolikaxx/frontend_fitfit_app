@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_fitfit_app/pages/login.dart';
-import 'package:frontend_fitfit_app/pages/signup.dart';
+import 'package:frontend_fitfit_app/pages/auth/login.dart';
+import 'package:frontend_fitfit_app/pages/register/signup.dart';
 import 'package:get/get.dart';
 
 class WelcomePage extends StatefulWidget {

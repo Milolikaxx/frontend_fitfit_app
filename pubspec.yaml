@@ -60,8 +60,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   firebase_storage: ^11.6.9
-  readmore: ^3.0.0
-  form_field_validator: ^1.1.0
+  loading_animation_widget: ^1.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

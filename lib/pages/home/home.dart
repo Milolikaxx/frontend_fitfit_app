@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
-import 'package:frontend_fitfit_app/pages/showworkoutprofile.dart';
+import 'package:frontend_fitfit_app/pages/preExercise/showworkoutprofile.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -67,9 +68,15 @@ class _HomePageState extends State<HomePage> {
             future: loadData,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                   child: LoadingAnimationWidget.beat(
+                    color: Colors.white,
+                    size: 50,
+                  ),
+                );
               }
               return RefreshIndicator(
+                  color: const Color(0xFFF8721D), // เปลี่ยนสีของ RefreshIndicator
                 onRefresh: () async {
                   setState(() {
                     loadData = loadDataAsync();
@@ -298,8 +305,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> delProfile(wpid) async {
     try {
       log(wpid.toString());
-      var responseCode =
-          await wpService.deleteWorkoutProfileByWpid(wpid);
+      var responseCode = await wpService.deleteWorkoutProfileByWpid(wpid);
       log(responseCode.toString());
       if (responseCode == 1) {
         log("Profile deleted successfully. Response code: $responseCode");

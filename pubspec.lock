@@ -396,14 +396,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "10.7.0"
-  form_field_validator:
-    dependency: "direct main"
-    description:
-      name: form_field_validator
-      sha256: c1fc6c89b5525288c02fe989a88c6f30bb6072da4f9dded17a04cf68c4abfb87
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   frontend_server_client:
     dependency: transitive
     description:
@@ -636,6 +628,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  loading_animation_widget:
+    dependency: "direct main"
+    description:
+      name: loading_animation_widget
+      sha256: ee3659035528d19145d50cf0107632bf647e7306c88b6a32f35f3bed63f6d728
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
   logging:
     dependency: transitive
     description:
@@ -820,14 +820,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.3"
-  readmore:
-    dependency: "direct main"
-    description:
-      name: readmore
-      sha256: e8fca2bd397b86342483b409e2ec26f06560a5963aceaa39b27f30722b506187
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   retrofit:
     dependency: "direct main"
     description:
