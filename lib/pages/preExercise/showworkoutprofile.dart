@@ -6,6 +6,7 @@ import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_g
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
 import 'package:frontend_fitfit_app/pages/playlsit/edit_playlsitpage.dart';
 import 'package:frontend_fitfit_app/pages/playlsitMusic/music_playlsitpage.dart';
+import 'package:frontend_fitfit_app/pages/preExercise/preExercise.dart';
 import 'package:frontend_fitfit_app/pages/share/post.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
@@ -269,101 +270,111 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   Widget playlistAll(PlaylistInWorkoutprofileGetResponse pl) {
     return Padding(
       padding: const EdgeInsets.only(top: 5, bottom: 5),
-      child: Container(
-        width: 350,
-        decoration: const BoxDecoration(
-          color: Color(0xff2E2F33),
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        padding: const EdgeInsets.only(right: 20),
-        child: Row(
-          children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(pl.imagePlaylist),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(4),
-                    bottomLeft: Radius.circular(4)),
-              ),
+      child: InkWell(
+        onTap: () {
+          Get.to(() =>  PreExercisePage(pl.wpid,pl.pid));
+          // setState(() {
+          //    cardColor = Colors.orange;
+          // });
+        },
+        child: Card(
+          child: Container(
+            width: 350,
+            decoration: const BoxDecoration(
+              color: Color(0xff2E2F33),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
-            const SizedBox(
-              width: 10,
-            ),
-            Flexible(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(pl.playlistName,
-                      style: const TextStyle(
-                          color: Color(0xffffffff),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          fontStyle: FontStyle.normal,
-                          overflow: TextOverflow.clip)),
-                  PopupMenuButton<Menu>(
-                    icon: const Icon(
-                      Icons.more_vert,
-                      color: Colors.white,
+            padding: const EdgeInsets.only(right: 20),
+            child: Row(
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(pl.imagePlaylist),
+                      fit: BoxFit.cover,
                     ),
-                    onSelected: (Menu item) {
-                      switch (item) {
-                        case Menu.preview:
-                          Get.to(() => MusicPlaylistPage(pl.pid));
-                          break;
-                        case Menu.share:
-                          Get.to(() => const PostPage());
-                          break;
-                        case Menu.remove:
-                          delPlaylist(pl.pid);
-                          break;
-                        case Menu.edit:
-                          Get.to(() => EditPlaylistPage(pl.pid));
-                          break;
-                      }
-                    },
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<Menu>>[
-                      const PopupMenuItem<Menu>(
-                        value: Menu.preview,
-                        child: ListTile(
-                          leading: Icon(Icons.visibility_outlined),
-                          title: Text('ดูเพลงในเพลย์ลิสต์'),
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(4),
+                        bottomLeft: Radius.circular(4)),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Flexible(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(pl.playlistName,
+                          style: const TextStyle(
+                              color: Color(0xffffffff),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              fontStyle: FontStyle.normal,
+                              overflow: TextOverflow.clip)),
+                      PopupMenuButton<Menu>(
+                        icon: const Icon(
+                          Icons.more_vert,
+                          color: Colors.white,
                         ),
-                      ),
-                      const PopupMenuItem<Menu>(
-                        value: Menu.share,
-                        child: ListTile(
-                          leading: Icon(Icons.share_outlined),
-                          title: Text('แชร์'),
-                        ),
-                      ),
+                        onSelected: (Menu item) {
+                          switch (item) {
+                            case Menu.preview:
+                              Get.to(() => MusicPlaylistPage(pl.pid));
+                              break;
+                            case Menu.share:
+                              Get.to(() => const PostPage());
+                              break;
+                            case Menu.remove:
+                              delPlaylist(pl.pid);
+                              break;
+                            case Menu.edit:
+                              Get.to(() => EditPlaylistPage(pl.pid));
+                              break;
+                          }
+                        },
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<Menu>>[
+                          const PopupMenuItem<Menu>(
+                            value: Menu.preview,
+                            child: ListTile(
+                              leading: Icon(Icons.visibility_outlined),
+                              title: Text('ดูเพลงในเพลย์ลิสต์'),
+                            ),
+                          ),
+                          const PopupMenuItem<Menu>(
+                            value: Menu.share,
+                            child: ListTile(
+                              leading: Icon(Icons.share_outlined),
+                              title: Text('แชร์'),
+                            ),
+                          ),
 
-                      // const PopupMenuDivider(),
-                      const PopupMenuItem<Menu>(
-                        value: Menu.remove,
-                        child: ListTile(
-                          leading: Icon(Icons.delete_outline),
-                          title: Text('ลบ'),
-                        ),
-                      ),
-                      const PopupMenuItem<Menu>(
-                        value: Menu.edit,
-                        child: ListTile(
-                          leading: Icon(Icons.edit_outlined),
-                          title: Text('แก้ไข'),
-                        ),
+                          // const PopupMenuDivider(),
+                          const PopupMenuItem<Menu>(
+                            value: Menu.remove,
+                            child: ListTile(
+                              leading: Icon(Icons.delete_outline),
+                              title: Text('ลบ'),
+                            ),
+                          ),
+                          const PopupMenuItem<Menu>(
+                            value: Menu.edit,
+                            child: ListTile(
+                              leading: Icon(Icons.edit_outlined),
+                              title: Text('แก้ไข'),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
