@@ -106,25 +106,27 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                     children: [
                       Container(
                         width: width,
-                        height: 250,
                         color: Colors.black,
-                        child: Column(
-                          children: [
-                            Image.network(
-                              music_pl.imagePlaylist,
-                              width: 200,
-                            ),
-                            Text(
-                              "${music_pl.playlistName} ",
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 20),
-                            ),
-                            Text(
-                              "playlsit by ${user.name} ",
-                              style: const TextStyle(
-                                  color: Colors.grey, fontSize: 16),
-                            ),
-                          ],
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                          child: Column(
+                            children: [
+                              Image.network(
+                                music_pl.imagePlaylist,
+                                width: 200,
+                              ),
+                              Text(
+                                "${music_pl.playlistName} ",
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                              ),
+                              Text(
+                                "playlsit by ${user.name} ",
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 16),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(

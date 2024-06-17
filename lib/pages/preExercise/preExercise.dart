@@ -2,11 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
-import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
-import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
+
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -21,41 +21,35 @@ class PreExercisePage extends StatefulWidget {
 }
 
 class _PreExercisePageState extends State<PreExercisePage> {
-  late WorkoutProfileGetResponse profile;
   late var loadData;
-  late WorkoutProfileService wpService;
   late PlaylistService playlsitService;
-  late PlaylistInWorkoutprofileGetResponse dePlaylist;
+  late PlaylistWithWorkoutGetResponse dePlaylist;
   @override
   void initState() {
     super.initState();
-    wpService = context.read<AppData>().workoutProfileService;
     playlsitService = context.read<AppData>().playlistService;
     loadData = loadDataAsync();
   }
 
   loadDataAsync() async {
     try {
-      profile = await wpService.getProfileByWpid(widget.wpid);
-    } catch (e) {
-      log(e.toString());
-    } finally {
       dePlaylist =
           await playlsitService.getPlaylistWithOutMusicByPid(widget.pid);
+    } catch (e) {
+      log(e.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.black,
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back_ios,
-              color: Color(0xFFF8721D),
-              
+              color:  Colors.white,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -84,7 +78,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
                 return Expanded(
                   child: Column(
                     children: [
-                      cardDetailsWp(profile),
+                      cardDetailsWp(dePlaylist),
                       const SizedBox(
                         height: 10,
                       ),
@@ -96,9 +90,9 @@ class _PreExercisePageState extends State<PreExercisePage> {
         ));
   }
 
-  Widget cardDetailsWp(WorkoutProfileGetResponse profile) {
+  Widget cardDetailsWp(PlaylistWithWorkoutGetResponse playlsit) {
     String levelDescription;
-    switch (profile.levelExercise) {
+    switch (playlsit.workoutProfile.levelExercise) {
       case 5:
         levelDescription = 'หนักมาก';
         break;
@@ -123,7 +117,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
         width: 350,
         padding: const EdgeInsets.only(top: 5),
         decoration: ShapeDecoration(
-          color: const Color(0xFFF8721D),
+          color: Colors.white,
           // color: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -137,7 +131,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white),
+                  color: Colors.black),
             ),
             const SizedBox(
               height: 10,
@@ -147,15 +141,15 @@ class _PreExercisePageState extends State<PreExercisePage> {
               children: [
                 const FaIcon(
                   FontAwesomeIcons.clock,
-                  color: Colors.white,
+                  color: Colors.black,
                   size: 20,
                 ),
                 const SizedBox(
                   width: 9,
                 ),
                 Text(
-                  "${profile.duration} นาที ",
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                  "${playlsit.workoutProfile.duration} นาที ",
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
                 ),
               ],
             ),
@@ -164,14 +158,14 @@ class _PreExercisePageState extends State<PreExercisePage> {
               children: [
                 const FaIcon(
                   FontAwesomeIcons.personRunning,
-                  color: Colors.white,
+                  color: Colors.black,
                   size: 20,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    profile.exerciseType,
-                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                    playlsit.workoutProfile.exerciseType,
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
                   ),
                 ),
               ],
@@ -181,17 +175,17 @@ class _PreExercisePageState extends State<PreExercisePage> {
               children: [
                 const FaIcon(
                   FontAwesomeIcons.chartColumn,
-                  color: Colors.white,
+                  color: Colors.black,
                   size: 20,
                 ),
                 const SizedBox(
                   width: 10,
                 ),
                 Text(
-                  profile.levelExercise > 0
-                      ? 'Lv.${profile.levelExercise} $levelDescription'
+                  playlsit.workoutProfile.levelExercise > 0
+                      ? 'Lv.${playlsit.workoutProfile.levelExercise} $levelDescription'
                       : '',
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
                 ),
               ],
             ),
@@ -200,13 +194,13 @@ class _PreExercisePageState extends State<PreExercisePage> {
               children: [
                 const FaIcon(
                   FontAwesomeIcons.music,
-                  color: Colors.white,
+                  color: Colors.black,
                   size: 20,
                 ),
                 const SizedBox(
                   width: 10,
                 ),
-                getTextMusicName(profile.workoutMusictype)
+                getTextMusicName(playlsit.workoutProfile.workoutMusictype)
               ],
             ),
           ]),
@@ -232,7 +226,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
                   text,
                   style: const TextStyle(
                     fontSize: 16,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               );
@@ -241,7 +235,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
             .toList());
   }
 
-  Widget playlsitWork(PlaylistInWorkoutprofileGetResponse dePlaylist) {
+  Widget playlsitWork(PlaylistWithWorkoutGetResponse dePlaylist) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -251,47 +245,22 @@ class _PreExercisePageState extends State<PreExercisePage> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w400,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
         const SizedBox(
           height: 10,
         ),
-        Container(
-          width: 350,
-          height: 250,
-          decoration: BoxDecoration(
-              // border: Border.all(width: 3, color: Colors.white),
-              borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-              shape: BoxShape.rectangle,
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                  image: NetworkImage(dePlaylist.imagePlaylist))),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  dePlaylist.playlistName,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                  ),
-                ),
-                const Icon(
-                  Icons.playlist_play_rounded,
-                  size: 30,
-                  color: Colors.white,
-                ),
-              ],
-            ),
-          ),
-        ),
+        GestureDetector(
+            // onTap: () => _openDestinationPage(context),
+            child: _buildFeaturedItem(
+          image: dePlaylist.imagePlaylist,
+          title: dePlaylist.playlistName,
+        )),
         Padding(
-          padding: const EdgeInsets.only(top:20 ,),
+          padding: const EdgeInsets.only(
+            top: 20,
+          ),
           child: ElevatedButton(
             onPressed: () {
               // Get.to(() => const SignUpPage());
@@ -313,6 +282,57 @@ class _PreExercisePageState extends State<PreExercisePage> {
           ),
         ),
       ],
+    );
+  }
+
+  Container _buildFeaturedItem({required String image, required String title}) {
+    return Container(
+      padding: const EdgeInsets.only(top: 5),
+      width: 350,
+      height: 200,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        image:DecorationImage(
+          image: NetworkImage(image),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            right: 10.0,
+            top: 10.0,
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.playlist_play_rounded,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 20.0,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              color: Colors.black.withOpacity(0.7),
+              child: Row(
+                children: [
+                  Text(
+                      title.length > 10
+                          ? '${title.substring(0, 10)}...'
+                          : title,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
