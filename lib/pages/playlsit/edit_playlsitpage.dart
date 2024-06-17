@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:frontend_fitfit_app/model/request/playlist_put_req.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
-import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/pages/preExercise/showworkoutprofile.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
@@ -26,7 +26,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
   final namePlController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late PlaylistService playlsitService;
-  late PlaylistInWorkoutprofileGetResponse dePlaylist;
+  late PlaylistWithWorkoutGetResponse dePlaylist;
   late var loadData;
   @override
   void initState() {
@@ -69,7 +69,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
             }));
   }
 
-  Widget uiEditPlaylist(PlaylistInWorkoutprofileGetResponse dePlaylist) {
+  Widget uiEditPlaylist(PlaylistWithWorkoutGetResponse dePlaylist) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),

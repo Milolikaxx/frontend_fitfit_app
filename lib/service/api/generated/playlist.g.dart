@@ -46,14 +46,13 @@ class _PlaylistService implements PlaylistService {
   }
 
   @override
-  Future<List<PlaylistInWorkoutprofileGetResponse>> getPlaylistByWpid(
-      int id) async {
+  Future<List<PlaylistWithWorkoutGetResponse>> getPlaylistByWpid(int id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<PlaylistInWorkoutprofileGetResponse>>(Options(
+        _setStreamType<List<PlaylistWithWorkoutGetResponse>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -70,8 +69,8 @@ class _PlaylistService implements PlaylistService {
               baseUrl,
             ))));
     var value = _result.data!
-        .map((dynamic i) => PlaylistInWorkoutprofileGetResponse.fromJson(
-            i as Map<String, dynamic>))
+        .map((dynamic i) =>
+            PlaylistWithWorkoutGetResponse.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
   }
@@ -104,14 +103,14 @@ class _PlaylistService implements PlaylistService {
   }
 
   @override
-  Future<PlaylistInWorkoutprofileGetResponse> getPlaylistWithOutMusicByPid(
+  Future<PlaylistWithWorkoutGetResponse> getPlaylistWithOutMusicByPid(
       int id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<PlaylistInWorkoutprofileGetResponse>(Options(
+        _setStreamType<PlaylistWithWorkoutGetResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -127,7 +126,7 @@ class _PlaylistService implements PlaylistService {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = PlaylistInWorkoutprofileGetResponse.fromJson(_result.data!);
+    final value = PlaylistWithWorkoutGetResponse.fromJson(_result.data!);
     return value;
   }
 

@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:frontend_fitfit_app/model/request/playlist_put_req.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
-import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'generated/playlist.g.dart';
@@ -15,7 +15,7 @@ abstract class PlaylistService {
   Future<int> addPlaylsit(@Body() PlaylsitPostRequest add);
 
   @GET("/playlist/wp/{id}")
-  Future<List<PlaylistInWorkoutprofileGetResponse>> getPlaylistByWpid(
+  Future<List<PlaylistWithWorkoutGetResponse>> getPlaylistByWpid(
     @Path() int id,
   );
   @GET("/playlist/{id}")
@@ -23,7 +23,7 @@ abstract class PlaylistService {
     @Path() int id,
   );
 @GET("/playlist/nomusic/{id}")
-  Future<PlaylistInWorkoutprofileGetResponse> getPlaylistWithOutMusicByPid(
+  Future<PlaylistWithWorkoutGetResponse> getPlaylistWithOutMusicByPid(
     @Path() int id,
   );
 

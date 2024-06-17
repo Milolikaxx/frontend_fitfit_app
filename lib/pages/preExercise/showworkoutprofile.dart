@@ -1,9 +1,11 @@
+// ignore_for_file: library_prefixes
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:frontend_fitfit_app/model/response/playlsitl_in_workoutprofile_get_res.dart';
-import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart' as GetWP;
 import 'package:frontend_fitfit_app/pages/playlsit/edit_playlsitpage.dart';
 import 'package:frontend_fitfit_app/pages/playlsitMusic/music_playlsitpage.dart';
 import 'package:frontend_fitfit_app/pages/preExercise/preExercise.dart';
@@ -28,13 +30,13 @@ enum Menu { preview, share, remove, edit }
 
 class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   // GoogleSignInAccount? user;
-  late WorkoutProfileGetResponse profile;
+  late GetWP.WorkoutProfileGetResponse profile;
   late var loadData;
   late WorkoutProfileService wpService;
   late PlaylistService playlsitService;
-  List<PlaylistInWorkoutprofileGetResponse> playlistWp = [];
+  List<PlaylistWithWorkoutGetResponse> playlistWp = [];
   @override
-  void initState() {
+    void initState() {
     super.initState();
     wpService = context.read<AppData>().workoutProfileService;
     playlsitService = context.read<AppData>().playlistService;
@@ -42,14 +44,19 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   }
 
   loadDataAsync() async {
-    try {
+    try {  
       profile = await wpService.getProfileByWpid(widget.idx);
+      log(profile.wpid.toString()); 
+      playlistWp = await playlsitService.getPlaylistByWpid(profile.wpid);
+       if (playlistWp.isNotEmpty) {
+        log(playlistWp.first.playlistName);
+      } else {
+        log("Playlist is null or empty");
+      }
     } catch (e) {
       log(e.toString());
     } finally {
-      log(profile.wpid.toString());
-      playlistWp = await playlsitService.getPlaylistByWpid(profile.wpid);
-      log(playlistWp.first.playlistName);
+     
     }
   }
 
@@ -115,7 +122,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
         ));
   }
 
-  Widget cardDetailsWp(WorkoutProfileGetResponse profile) {
+  Widget cardDetailsWp(GetWP.WorkoutProfileGetResponse profile) {
     String levelDescription;
     switch (profile.levelExercise) {
       case 5:
@@ -231,7 +238,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
     );
   }
 
-  Widget getTextMusicName(List<WorkoutMusictype> musicTypes) {
+  Widget getTextMusicName(List<GetWP.WorkoutMusictype> musicTypes) {
     return Column(
         // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,15 +274,12 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
     );
   }
 
-  Widget playlistAll(PlaylistInWorkoutprofileGetResponse pl) {
+  Widget playlistAll(PlaylistWithWorkoutGetResponse pl) {
     return Padding(
       padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: InkWell(
         onTap: () {
           Get.to(() =>  PreExercisePage(pl.wpid,pl.pid));
-          // setState(() {
-          //    cardColor = Colors.orange;
-          // });
         },
         child: Card(
           child: Container(
@@ -303,17 +307,22 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                 const SizedBox(
                   width: 10,
                 ),
-                Flexible(
+                 Flexible(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(pl.playlistName,
-                          style: const TextStyle(
-                              color: Color(0xffffffff),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              fontStyle: FontStyle.normal,
-                              overflow: TextOverflow.clip)),
+                      Text(
+                        pl.playlistName.length > 10
+                            ? '${pl.playlistName.substring(0, 10)}...'
+                            : pl.playlistName,
+                        style: const TextStyle(
+                          color: Color(0xffffffff),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          fontStyle: FontStyle.normal,
+                          overflow: TextOverflow.clip,
+                        ),
+                      ),
                       PopupMenuButton<Menu>(
                         icon: const Icon(
                           Icons.more_vert,
@@ -325,7 +334,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                               Get.to(() => MusicPlaylistPage(pl.pid));
                               break;
                             case Menu.share:
-                              Get.to(() => const PostPage());
+                              Get.to(() =>PostPage(pl.pid));
                               break;
                             case Menu.remove:
                               delPlaylist(pl.pid);
@@ -351,7 +360,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                               title: Text('แชร์'),
                             ),
                           ),
-
+                  
                           // const PopupMenuDivider(),
                           const PopupMenuItem<Menu>(
                             value: Menu.remove,
