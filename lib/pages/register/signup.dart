@@ -449,7 +449,8 @@ class _SignUpPageState extends State<SignUpPage> {
               shape: BoxShape.circle,
               image: const DecorationImage(
                   fit: BoxFit.cover,
-                  image: AssetImage('assets/images/runner.png'))),
+                  image: AssetImage('assets/images/runner.png')),
+            ),
         ),
         Positioned(
             bottom: 0,
@@ -478,7 +479,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Container(
           width: 130,
           height: 130,
-          decoration: BoxDecoration(
+            decoration: BoxDecoration(
               border: Border.all(width: 4, color: Colors.white),
               boxShadow: [
                 BoxShadow(
@@ -488,7 +489,9 @@ class _SignUpPageState extends State<SignUpPage> {
               ],
               shape: BoxShape.circle,
               image: DecorationImage(
-                  fit: BoxFit.cover, image: NetworkImage(imgPick))),
+                  fit: BoxFit.cover, image: NetworkImage(imgPick),
+              )),
+                
         ),
         Positioned(
             bottom: 0,
@@ -512,7 +515,7 @@ class _SignUpPageState extends State<SignUpPage> {
       ],
     );
   }
-
+ 
   //firebase
   File? _image;
   void pickImage() async {
