@@ -5,9 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/request/share_playlsit_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/pages/auth/login.dart';
+import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/post.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -220,6 +224,35 @@ class _PostPageState extends State<PostPage> {
       int res = await postService.addPost(post);
       if (res > 0) {
         log("add post");
+         // ignore: use_build_context_synchronously
+         showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: const Text('แชร์เพลย์ลิสต์สำเร็จ'),
+                  // content: const Text('AlertDialog description'),
+                  actions: <Widget>[
+                    ElevatedButton(
+                      onPressed: () {
+                        Get.to(() => const Barbottom());
+                      },
+                      style: ButtonStyle(
+                        
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFFF8721D)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'ตกลง',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ));
       }
     } catch (e) {
       log(e.toString());
