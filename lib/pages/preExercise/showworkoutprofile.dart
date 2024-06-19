@@ -94,29 +94,32 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                   );
                 }
 
-                return Column(
-                  children: [
-                    cardDetailsWp(profile),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    (playlistWp.isNotEmpty)
-                        ? const Text(
-                            'เพลย์ลิสต์เพลงของฉัน',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          )
-                        : const Text(""),
-                    (playlistWp.isNotEmpty)
-                        ? list()
-                        : const Text('ยังไม่มีเพลย์ลิสต์เพลง',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold)),
-                  ],
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      cardDetailsWp(profile),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      (playlistWp.isNotEmpty)
+                          ? const Text(
+                              'เพลย์ลิสต์เพลงของฉัน',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          : const Text(""),
+                      (playlistWp.isNotEmpty)
+                          ? list()
+                          : const Text('ยังไม่มีเพลย์ลิสต์เพลง',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                 );
               }),
         ));
@@ -156,7 +159,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(30),
           child: Column(children: [
             const Text(
               'ข้อมูลโปรไฟล์ออกกำลังกาย',
@@ -267,7 +270,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   Widget list() {
     return Expanded(
       child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         itemCount: playlistWp.isEmpty ? 0 : playlistWp.length,
         itemBuilder: (context, index) => playlistAll(playlistWp[index]),
       ),

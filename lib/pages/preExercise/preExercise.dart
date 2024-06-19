@@ -77,14 +77,17 @@ class _PreExercisePageState extends State<PreExercisePage> {
                 }
 
                 return Expanded(
-                  child: Column(
-                    children: [
-                      cardDetailsWp(dePlaylist),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      playlsitWork(dePlaylist)
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        cardDetailsWp(dePlaylist),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        playlsitWork(dePlaylist)
+                      ],
+                    ),
                   ),
                 );
               }),
