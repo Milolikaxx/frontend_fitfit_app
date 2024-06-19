@@ -29,12 +29,10 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   final playlist = ConcatenatingAudioSource(children: [
     AudioSource.uri(Uri.parse(
         "http://202.28.34.197:8888/contents/e0891202-9565-4602-98d6-c2b3fee0a471.mp3")),
-    // AudioSource.uri(Uri.parse(
-    //     "https://firebasestorage.googleapis.com/v0/b/equalized-audio.appspot.com/o/NewJeans%2FAttention.m4a?alt=media&token=e9119000-9f63-4c39-8661-4b00c579d407")),
-    // AudioSource.uri(Uri.parse(
-    //     "https://firebasestorage.googleapis.com/v0/b/equalized-audio.appspot.com/o/NewJeans%2FDitto.m4a?alt=media&token=438ef6e6-6509-4505-a92d-a30f70969858")),
-    // AudioSource.uri(Uri.parse(
-    //     "https://firebasestorage.googleapis.com/v0/b/equalized-audio.appspot.com/o/NewJeans%2FHurt.m4a?alt=media&token=d48989b7-3d7a-4703-b4d7-c0976bd0d2a8")),
+    AudioSource.uri(Uri.parse(
+        "http://202.28.34.197:8888/contents/53dc392b-53be-4192-aa37-60e28bd1f741.mp3")),
+    AudioSource.uri(Uri.parse(
+        "http://202.28.34.197:8888/contents/8e07089f-2288-47f0-8419-df84f46c74ab.mp3")),
   ]);
 
   Stream<PositionData> get _positionDataStream =>
@@ -225,10 +223,3 @@ class PositionData {
   final Duration bufferedPosition;
   final Duration duration;
 }
-
-// AudioSource.uri(Uri.parse(
-//     "http://202.28.34.197:8888/contents/e0891202-9565-4602-98d6-c2b3fee0a471.mp3")),
-// AudioSource.uri(Uri.parse(
-//     "http://202.28.34.197:8888/contents/53dc392b-53be-4192-aa37-60e28bd1f741.mp3")),
-// AudioSource.uri(Uri.parse(
-//     "http://202.28.34.197:8888/contents/8e07089f-2288-47f0-8419-df84f46c74ab.mp3")),
