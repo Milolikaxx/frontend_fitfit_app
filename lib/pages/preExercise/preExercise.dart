@@ -3,8 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
+import 'package:frontend_fitfit_app/pages/playMusic/play_musicpage.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
-
+import 'package:get/get.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -49,7 +50,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back_ios,
-              color:  Colors.white,
+              color: Colors.white,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -263,7 +264,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
           ),
           child: ElevatedButton(
             onPressed: () {
-              // Get.to(() => const SignUpPage());
+              Get.to(() => PlayMusicPage(dePlaylist.pid));
             },
             style: ButtonStyle(
               minimumSize: MaterialStateProperty.all<Size>(const Size(330, 50)),
@@ -292,7 +293,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
       height: 200,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        image:DecorationImage(
+        image: DecorationImage(
           image: NetworkImage(image),
           fit: BoxFit.cover,
         ),

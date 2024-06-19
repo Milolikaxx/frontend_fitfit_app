@@ -61,6 +61,11 @@ dependencies:
     sdk: flutter
   firebase_storage: ^11.6.9
   loading_animation_widget: ^1.2.1
+  flutter_timer_countdown: ^1.0.7
+  just_audio: ^0.9.38
+  audio_video_progress_bar: ^2.0.3
+  rxdart: ^0.27.7
+  http: ^1.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
