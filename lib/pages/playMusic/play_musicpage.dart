@@ -1,17 +1,21 @@
 import 'dart:developer';
+import 'dart:ffi';
 // import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
 // import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 
+// ignore: must_be_immutable
 class PlayMusicPage extends StatefulWidget {
   int pid = 0;
   PlayMusicPage(this.pid, {super.key});
@@ -20,20 +24,38 @@ class PlayMusicPage extends StatefulWidget {
   State<PlayMusicPage> createState() => _PlayMusicPageState();
 }
 
+class Musicdata {
+  final String mLink;
+  final String name;
+  final String musicImage;
+  final String artist;
+  final double duration;
+  final int bpm;
+
+  Musicdata(
+    this.mLink,
+    this.name,
+    this.musicImage,
+    this.artist,
+    this.duration,
+    this.bpm,
+  );
+}
+
 class _PlayMusicPageState extends State<PlayMusicPage> {
   late var loadData;
   late PlaylistService playlistService;
-
+  late PlaylsitMusicGetResponse music_pl;
   late AudioPlayer _audioPlayer;
   bool isPlaying = false;
-  final playlist = ConcatenatingAudioSource(children: [
-    AudioSource.uri(Uri.parse(
-        "http://202.28.34.197:8888/contents/e0891202-9565-4602-98d6-c2b3fee0a471.mp3")),
-    AudioSource.uri(Uri.parse(
-        "http://202.28.34.197:8888/contents/53dc392b-53be-4192-aa37-60e28bd1f741.mp3")),
-    AudioSource.uri(Uri.parse(
-        "http://202.28.34.197:8888/contents/8e07089f-2288-47f0-8419-df84f46c74ab.mp3")),
-  ]);
+  List<Musicdata> musicList = [];
+  ConcatenatingAudioSource? playlist;
+
+  late String currentMusicName;
+  late String currentMusicImage;
+  late String currentMusicArtist;
+  late double currentMusicDuration;
+  late int currentMusicBpm;
 
   Stream<PositionData> get _positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
@@ -51,6 +73,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   void initState() {
     super.initState();
     playlistService = context.read<AppData>().playlistService;
+
     loadData = loadDataAsync();
     _audioPlayer = AudioPlayer();
     init();
@@ -58,16 +81,47 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
 
   loadDataAsync() async {
     try {
-      await playlistService.getPlaylistWithOutMusicByPid(widget.pid);
-      log(widget.pid.toString());
+      music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
+      // log(widget.pid.toString());
     } catch (e) {
       log(e.toString());
     }
+    for (var m in music_pl.playlistDetail) {
+      musicList.add(Musicdata(m.music.mLink, m.music.name, m.music.musicImage,
+          m.music.artist, m.music.duration, m.music.bpm));
+    }
+    playlist = ConcatenatingAudioSource(
+      children: musicList
+          .map((music) => AudioSource.uri(Uri.parse(music.mLink), tag: {
+                'name': music.name,
+                'musicImage': music.musicImage,
+                'artist': music.artist,
+                'duration': music.duration,
+                'bpm': music.bpm,
+              }))
+          .toList(),
+    );
+    // for (var m in musicList) {
+    //   log(m.name);
+    // }
+    init();
   }
 
   Future<void> init() async {
     await _audioPlayer.setLoopMode(LoopMode.all);
-    await _audioPlayer.setAudioSource(playlist);
+    await _audioPlayer.setAudioSource(playlist!);
+  }
+
+  void updateCurrentMusic(int index) {
+    setState(() {
+      // Update current music data based on index
+      Musicdata currentMusic = musicList[index];
+      currentMusicName = currentMusic.name;
+      currentMusicImage = currentMusic.musicImage;
+      currentMusicArtist = currentMusic.artist;
+      currentMusicDuration = currentMusic.duration;
+      currentMusicBpm = currentMusic.bpm;
+    });
   }
 
   @override
@@ -80,19 +134,28 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Column(
+      body: FutureBuilder(
+        future: loadData,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Center(
+              child: LoadingAnimationWidget.beat(
+                color: Colors.black,
+                size: 50,
+              ),
+            );
+          }
+          return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               timerCounter(),
               circleImage(),
+              detailMusic(),
               timeBar(),
               controller(),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -129,7 +192,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
         child: Container(
           width: 280,
           height: 280,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: Colors.black,
             shape: BoxShape.circle,
             // image: DecorationImage(
@@ -139,6 +202,12 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget detailMusic() {
+    return Row(
+      children: [Text("ชื่อเพลง : ")],
     );
   }
 
@@ -187,7 +256,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
 
   Widget timeBar() {
     return SizedBox(
-      width: 200,
+      width: 250,
       child: StreamBuilder<PositionData>(
         stream: _positionDataStream,
         builder: (context, snapshot) {
