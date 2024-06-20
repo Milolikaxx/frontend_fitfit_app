@@ -342,6 +342,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
     }
 
     if (selectedTags.isEmpty) {
+      Get.snackbar('กรุณาเลือกแนวเพลง', '');
      setState(() {
        
      });

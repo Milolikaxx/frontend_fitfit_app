@@ -548,7 +548,7 @@ class _SignUpPageState extends State<SignUpPage> {
         era: EraMode.BUDDHIST_YEAR,
         context: context,
         initialDate: selectedBirthDate,
-        // firstDate: DateTime(DateTime.now().year - 100),
+        firstDate: DateTime(DateTime.now().year - 100),
         borderRadius: 10,
         height: 300,
         styleDatePicker: MaterialRoundedDatePickerStyle(
@@ -565,6 +565,7 @@ class _SignUpPageState extends State<SignUpPage> {
           decorationDateSelected: const BoxDecoration(
             color: Color(0xFFF8721D), // This is the orange color
             shape: BoxShape.circle,
+          
           ),
         ),
         theme: ThemeData(

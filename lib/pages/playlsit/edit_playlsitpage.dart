@@ -91,6 +91,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: TextFormField(
+                maxLength: 50,
                 controller: namePlController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -116,6 +117,8 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                   focusedBorder: const UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white, width: 2),
                   ),
+                   counterStyle: const TextStyle(
+                                color: Colors.white,) // สีของ maxLength counter
                 ),
               ),
             ),
