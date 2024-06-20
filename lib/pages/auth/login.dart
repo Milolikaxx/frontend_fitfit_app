@@ -1,10 +1,11 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/model/request/user_login%20google_req.dart';
 import 'package:frontend_fitfit_app/model/request/user_login_post_req.dart';
+import 'package:frontend_fitfit_app/model/request/user_register_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/register/signup.dart';
-
 
 import 'package:frontend_fitfit_app/service/api/user.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
@@ -100,7 +101,6 @@ class _LoginPageState extends State<LoginPage> {
                                   Icons.email_outlined,
                                   color: Colors.white,
                                 ),
-                                
                               ),
                             ),
                           ),
@@ -127,7 +127,6 @@ class _LoginPageState extends State<LoginPage> {
                                   prefixIcon: const Icon(
                                       Icons.lock_outline_rounded,
                                       color: Colors.white),
-                                 
                                   suffixIcon: IconButton(
                                     color: Colors.white,
                                     icon: Icon(_isPasswordVisible
@@ -249,6 +248,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
+                        // _googleSignInButton()
                       ],
                     )
                   ],
@@ -265,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState?.validate() ?? true) {
       UserLoginPostRequest loginObj = UserLoginPostRequest(
           email: emailController.text, password: passwordController.text);
-          // startLoading(context);
+      // startLoading(context);
       try {
         UserLoginPostResponse res = await userService.login(loginObj);
         if (res.uid != 0) {
@@ -296,9 +296,33 @@ class _LoginPageState extends State<LoginPage> {
       log(googleSignInAccount.id);
       log(googleSignInAccount.displayName ?? 'No Dispayname');
       log(googleSignInAccount.photoUrl ?? 'No url');
-      // Get.to(() => HomePage(user: googleSignInAccount));
+      UserLoginGooglePostRequest user = UserLoginGooglePostRequest(
+          name: googleSignInAccount.displayName.toString(),
+          email: googleSignInAccount.email,
+          imageProfile: googleSignInAccount.photoUrl ??
+              'http://202.28.34.197:8888/contents/ac11379f-1be1-46fe-ae0d-0c41ff876e24.png',
+          googleId: googleSignInAccount.id);
+      try {
+        UserLoginPostResponse res = await userService.loginGoogle(user);
+        if (res.uid != 0) {
+          log("have uid");
+          if (context.mounted) {
+            context.read<AppData>().user = res;
+          }
+          log('เข้าสู่ระบบ');
+          Get.to(() => const Barbottom());
+        } else {
+          log("not have uid");
+          Get.snackbar('เข้าสู่ระบบไม่สำเร็จ', '');
+        }
+      } catch (e) {
+        log(e.toString());
+      }
     } else {
       log('error');
     }
   }
+
+   //ปุ่ม Sign Out การออกจากระบบ
 }
+

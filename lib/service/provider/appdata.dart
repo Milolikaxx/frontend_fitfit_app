@@ -11,8 +11,8 @@ import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 
 class AppData with ChangeNotifier {
   //Api baseurl
-  String baseUrl = "http://202.28.34.197:8020";
-  // String baseUrl = "http://192.168.1.17:8080";
+  // String baseUrl = "http://202.28.34.197:8020";
+  String baseUrl = "http://192.168.1.13:8080";
   // String baseUrl = "http://172.20.10.8:8080";
 
   late UserLoginPostResponse user = UserLoginPostResponse();

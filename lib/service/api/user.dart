@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:frontend_fitfit_app/model/request/user_login%20google_req.dart';
 import 'package:frontend_fitfit_app/model/request/user_register_post_req.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:frontend_fitfit_app/model/request/user_login_post_req.dart';
@@ -14,6 +15,9 @@ abstract class UserService {
 
   @POST("/user/login")
   Future<UserLoginPostResponse> login(@Body() UserLoginPostRequest userLogin);
+
+  @POST("/user/loginGoogle")
+  Future<UserLoginPostResponse> loginGoogle(@Body() UserLoginGooglePostRequest userLoginGoogle);
 
   @PUT("/user/update/{id}")
   Future<int> edit(@Path() int id, @Body() UserEditPutRequest edituser);
