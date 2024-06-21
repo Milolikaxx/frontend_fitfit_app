@@ -1,14 +1,9 @@
-// ignore_for_file: sort_child_properties_last
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
-import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
-import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +32,8 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
   late UserLoginPostResponse user;
+  double totalDuration = 0;
+
   @override
   void initState() {
     super.initState();
@@ -47,16 +44,18 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
 
   loadDataAsync() async {
     music_pl = await playlistService.getPlaylistMusicByPid(widget.idx);
+    chartData.clear();
+    totalDuration = 0;
     for (var m in music_pl.playlistDetail) {
       chartData.add(Musicdata(m.music.duration, m.music.bpm));
+      totalDuration += m.music.duration;
     }
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -95,7 +94,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                   ),
                 );
               }
-              return  RefreshIndicator(
+              return RefreshIndicator(
                   color: const Color(0xFFF8721D),
                   onRefresh: () async {
                     setState(() {
@@ -108,39 +107,66 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                         width: width,
                         color: Colors.black,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
                           child: Column(
                             children: [
                               Image.network(
                                 music_pl.imagePlaylist,
-                                width: 200,
+                                width: 250,
                               ),
-                              Text(
-                                "${music_pl.playlistName} ",
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 16),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                        '${user.imageProfile}',
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ) , 
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${music_pl.playlistName} ($totalDuration นาที)",
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 16),
+                                    ),
+                                    Text(
+                                      "playlsit by ${user.name} ",
+                                      style: const TextStyle(
+                                          color: Colors.grey, fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                                  ],
+                                ),
                               ),
-                              Text(
-                                "playlsit by ${user.name} ",
-                                style: const TextStyle(
-                                    color: Colors.grey, fontSize: 16),
-                              ),
+                           
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      musicGraph(),
+                // musicGraph(),
                       const Padding(
-                        padding: EdgeInsets.only(left: 100, right: 35),
+                        padding: EdgeInsets.only(left: 85, right: 35,top: 5),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Title"),
+                            
+                             Text(
+                              "Title",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18),
+                            ),
                             Icon(Icons.access_time_rounded,
-                                color: Colors.black),
+                                color: Colors.black , ),
                           ],
                         ),
                       ),
@@ -152,13 +178,15 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
 
   Widget listMusic() {
     return Expanded(
-      child: ListView.builder(
-        padding: const EdgeInsets.only(bottom: 60),
-        itemCount: music_pl.playlistDetail.isEmpty
-            ? 0
-            : music_pl.playlistDetail.length,
-        itemBuilder: (context, index) =>
-            musicInfo(music_pl.playlistDetail[index]),
+      child: Expanded(
+        child: ListView.builder(
+          padding: const EdgeInsets.only(bottom: 60),
+          itemCount: music_pl.playlistDetail.isEmpty
+              ? 0
+              : music_pl.playlistDetail.length,
+          itemBuilder: (context, index) =>
+              musicInfo(music_pl.playlistDetail[index]),
+        ),
       ),
     );
   }
@@ -236,7 +264,8 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   }
 
   Widget musicGraph() {
-    return SfCartesianChart(
+    return Expanded(
+      child: SfCartesianChart(
         primaryXAxis: const CategoryAxis(),
         legend: const Legend(
           isVisible: false,
@@ -244,11 +273,14 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
         tooltipBehavior: TooltipBehavior(enable: true),
         series: <CartesianSeries<Musicdata, double>>[
           LineSeries<Musicdata, double>(
-              dataSource: chartData,
-              xValueMapper: (Musicdata m, _) => m.musictime,
-              yValueMapper: (Musicdata m, _) => m.bpm,
-              color: Colors.red,
-              dataLabelSettings: const DataLabelSettings(isVisible: false))
-        ]);
+            dataSource: chartData,
+            xValueMapper: (Musicdata m, _) => m.musictime,
+            yValueMapper: (Musicdata m, _) => m.bpm,
+            color: Colors.red,
+            dataLabelSettings: const DataLabelSettings(isVisible: false),
+          ),
+        ],
+      ),
+    );
   }
 }
