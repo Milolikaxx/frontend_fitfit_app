@@ -116,7 +116,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   }
 
   void startCountdown() {
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         countdown--;
       });
@@ -173,7 +173,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
     return Center(
       child: Text(
         '$countdown',
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white,
           fontSize: 50,
         ),
@@ -317,8 +317,8 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
             barHeight: 8,
             baseBarColor: Colors.white,
             bufferedBarColor: Colors.white70, // สีที่อ่อนลงสำหรับ buffered bar
-            progressBarColor: Colors.white,
-            thumbColor: Colors.white,
+            progressBarColor: const Color(0xFFF8721D),
+            thumbColor: const Color(0xFFF8721D),
             timeLabelTextStyle: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w600,
@@ -326,7 +326,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
             progress: positionData?.position ?? Duration.zero,
             buffered: positionData?.bufferedPosition ?? Duration.zero,
             total: positionData?.duration ?? Duration.zero,
-            onSeek: _audioPlayer.seek,
+            onSeek: null,
           );
         },
       ),

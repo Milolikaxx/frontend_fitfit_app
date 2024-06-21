@@ -25,7 +25,7 @@ class _BarbottomState extends State<Barbottom> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
+      canPop: false,
       // onPopInvoked: (didPop) async {
       //   if (didPop) {
       //     return;

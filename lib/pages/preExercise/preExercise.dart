@@ -53,7 +53,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
               color: Colors.white,
             ),
             onPressed: () {
-               Get.back();
+              Get.back();
             },
           ),
         ),
@@ -76,12 +76,22 @@ class _PreExercisePageState extends State<PreExercisePage> {
                   );
                 }
 
-                return Expanded(
+                return SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Column(
                       children: [
                         cardDetailsWp(dePlaylist),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        const Text(
+                          'เพลย์ลิสต์ที่จะใช้ออกกำลังกาย',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
                         const SizedBox(
                           height: 10,
                         ),
@@ -240,98 +250,63 @@ class _PreExercisePageState extends State<PreExercisePage> {
   }
 
   Widget playlsitWork(PlaylistWithWorkoutGetResponse dePlaylist) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Text(
-          "เพลย์ลิสต์เพลงที่ใช้ออกกำลังกาย",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w400,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        GestureDetector(
-            // onTap: () => _openDestinationPage(context),
-            child: _buildFeaturedItem(
-          image: dePlaylist.imagePlaylist,
-          title: dePlaylist.playlistName,
-        )),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 20,
-          ),
-          child: ElevatedButton(
-            onPressed: () {
-              Get.to(() => PlayMusicPage(dePlaylist.pid));
-            },
-            style: ButtonStyle(
-              minimumSize: MaterialStateProperty.all<Size>(const Size(330, 50)),
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(const Color(0xFFF8721D)),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-              ),
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      elevation: 4,
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
             ),
-            child: const Text(
-              'เริ่มออกกำลังกาย',
-              style: TextStyle(fontSize: 16, color: Colors.white),
+            child: Image.network(
+              dePlaylist.imagePlaylist,
+              height: 250,
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.cover,
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Container _buildFeaturedItem({required String image, required String title}) {
-    return Container(
-      padding: const EdgeInsets.only(top: 5),
-      width: 350,
-      height: 200,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        image: DecorationImage(
-          image: NetworkImage(image),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            right: 10.0,
-            top: 10.0,
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.playlist_play_rounded,
-                color: Colors.white,
-                size: 30,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 20.0,
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              color: Colors.black.withOpacity(0.7),
+         
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15 ,vertical: 10),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                      title.length > 10
-                          ? '${title.substring(0, 10)}...'
-                          : title,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold)),
+                    dePlaylist.playlistName.length > 15 ? "${dePlaylist.playlistName}..." : dePlaylist.playlistName,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  const Icon(
+                Icons.playlist_play_rounded,
+                color: Colors.black,
+                size: 30,
+              ),
                 ],
+              ),
+            ),
+             
+          
+           Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: ElevatedButton(
+              onPressed: () {
+                Get.to(() => PlayMusicPage(dePlaylist.pid));
+              },
+              style: ButtonStyle(
+                minimumSize:
+                    MaterialStateProperty.all<Size>(const Size(330, 50)),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(const Color(0xFFF8721D)),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+              ),
+              child: const Text(
+                'เริ่มออกกำลังกาย',
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
           ),

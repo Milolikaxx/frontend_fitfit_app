@@ -61,7 +61,7 @@ class _PostPageState extends State<PostPage> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () {
-                  Get.back();
+                Get.back();
               },
             ),
             title: const Text(
@@ -135,6 +135,13 @@ class _PostPageState extends State<PostPage> {
                         TextFormField(
                           maxLength: 50,
                           controller: desController,
+                          validator: (value) {
+                            // add email validation
+                            if (value == null || value.isEmpty) {
+                              return 'กรุณากรอกข้อความ';
+                            }
+                            return null;
+                          },
                           decoration: const InputDecoration(
                             // border: InputBorder.none,
                             hintText: 'เขียนอะไรสักอย่างสิ',
@@ -212,50 +219,62 @@ class _PostPageState extends State<PostPage> {
             }));
   }
 
+// final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   void post() async {
-    SharePlaylsitPostRequest post = SharePlaylsitPostRequest(
-        uid: user.uid!,
-        pid: dePlaylist.pid,
-        playlistName: nameController.text == ""
-            ? dePlaylist.imagePlaylist
-            : nameController.text,
-        description: desController.text);
-    try {
-      int res = await postService.addPost(post);
-      if (res > 0) {
-        log("add post");
-         // ignore: use_build_context_synchronously
-         showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                  title: const Text('แชร์เพลย์ลิสต์สำเร็จ'),
-                  // content: const Text('AlertDialog description'),
-                  actions: <Widget>[
-                    ElevatedButton(
-                      onPressed: () {
-                        Get.to(() => const Barbottom());
-                      },
-                      style: ButtonStyle(
-                        
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0xFFF8721D)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
+    log("post");
+    if (desController.text != "") {
+      log("post 1");
+      SharePlaylsitPostRequest post = SharePlaylsitPostRequest(
+          uid: user.uid!,
+          pid: dePlaylist.pid,
+          playlistName: nameController.text == ""
+              ? dePlaylist.playlistName
+              : nameController.text,
+          description: desController.text);
+      try {
+        int res = await postService.addPost(post);
+        if (res > 0) {
+          log("add post");
+          // ignore: use_build_context_synchronously
+          showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                    title: const Text('แชร์เพลย์ลิสต์สำเร็จ'),
+                    // content: const Text('AlertDialog description'),
+                    actions: <Widget>[
+                      ElevatedButton(
+                        onPressed: () {
+                          Get.offAll(() => const Barbottom());
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color(0xFFF8721D)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
                           ),
                         ),
+                        child: const Text(
+                          'ตกลง',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
                       ),
-                      child: const Text(
-                        'ตกลง',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ));
+                    ],
+                  ));
+        }
+      } catch (e) {
+        log(e.toString());
       }
-    } catch (e) {
-      log(e.toString());
+    } else {
+      Get.snackbar(
+        'กรุณารายละเอียดแชร์', // Title
+        'อย่าลืมกรอกน้า', // Message
+        backgroundColor: Colors.white, // Background color
+        colorText: Colors
+            .black, // Text color to ensure it's visible on white background
+      );
     }
   }
 }
