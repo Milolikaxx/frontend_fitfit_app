@@ -48,7 +48,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () {
-              Navigator.pop(context);
+               Get.back();
             },
           ),
         ),
@@ -107,19 +107,20 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                 },
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  hintText: dePlaylist.playlistName,
-                  hintStyle: const TextStyle(color: Colors.white),
-                  prefixIcon: const Image(
-                      image: AssetImage("assets/images/playlist.png")),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white, width: 2),
-                  ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white, width: 2),
-                  ),
-                   counterStyle: const TextStyle(
-                                color: Colors.white,) // สีของ maxLength counter
-                ),
+                    hintText: dePlaylist.playlistName,
+                    hintStyle: const TextStyle(color: Colors.white),
+                    prefixIcon: const Image(
+                        image: AssetImage("assets/images/playlist.png")),
+                    enabledBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 2),
+                    ),
+                    focusedBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 2),
+                    ),
+                    counterStyle: const TextStyle(
+                      color: Colors.white,
+                    ) // สีของ maxLength counter
+                    ),
               ),
             ),
             Padding(
@@ -199,13 +200,12 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                 : namePlController.text,
             imagePlaylist: dePlaylist.imagePlaylist);
         try {
-          int res = await playlsitService.editPlaylist(widget.pid,editPl);
+          int res = await playlsitService.editPlaylist(widget.pid, editPl);
           if (res > 0) {
             log('แก้ไขเพลย์ลิสต์สำเร็จ');
-             // ignore: use_build_context_synchronously
-             Navigator.pop(context);
-          // Get.to(() => ShowWorkoutProfilePage(dePlaylist.wpid));
-    
+            // ignore: use_build_context_synchronously
+            Navigator.pop(context);
+            // Get.to(() => ShowWorkoutProfilePage(dePlaylist.wpid));
           } else {
             log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
           }
@@ -219,12 +219,11 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                 : namePlController.text,
             imagePlaylist: imgPick);
         try {
-          int res = await playlsitService.editPlaylist(dePlaylist.pid,editPl );
-          if (res > 0 ) {
+          int res = await playlsitService.editPlaylist(dePlaylist.pid, editPl);
+          if (res > 0) {
             log('แก้ไขเพลย์ลิสต์สำเร็จ');
-             // ignore: use_build_context_synchronously
-             Navigator.pop(context);
-            //  Get.to(() => ShowWorkoutProfilePage(dePlaylist.wpid));
+
+            Get.back();
           } else {
             log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
           }

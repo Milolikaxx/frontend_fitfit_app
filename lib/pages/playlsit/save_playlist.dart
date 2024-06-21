@@ -47,7 +47,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+              Get.back();
           },
         ),
       ),
@@ -73,15 +73,6 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 padding: const EdgeInsets.only(top: 20),
                 child: TextFormField(
                   controller: namePlController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      log('no');
-                      return 'กรุณากรอกชื่อรายการเพลงของคุณ';
-                    }
-
-                    return null;
-                 },
-
                   style: const TextStyle(color: Colors.white),
                    maxLength: 50,
                   decoration: const InputDecoration(
@@ -96,19 +87,9 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                       borderSide: BorderSide(color: Colors.white, width: 2),
                     ),
                   
-                    errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.red,
-                          width: 2), // สีเส้นขอบเมื่อมี error
-                     
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.red,
-                          width: 2), // สีเส้นขอบเมื่อโฟกัสและมี error
-                     
-                    ),
-                    errorStyle: TextStyle(color: Colors.white),
+                   counterStyle: TextStyle(
+                    color: Colors.white
+                   )
                   ),
                 ),
               ),
@@ -184,7 +165,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
   }
 
   Future<void> save() async {
-    if (_formKey.currentState?.validate() ?? true) {
+    if (namePlController.text != "") {
       if (imgPick == "") {
         PlaylsitPostRequest plObj = PlaylsitPostRequest(
             wpid: widget.idx,
@@ -247,7 +228,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-            Get.to(const Barbottom());
+           Get.to(() => const Barbottom());
           } else {
             log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
           }
@@ -255,6 +236,14 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
           log(e.toString());
         }
       }
+    }else {
+       Get.snackbar(
+        'กรุณากรอกชื่อเพลย์ลิสต์', // Title
+        'กรุณากรอกชื่อเพลย์ลิสต์ที่คุณอยากตั้งชื่อ', // Message
+        backgroundColor: Colors.white, // Background color
+        colorText: Colors
+            .black, // Text color to ensure it's visible on white background
+      );
     }
   }
 

@@ -64,7 +64,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () {
-              Navigator.pop(context);
+                Get.back();
             },
           ),
           title: Center(

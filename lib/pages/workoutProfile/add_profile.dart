@@ -300,7 +300,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                         ),
                       
                       ),
-                     (selectedTags.isEmpty) ? const Text("***กรุณาเลือกแนวเพลง",style: TextStyle(fontSize: 16, color: Colors.white)) : Container(),
+                    //  (selectedTags.isEmpty) ? const Text("***กรุณาเลือกแนวเพลง",style: TextStyle(fontSize: 16, color: Colors.white)) : Container(),
                       const SizedBox(
                         height: 50,
                       ),
@@ -342,7 +342,13 @@ class _AddProfilePageState extends State<AddProfilePage> {
     }
 
     if (selectedTags.isEmpty) {
-      Get.snackbar('กรุณาเลือกแนวเพลง', '');
+     Get.snackbar(
+        'กรุณาเลือกแนวเพลง', // Title
+        'กรุณาเลือกแนวเพลงที่คุณชอบ', // Message
+        backgroundColor: Colors.white, // Background color
+        colorText: Colors
+            .black, // Text color to ensure it's visible on white background
+      );
      setState(() {
        
      });

@@ -53,7 +53,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.pop(context);
+               Get.back();
             },
           ),
         ),

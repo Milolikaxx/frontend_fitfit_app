@@ -71,7 +71,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () {
-              Navigator.pop(context);
+               Get.back();
             },
           ),
         ),

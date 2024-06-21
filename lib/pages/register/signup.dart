@@ -3,12 +3,16 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
+import 'package:frontend_fitfit_app/model/request/user_login%20google_req.dart';
 import 'package:frontend_fitfit_app/model/request/user_register_post_req.dart';
+import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/service/api/user.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/pages/auth/login.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +41,9 @@ class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime selectedBirthDate = DateTime.now();
   late UserService userService;
+   List<String> scopes = <String>[
+    'email',
+  ];
   @override
   void initState() {
     super.initState();
@@ -93,7 +100,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         decoration: const InputDecoration(
                           hintText: 'ชื่อในระบบ',
                           hintStyle: TextStyle(color: Colors.white),
-                          
                         ),
                       ),
                     ),
@@ -106,7 +112,6 @@ class _SignUpPageState extends State<SignUpPage> {
                             // label: const Text('วันเกิด'),
                             hintText: 'วันเกิด',
                             hintStyle: TextStyle(color: Colors.white),
-                            
                             suffixIcon: Padding(
                               padding: EdgeInsets.all(15),
                               child: FaIcon(
@@ -144,7 +149,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         decoration: const InputDecoration(
                           hintText: 'อีเมล',
                           hintStyle: TextStyle(color: Colors.white),
-                         
                         ),
                       ),
                     ),
@@ -167,7 +171,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         decoration: InputDecoration(
                             hintText: 'รหัสผ่าน',
                             hintStyle: const TextStyle(color: Colors.white),
-                           
                             suffixIcon: IconButton(
                               color: Colors.white,
                               icon: Icon(_isPasswordVisible
@@ -239,7 +242,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          signIn();
+                        },
                         style: ButtonStyle(
                           minimumSize: MaterialStateProperty.all<Size>(
                               const Size(300, 50)),
@@ -439,18 +444,18 @@ class _SignUpPageState extends State<SignUpPage> {
           width: 130,
           height: 130,
           decoration: BoxDecoration(
-              border: Border.all(width: 4, color: Colors.white),
-              boxShadow: [
-                BoxShadow(
-                    spreadRadius: 2,
-                    blurRadius: 10,
-                    color: Colors.black.withOpacity(0.1))
-              ],
-              shape: BoxShape.circle,
-              image: const DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage('assets/images/runner.png')),
-            ),
+            border: Border.all(width: 4, color: Colors.white),
+            boxShadow: [
+              BoxShadow(
+                  spreadRadius: 2,
+                  blurRadius: 10,
+                  color: Colors.black.withOpacity(0.1))
+            ],
+            shape: BoxShape.circle,
+            image: const DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/images/runner.png')),
+          ),
         ),
         Positioned(
             bottom: 0,
@@ -479,7 +484,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Container(
           width: 130,
           height: 130,
-            decoration: BoxDecoration(
+          decoration: BoxDecoration(
               border: Border.all(width: 4, color: Colors.white),
               boxShadow: [
                 BoxShadow(
@@ -489,9 +494,9 @@ class _SignUpPageState extends State<SignUpPage> {
               ],
               shape: BoxShape.circle,
               image: DecorationImage(
-                  fit: BoxFit.cover, image: NetworkImage(imgPick),
+                fit: BoxFit.cover,
+                image: NetworkImage(imgPick),
               )),
-                
         ),
         Positioned(
             bottom: 0,
@@ -515,7 +520,7 @@ class _SignUpPageState extends State<SignUpPage> {
       ],
     );
   }
- 
+
   //firebase
   File? _image;
   void pickImage() async {
@@ -565,13 +570,11 @@ class _SignUpPageState extends State<SignUpPage> {
           decorationDateSelected: const BoxDecoration(
             color: Color(0xFFF8721D), // This is the orange color
             shape: BoxShape.circle,
-          
           ),
         ),
         theme: ThemeData(
           primaryColor: const Color(0xFFF8721D),
-        )
-        );
+        ));
 
     if (newDateTime != null) {
       selectedBirthDate = newDateTime;
@@ -580,7 +583,43 @@ class _SignUpPageState extends State<SignUpPage> {
           formatter.formatInBuddhistCalendarThai(selectedBirthDate);
       dateController.text = "วันเกิด $dateInBuddhistCalendarFormat";
     }
-  
+  }
+
+  void signIn() async {
+    GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: scopes,
+    );
+    var googleSignInAccount = await googleSignIn.signIn();
+    if (googleSignInAccount != null) {
+      log(googleSignInAccount.email);
+      log(googleSignInAccount.id);
+      log(googleSignInAccount.displayName ?? 'No Dispayname');
+      log(googleSignInAccount.photoUrl ?? 'No url');
+      UserLoginGooglePostRequest user = UserLoginGooglePostRequest(
+          name: googleSignInAccount.displayName.toString(),
+          email: googleSignInAccount.email,
+          imageProfile: googleSignInAccount.photoUrl ??
+              'http://202.28.34.197:8888/contents/ac11379f-1be1-46fe-ae0d-0c41ff876e24.png',
+          googleId: googleSignInAccount.id);
+      try {
+        UserLoginPostResponse res = await userService.loginGoogle(user);
+        if (res.uid != 0) {
+          log("have uid");
+          if (context.mounted) {
+            context.read<AppData>().user = res;
+          }
+          log('เข้าสู่ระบบ');
+          Get.to(() => const Barbottom());
+        } else {
+          log("not have uid");
+          Get.snackbar('เข้าสู่ระบบไม่สำเร็จ', '');
+        }
+      } catch (e) {
+        log(e.toString());
+      }
+    } else {
+      log('error');
+    }
   }
   // void pickImage() async {
   //   final ImagePicker picker = ImagePicker();

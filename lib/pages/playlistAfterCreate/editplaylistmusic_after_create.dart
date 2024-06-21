@@ -55,7 +55,7 @@ class _EditPlaylistMusicAfterCreatePageState
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () {
-              Navigator.pop(context);
+                Get.back();
             },
           ),
           title: const Center(
@@ -72,7 +72,8 @@ class _EditPlaylistMusicAfterCreatePageState
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          child: FaIcon(
+          // ignore: sort_child_properties_last
+          child: const FaIcon(
             FontAwesomeIcons.shuffle,
             color: Colors.white,
           ),
