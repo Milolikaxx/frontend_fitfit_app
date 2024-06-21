@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'dart:ffi';
+// import 'dart:ffi';
 // import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'dart:async';
 
 // ignore: must_be_immutable
 class PlayMusicPage extends StatefulWidget {
@@ -48,14 +49,12 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   late PlaylsitMusicGetResponse music_pl;
   late AudioPlayer _audioPlayer;
   bool isPlaying = false;
+  bool isCountdownFinished = false;
+  int countdown = 3; // Countdown timer initial value
   List<Musicdata> musicList = [];
   ConcatenatingAudioSource? playlist;
-
-  late String currentMusicName;
-  late String currentMusicImage;
-  late String currentMusicArtist;
-  late double currentMusicDuration;
-  late int currentMusicBpm;
+  int currentIndex = 0;
+  late Duration totalDuration; // Total duration of all songs
 
   Stream<PositionData> get _positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
@@ -74,9 +73,14 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
     super.initState();
     playlistService = context.read<AppData>().playlistService;
 
-    loadData = loadDataAsync();
     _audioPlayer = AudioPlayer();
-    init();
+    _audioPlayer.currentIndexStream.listen((index) {
+      setState(() {
+        currentIndex = index ?? 0;
+      });
+    });
+
+    loadData = loadDataAsync();
   }
 
   loadDataAsync() async {
@@ -86,9 +90,13 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
     } catch (e) {
       log(e.toString());
     }
+    // totalDuration = Duration.zero; // Initialize total duration
     for (var m in music_pl.playlistDetail) {
-      musicList.add(Musicdata(m.music.mLink, m.music.name, m.music.musicImage,
-          m.music.artist, m.music.duration, m.music.bpm));
+      final music = Musicdata(m.music.mLink, m.music.name, m.music.musicImage,
+          m.music.artist, m.music.duration, m.music.bpm);
+      musicList.add(music);
+      // totalDuration += Duration(
+      //     seconds: (music.duration * 60).toInt()); // Add each song's duration
     }
     playlist = ConcatenatingAudioSource(
       children: musicList
@@ -101,27 +109,37 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
               }))
           .toList(),
     );
-    // for (var m in musicList) {
-    //   log(m.name);
-    // }
-    init();
-  }
-
-  Future<void> init() async {
     await _audioPlayer.setLoopMode(LoopMode.all);
     await _audioPlayer.setAudioSource(playlist!);
+    fullTime();
+    startCountdown();
   }
 
-  void updateCurrentMusic(int index) {
-    setState(() {
-      // Update current music data based on index
-      Musicdata currentMusic = musicList[index];
-      currentMusicName = currentMusic.name;
-      currentMusicImage = currentMusic.musicImage;
-      currentMusicArtist = currentMusic.artist;
-      currentMusicDuration = currentMusic.duration;
-      currentMusicBpm = currentMusic.bpm;
+  void startCountdown() {
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        countdown--;
+      });
+      if (countdown == 0) {
+        timer.cancel();
+        setState(() {
+          isCountdownFinished = true;
+          isPlaying = true; // Set isPlaying to true when countdown finishes
+        });
+        _audioPlayer.play(); // Start playing music
+      }
     });
+  }
+
+  void fullTime() {
+    totalDuration = Duration.zero; // Initialize total duration
+    for (var m in music_pl.playlistDetail) {
+      final music = Musicdata(m.music.mLink, m.music.name, m.music.musicImage,
+          m.music.artist, m.music.duration, m.music.bpm);
+      musicList.add(music);
+      totalDuration += Duration(
+          seconds: (music.duration * 60).toInt()); // Add each song's duration
+    }
   }
 
   @override
@@ -140,36 +158,61 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           if (snapshot.connectionState != ConnectionState.done) {
             return Center(
               child: LoadingAnimationWidget.beat(
-                color: Colors.black,
+                color: Colors.white,
                 size: 50,
               ),
             );
           }
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              timerCounter(),
-              circleImage(),
-              detailMusic(),
-              timeBar(),
-              controller(),
-            ],
-          );
+          return isCountdownFinished ? buildMusicPlayer() : buildCountdown();
         },
       ),
+    );
+  }
+
+  Widget buildCountdown() {
+    return Center(
+      child: Text(
+        '$countdown',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 50,
+        ),
+      ),
+    );
+  }
+
+  Widget buildMusicPlayer() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: timerCounter(),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: circleImage(),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: detailMusic(),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: timeBar(),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: controller(),
+        ),
+      ],
     );
   }
 
   Widget timerCounter() {
     return TimerCountdown(
       format: CountDownTimerFormat.hoursMinutesSeconds,
-      endTime: DateTime.now().add(
-        const Duration(
-          hours: 10,
-          minutes: 10,
-          seconds: 10,
-        ),
-      ),
+      endTime: DateTime.now().add(totalDuration), // Use total duration
       onEnd: () {
         log("Timer finished");
       },
@@ -195,10 +238,10 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           decoration: BoxDecoration(
             color: Colors.black,
             shape: BoxShape.circle,
-            // image: DecorationImage(
-            //   image: NetworkImage(""),
-            //   fit: BoxFit.cover,
-            // ),
+            image: DecorationImage(
+              image: NetworkImage(musicList[currentIndex].musicImage),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),
@@ -206,8 +249,17 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   }
 
   Widget detailMusic() {
-    return Row(
-      children: [Text("ชื่อเพลง : ")],
+    return Column(
+      children: [
+        Text(
+          "ชื่อเพลง : ${musicList[currentIndex].name}",
+          style: const TextStyle(color: Colors.white, fontSize: 20),
+        ),
+        Text(
+          "ศิลปิน : ${musicList[currentIndex].artist}",
+          style: const TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      ],
     );
   }
 
