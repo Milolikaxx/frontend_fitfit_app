@@ -46,40 +46,31 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.black,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: ClipRRect(
-            clipBehavior: Clip.antiAlias,
-            borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(20.0),
-                bottomRight: Radius.circular(20.0)),
-            child: AppBar(
-              backgroundColor: const Color(0xFFF8721D),
-              automaticallyImplyLeading: false,
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(
-                  '${user.imageProfile}',
-                ),
-              ),
-              centerTitle: true,
-              title: Text(
-                "${user.name}",
-                style: const TextStyle(color: Colors.white),
-              ),
-                  actions: [
-                  IconButton(
-                    icon: const Icon(Icons.exit_to_app_rounded,
-                        color: Color.fromARGB(255, 255, 255, 255)),
-                    onPressed: () async {
-                      if (user.googleId!.isNotEmpty) {
-                        await GoogleSignIn().signOut();
-                      }
-                      Get.to(() => const WelcomePage());
-                    },
-                  ),
-                ],
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFF8721D),
+          automaticallyImplyLeading: false,
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(
+              '${user.imageProfile}',
             ),
           ),
+          centerTitle: true,
+          title: Text(
+            "${user.name}",
+            style: const TextStyle(color: Colors.white),
+          ),
+              actions: [
+              IconButton(
+                icon: const Icon(Icons.exit_to_app_rounded,
+                    color: Color.fromARGB(255, 255, 255, 255)),
+                onPressed: () async {
+                  if (user.googleId!.isNotEmpty) {
+                    await GoogleSignIn().signOut();
+                  }
+                  Get.to(() => const WelcomePage());
+                },
+              ),
+            ],
         ),
         body: FutureBuilder(
             future: loadData,

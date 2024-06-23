@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
             borderSide: const BorderSide(color: Colors.red, width: 2),
             borderRadius: BorderRadius.circular(18),
           ),
-          errorStyle: const TextStyle(color: Colors.white),
+          errorStyle: const TextStyle(color: Colors.white,height: 0.5 ,fontSize: 14),
         ),
          
       ),

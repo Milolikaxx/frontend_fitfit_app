@@ -108,6 +108,13 @@ class _SignUpPageState extends State<SignUpPage> {
                       child: TextFormField(
                         controller: dateController,
                         style: const TextStyle(color: Colors.white),
+                          validator: (value) {
+                      
+                          if (value == null || value.isEmpty) {
+                            return 'กรุณาเลือกวันเกิด';
+                          }
+                          return null;
+                        },
                         decoration: const InputDecoration(
                             // label: const Text('วันเกิด'),
                             hintText: 'วันเกิด',
@@ -397,7 +404,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         actions: <Widget>[
                           ElevatedButton(
                             onPressed: () {
-                              Get.to(() => const LoginPage());
+                              Get.offAll(() => const LoginPage());
                             },
                             style: ButtonStyle(
                               minimumSize: MaterialStateProperty.all<Size>(
