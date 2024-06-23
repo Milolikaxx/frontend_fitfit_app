@@ -205,6 +205,10 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           padding: const EdgeInsets.all(8.0),
           child: controller(),
         ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: stopButton(),
+        ),
       ],
     );
   }
@@ -329,6 +333,34 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
             onSeek: null,
           );
         },
+      ),
+    );
+  }
+
+  Widget stopButton() {
+    return ElevatedButton(
+      onPressed: () {
+        log('Stop button pressed');
+      },
+      style: ElevatedButton.styleFrom(
+        primary: Colors.red,
+        onPrimary: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.cancel,
+            color: Colors.black,
+            size: 50.0,
+          ),
+          SizedBox(width: 8), // เพิ่มระยะห่างระหว่างไอคอนกับข้อความ
+          Text(
+            'STOP',
+            style: TextStyle(fontSize: 18),
+          ),
+        ],
       ),
     );
   }
