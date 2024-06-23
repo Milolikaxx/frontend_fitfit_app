@@ -54,110 +54,121 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
-          child: Column(
-            children: [
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment:CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "โปรดใส่ชื่อรายการเพลงของคุณ",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: TextFormField(
-                  controller: namePlController,
-                  style: const TextStyle(color: Colors.white),
-                   maxLength: 50,
-                  decoration: const InputDecoration(
-                    hintText: 'ชื่อรายการเพลง',
-                    hintStyle: TextStyle(color: Colors.white),
-                    prefixIcon:
-                        Image(image: AssetImage("assets/images/playlist.png")),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 2),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 2),
-                    ),
-                  
-                   counterStyle: TextStyle(
-                    color: Colors.white
-                   )
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 40, bottom: 50),
-                child: (imgPick != "") ? playlistImg() : noImg(),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Row(
+          child: Form(
+             key: _formKey,
+            child: Column(
+              children: [
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  // crossAxisAlignment:CrossAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                      onPressed: save,
-                      style: ButtonStyle(
-                        minimumSize: MaterialStateProperty.all<Size>(
-                            const Size(300, 50)),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0xFFF8721D)),
-                        // textStyle: MaterialStateProperty.all(TextStyle(fontSize: 18, color: Colors.white)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      child: const Text(
-                        'บันทึกรายการเพลง',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 30),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () {
-                        // Get.to(() => const LoginPage());
-                      },
-                      style: ButtonStyle(
-                        minimumSize: MaterialStateProperty.all<Size>(
-                            const Size(300, 50)),
-                        side: MaterialStateProperty.all<BorderSide>(
-                            const BorderSide(
+                    Text(
+                      "โปรดใส่ชื่อรายการเพลงของคุณ",
+                      style: TextStyle(
                           color: Colors.white,
-                          width: 2.0,
-                        )),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      child: const Text(
-                        'บันทึกและเริ่มออกกำลังกาย',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: TextFormField(
+                    controller: namePlController,
+                    style: const TextStyle(color: Colors.white),
+                     maxLength: 50,
+                      validator: (value) {
+                      // add email validation
+                      if (value == null || value.isEmpty) {
+                        return 'กรุณากรอกชื่อเพลย์ลิสต์';
+                      }
+
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                      hintText: 'ชื่อรายการเพลง',
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon:
+                          Image(image: AssetImage("assets/images/playlist.png")),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 2),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 2),
+                      ),
+                    
+                     counterStyle: TextStyle(
+                      color: Colors.white,height: 1
+                     )
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 40, bottom: 50),
+                  child: (imgPick != "") ? playlistImg() : noImg(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: save,
+                        style: ButtonStyle(
+                          minimumSize: MaterialStateProperty.all<Size>(
+                              const Size(300, 50)),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color(0xFFF8721D)),
+                          // textStyle: MaterialStateProperty.all(TextStyle(fontSize: 18, color: Colors.white)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          'บันทึกรายการเพลง',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () {
+                          // Get.to(() => const LoginPage());
+                        },
+                        style: ButtonStyle(
+                          minimumSize: MaterialStateProperty.all<Size>(
+                              const Size(300, 50)),
+                          side: MaterialStateProperty.all<BorderSide>(
+                              const BorderSide(
+                            color: Colors.white,
+                            width: 2.0,
+                          )),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          'บันทึกและเริ่มออกกำลังกาย',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -165,7 +176,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
   }
 
   Future<void> save() async {
-    if (namePlController.text != "") {
+    if (_formKey.currentState?.validate() ?? true) {
       if (imgPick == "") {
         PlaylsitPostRequest plObj = PlaylsitPostRequest(
             wpid: widget.idx,
@@ -236,14 +247,6 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
           log(e.toString());
         }
       }
-    }else {
-       Get.snackbar(
-        'กรุณากรอกชื่อเพลย์ลิสต์', // Title
-        'กรุณากรอกชื่อเพลย์ลิสต์ที่คุณอยากตั้งชื่อ', // Message
-        backgroundColor: Colors.white, // Background color
-        colorText: Colors
-            .black, // Text color to ensure it's visible on white background
-      );
     }
   }
 

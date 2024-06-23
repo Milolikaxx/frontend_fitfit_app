@@ -32,6 +32,7 @@ class _PostPageState extends State<PostPage> {
   late PlaylistService playlsitService;
   late PostService postService;
   late PlaylistWithWorkoutGetResponse dePlaylist;
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -132,85 +133,96 @@ class _PostPageState extends State<PostPage> {
                         const SizedBox(
                           height: 20,
                         ),
-                        TextFormField(
-                          maxLength: 50,
-                          controller: desController,
-                          validator: (value) {
-                            // add email validation
-                            if (value == null || value.isEmpty) {
-                              return 'กรุณากรอกข้อความ';
-                            }
-                            return null;
-                          },
-                          decoration: const InputDecoration(
-                            // border: InputBorder.none,
-                            hintText: 'เขียนอะไรสักอย่างสิ',
-                            hintStyle: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white), // สีของข้อความ hint
-                            counterStyle: TextStyle(
-                              color: Colors.white, // สีของ maxLength counter
-                            ),
-                          ),
-                          style: const TextStyle(
-                              color: Colors.white), // สีของข้อความที่พิมพ์
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Container(
-                            width: 400,
-                            height: 250,
-                            decoration: BoxDecoration(
-                                // border: Border.all(width: 3, color: Colors.white),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(8.0)),
-                                shape: BoxShape.rectangle,
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    alignment: Alignment.topCenter,
-                                    image: NetworkImage(
-                                        dePlaylist.imagePlaylist))),
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Icon(
-                                    Icons.playlist_play_rounded,
-                                    size: 30,
-                                    color: Colors.white,
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                maxLength: 50,
+                                controller: desController,
+                                validator: (value) {
+                                  // add email validation
+                                  if (value == null || value.isEmpty) {
+                                    return 'กรุณากรอกข้อความ';
+                                  }
+                                  return null;
+                                },
+                                decoration: const InputDecoration(
+                                  // border: InputBorder.none,
+                                  hintText: 'เขียนอะไรสักอย่างสิ',
+                                  hintStyle: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white), // สีของข้อความ hint
+                                  counterStyle: TextStyle(
+                                    color: Colors.white, // สีของ maxLength counter
                                   ),
-                                ],
+                                ),
+                                style: const TextStyle(
+                                    color: Colors.white), // สีของข้อความที่พิมพ์
                               ),
-                            ),
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 15),
-                          child: Text(
-                            "เพลย์ลิสต์เพลง",
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: TextFormField(
-                            maxLength: 50,
-                            controller: nameController,
-                            decoration: InputDecoration(
-                              hintText: dePlaylist.playlistName,
-                              hintStyle: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white), // สีของข้อความ hint
-                              counterStyle: const TextStyle(
-                                color: Colors.white, // สีของ maxLength counter
+                               Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: Container(
+                                  width: 400,
+                                  height: 250,
+                                  decoration: BoxDecoration(
+                                      // border: Border.all(width: 3, color: Colors.white),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(8.0)),
+                                      shape: BoxShape.rectangle,
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          alignment: Alignment.topCenter,
+                                          image: NetworkImage(
+                                              dePlaylist.imagePlaylist))),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Icon(
+                                          Icons.playlist_play_rounded,
+                                          size: 30,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                            style: const TextStyle(
-                                color: Colors.white), // สีของข้อความที่พิมพ์
+                              const Padding(
+                                padding: EdgeInsets.only(top: 15),
+                                child: Text(
+                                  "เพลย์ลิสต์เพลง",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 5),
+                                child: TextFormField(
+                                  maxLength: 50,
+                                  controller: nameController,
+                                  decoration: InputDecoration(
+                                    hintText: dePlaylist.playlistName,
+                                    hintStyle: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white), // สีของข้อความ hint
+                                    counterStyle: const TextStyle(
+                                      color:
+                                          Colors.white, // สีของ maxLength counter
+                                    ),
+                                  ),
+                                  style: const TextStyle(
+                                      color:
+                                          Colors.white), // สีของข้อความที่พิมพ์
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+                       
                       ],
                     ),
                   ),
@@ -222,7 +234,7 @@ class _PostPageState extends State<PostPage> {
 // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   void post() async {
     log("post");
-    if (desController.text != "") {
+    if (_formKey.currentState?.validate() ?? true) {
       log("post 1");
       SharePlaylsitPostRequest post = SharePlaylsitPostRequest(
           uid: user.uid!,

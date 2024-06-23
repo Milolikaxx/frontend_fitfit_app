@@ -90,37 +90,36 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 20),
-              child: TextFormField(
-                maxLength: 50,
-                controller: namePlController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    log('no');
-                    return 'กรุณากรอกชื่อรายการเพลงของคุณ';
-                  }
-
-                  if (value.length > 50) {
-                    return 'กรุณากรอกชื่อรายการเพลงของคุณที่มีความยาวไม่เกิน 50 ตัวอักษร';
-                  }
-
-                  return null;
-                },
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                    hintText: dePlaylist.playlistName,
-                    hintStyle: const TextStyle(color: Colors.white),
-                    prefixIcon: const Image(
-                        image: AssetImage("assets/images/playlist.png")),
-                    enabledBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 2),
-                    ),
-                    focusedBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 2),
-                    ),
-                    counterStyle: const TextStyle(
-                      color: Colors.white,
-                    ) // สีของ maxLength counter
-                    ),
+              child: Form(
+                key: _formKey,
+                child: TextFormField(
+                  maxLength: 50,
+                  controller: namePlController,
+                 validator: (value) {
+                    // add email validation
+                    if (value == null || value.isEmpty) {
+                      return 'กรุณากรอกชื่อเพลย์ลิสต์';
+                    }
+                
+                    return null;
+                  },
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                      hintText: dePlaylist.playlistName,
+                      hintStyle: const TextStyle(color: Colors.white),
+                      prefixIcon: const Image(
+                          image: AssetImage("assets/images/playlist.png")),
+                      enabledBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 2),
+                      ),
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 2),
+                      ),
+                      counterStyle: const TextStyle(
+                        color: Colors.white,
+                      ) // สีของ maxLength counter
+                      ),
+                ),
               ),
             ),
             Padding(
