@@ -341,6 +341,12 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
     return ElevatedButton(
       onPressed: () {
         log('Stop button pressed');
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return alertConfirmDialog(context);
+          },
+        );
       },
       style: ElevatedButton.styleFrom(
         primary: Colors.red,
@@ -362,6 +368,34 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           ),
         ],
       ),
+    );
+  }
+
+  void log(String message) {
+    // You can use any logging mechanism you prefer
+    print(message);
+  }
+
+  AlertDialog alertConfirmDialog(BuildContext context) {
+    return AlertDialog(
+      title: Text('Confirmation'),
+      content: Text('Are you sure you want to stop?'),
+      actions: <Widget>[
+        TextButton(
+          child: Text('Cancel'),
+          onPressed: () {
+            log('Cancel button pressed');
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          child: Text('Confirm'),
+          onPressed: () {
+            log('Confirm button pressed');
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
     );
   }
 }
