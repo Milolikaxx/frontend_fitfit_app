@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_detail_post_req.dart';
+import 'package:frontend_fitfit_app/model/request/rand_music1_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
 
 import 'package:retrofit/retrofit.dart';
@@ -15,9 +16,10 @@ abstract class PlaylistDetailService {
   Future<List<MusicGetResponse>> getMusicDetailGen(
     @Path() int id,
   );
+  @GET("/playlist_detail/rand")
+  Future<List<MusicGetResponse>> randomMusic(
+      @Body() RandMusic1PostRequest randMusic);
 
   @POST("/playlist_detail/addmusic")
-  Future<int> addMusicToPlaylist(
-     @Body() PlaylsitDetailPostRequest addMusic
-  );
+  Future<int> addMusicToPlaylist(@Body() PlaylsitDetailPostRequest addMusic);
 }
