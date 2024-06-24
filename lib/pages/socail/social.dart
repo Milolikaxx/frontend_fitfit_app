@@ -1,4 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/social_all_post_res.dart';
+import 'package:frontend_fitfit_app/service/api/playlist.dart';
+import 'package:frontend_fitfit_app/service/api/post.dart';
+import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:provider/provider.dart';
 
 class SocailPage extends StatefulWidget {
   const SocailPage({super.key});
@@ -8,272 +17,230 @@ class SocailPage extends StatefulWidget {
 }
 
 class _SocailPageState extends State<SocailPage> {
+  List<SocialAllPostResonse> postAll = [];
+  // List<List<WorkoutProfileMusicTypeGetResponse>> profileInfos = [];
+  late var loadData;
+  late PostService postService;
+  @override
+  void initState() {
+    super.initState();
+    postService = context.read<AppData>().postService;
+    loadData = loadDataAsync();
+  }
+
+  loadDataAsync() async {
+    try {
+      postAll = await postService.getPostAll();
+      log(postAll.length.toString());
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-        title: const Text(
-          "Feeds",
-          style: TextStyle(color: Colors.white),
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+          title: const Text(
+            "Feeds",
+            style: TextStyle(color: Colors.white),
+          ),
+          automaticallyImplyLeading: false,
         ),
-        automaticallyImplyLeading: false,
+        body: FutureBuilder(
+            future: loadData,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return Center(
+                  child: LoadingAnimationWidget.beat(
+                    color: Colors.white,
+                    size: 50,
+                  ),
+                );
+              }
+              return Column(children: [listPost()]);
+            }));
+  }
+
+  Widget listPost() {
+    return Expanded(
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        itemCount: postAll.isEmpty ? 0 : postAll.length,
+        itemBuilder: (context, index) => post(postAll[index]),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-           padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-          child: Column(
-            children: [
-            post(),
-            postLongg(),
-            post(),
-        
-          ]),
+    );
+  }
+
+ Widget post(SocialAllPostResonse post) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Container(
+          width: 350,
+          padding: const EdgeInsets.only(top: 5),
+          decoration: ShapeDecoration(
+            color: const Color(0x66CCCCCC),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 47,
+                      height: 47,
+                      decoration: ShapeDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(post.user.imageProfile),
+                          fit: BoxFit.cover,
+                        ),
+                        shape: const OvalBorder(),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          post.user.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          calDateTime(post.pDatetime.toString()),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  width: 300,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFFF8721D),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    post.description,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  width: 300,
+                  decoration: ShapeDecoration(
+                    color: const Color.fromARGB(255, 255, 255, 255),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Row(
+                        children: [
+                          Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image:
+                                    NetworkImage(post.playlist.imagePlaylist),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(4),
+                                bottomLeft: Radius.circular(4),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          SizedBox(
+                            width: constraints.maxWidth -
+                                130, // 120 (image width) + 10 (SizedBox width)
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  post.playlistName,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                  // overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  "playlist by ${post.user.name}",
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget post() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: Container(
-          width: 350,
-          padding: const EdgeInsets.only(top: 5),
-          decoration: ShapeDecoration(
-            color: const Color(0x66CCCCCC),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 47,
-                      height: 47,
-                      decoration: const ShapeDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(
-                              "https://i.pinimg.com/736x/af/2d/bc/af2dbc00320f21026d87f3820d13429e.jpg"),
-                          fit: BoxFit.cover,
-                        ),
-                        shape: OvalBorder(),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Gojo Satoru',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          '1 h',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                 
-                   
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: 300,
-                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                  decoration: ShapeDecoration(
-                    color: const  Color(0xFFF8721D),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text(
-                    'เพลงเกาหลีเกาใจออกกำลังกายชิลๆ อิอิ ',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: 300,
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  decoration: ShapeDecoration(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Row(
-                    children: [
-                      Image(
-                        image: NetworkImage(
-                            "https://i.pinimg.com/564x/06/f9/6f/06f96f2944fcfabe3a291a1060441511.jpg"),
-                        width: 150,
-                        height: 130,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("ปั่นจักยาน ตามมูมู",
-                              style: TextStyle(fontSize: 16, color: Colors.black)),
-                          Text("playlist by Gojo",
-                              style: TextStyle(fontSize: 12, color: Colors.grey)),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-  Widget postLongg() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: Container(
-          width: 350,
-          padding: const EdgeInsets.only(top: 5),
-          decoration: ShapeDecoration(
-            color: const Color(0x66CCCCCC),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 47,
-                      height: 47,
-                      decoration: const ShapeDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(
-                              "https://i.pinimg.com/736x/af/2d/bc/af2dbc00320f21026d87f3820d13429e.jpg"),
-                          fit: BoxFit.cover,
-                        ),
-                        shape: OvalBorder(),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Gojo Satoru',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          '1 h',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                 
-                   
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: 300,
-                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                  decoration: ShapeDecoration(
-                    color: const  Color(0xFFF8721D),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text(
-                    'เพลงเกาหลีเกาใจออกกำลังกายชิลๆ อิอิ otttttttttttttttttttttasssssd sssssssssss',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: 300,
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  decoration: ShapeDecoration(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child:  const Row(
-                    children: [
-                      Image(
-                        image: NetworkImage(
-                            "https://i.pinimg.com/564x/06/f9/6f/06f96f2944fcfabe3a291a1060441511.jpg"),
-                        width: 150,
-                        height: 130,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("ปั่นจักยาน ตามมูมู",
-                              style: TextStyle(fontSize: 16, color: Colors.black)),
-                          Text("playlist by Gojo",
-                              style: TextStyle(fontSize: 12, color: Colors.grey)),
-                            
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+  String calDateTime(String dt) {
+    String res = '';
+    log(dt);
+    log(DateTime.now().toString());
+    if (DateTime.now().difference(DateTime.parse(dt)).inMinutes < 1) {
+      res = '${DateTime.now().difference(DateTime.parse(dt)).inSeconds} วินาที';
+      log(res);
+    } else if (DateTime.now().difference(DateTime.parse(dt)).inMinutes < 60) {
+      res = '${DateTime.now().difference(DateTime.parse(dt)).inMinutes} นาที';
+      log(res);
+    } else if (DateTime.now().difference(DateTime.parse(dt)).inMinutes < 1440) {
+      res = '${DateTime.now().difference(DateTime.parse(dt)).inHours} ชม.';
+      log(res);
+    } else {
+      res = '${DateTime.now().difference(DateTime.parse(dt)).inDays} วัน';
+      log(res);
+    }
+    return res;
   }
 }

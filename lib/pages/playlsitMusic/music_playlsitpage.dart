@@ -56,6 +56,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -113,10 +114,12 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                             children: [
                               Image.network(
                                 music_pl.imagePlaylist,
-                                width: 250,
+                                width: 200,
+                                height: 200,
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -128,45 +131,44 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                                     ),
                                     const SizedBox(
                                       width: 10,
-                                    ) , 
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "${music_pl.playlistName} ($totalDuration นาที)",
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 16),
                                     ),
-                                    Text(
-                                      "playlsit by ${user.name} ",
-                                      style: const TextStyle(
-                                          color: Colors.grey, fontSize: 16),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${music_pl.playlistName} ($totalDuration นาที)",
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16),
+                                        ),
+                                        Text(
+                                          "playlsit by ${user.name} ",
+                                          style: const TextStyle(
+                                              color: Colors.grey, fontSize: 16),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
                                   ],
                                 ),
                               ),
-                           
                             ],
                           ),
                         ),
                       ),
-                // musicGraph(),
+                       musicGraph(),
                       const Padding(
-                        padding: EdgeInsets.only(left: 85, right: 35,top: 5),
+                        padding: EdgeInsets.only(left: 85, right: 35, top: 5),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            
-                             Text(
+                            Text(
                               "Title",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18),
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 18),
                             ),
                             Icon(Icons.access_time_rounded,
-                                color: Colors.black , ),
+                                color: Colors.black),
                           ],
                         ),
                       ),
@@ -176,17 +178,17 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
             }));
   }
 
-  Widget listMusic() {
+Widget listMusic() {
     return Expanded(
-      child: Expanded(
-        child: ListView.builder(
-          padding: const EdgeInsets.only(bottom: 60),
-          itemCount: music_pl.playlistDetail.isEmpty
-              ? 0
-              : music_pl.playlistDetail.length,
-          itemBuilder: (context, index) =>
-              musicInfo(music_pl.playlistDetail[index]),
-        ),
+      child: ListView.builder(
+        padding: const EdgeInsets.only(bottom: 60),
+        shrinkWrap: true,
+      
+        itemCount: music_pl.playlistDetail.isEmpty
+            ? 0
+            : music_pl.playlistDetail.length,
+        itemBuilder: (context, index) =>
+            musicInfo(music_pl.playlistDetail[index]),
       ),
     );
   }

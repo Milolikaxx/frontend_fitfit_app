@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -5,6 +8,7 @@ import 'package:frontend_fitfit_app/firebase_options.dart';
 import 'package:frontend_fitfit_app/pages/welcome.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -13,9 +17,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() async {
   Intl.defaultLocale = 'th';
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await GetStorage.init();
+    // Handle SSL Cert
+  HttpOverrides.global = MyHttpOverrides();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (context) => AppData(),
@@ -59,10 +67,19 @@ class MyApp extends StatelessWidget {
             borderSide: const BorderSide(color: Colors.red, width: 2),
             borderRadius: BorderRadius.circular(18),
           ),
-          errorStyle: const TextStyle(color: Colors.white,height: 0.5 ,fontSize: 14),
+          errorStyle:
+              const TextStyle(color: Colors.white, height: 0.5, fontSize: 14),
         ),
-         
       ),
     );
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
