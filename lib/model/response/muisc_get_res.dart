@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:frontend_fitfit_app/model/request/rand_music1_post_req.dart';
+
 List<MusicGetResponse> musicGetResponseFromJson(String str) =>
     List<MusicGetResponse>.from(
         json.decode(str).map((x) => MusicGetResponse.fromJson(x)));
@@ -21,6 +23,7 @@ class MusicGetResponse {
   String artist;
   double duration;
   int bpm;
+  
 
   MusicGetResponse({
     required this.mid,
@@ -58,6 +61,20 @@ class MusicGetResponse {
         "Duration": duration,
         "Bpm": bpm,
       };
+ // เพิ่มเมธอด toMusic
+  Music toMusic() {
+    return Music(
+      mid: mid,
+      mtid: mtid,
+      musicType: MusicGenre(mtid: mtid, name: name),
+      mLink: mLink,
+      name: name,
+      musicImage: musicImage,
+      artist: artist,
+      duration: duration,
+      bpm: bpm,
+    );
+  }
 }
 
 class MusicType {

@@ -4,7 +4,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
-import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
 import 'package:frontend_fitfit_app/pages/playlistAfterCreate/editplaylistmusic_after_create.dart';
 import 'package:frontend_fitfit_app/pages/playlsit/save_playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';

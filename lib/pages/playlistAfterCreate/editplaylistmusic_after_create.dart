@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend_fitfit_app/model/request/rand_music1_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
 import 'package:frontend_fitfit_app/pages/playlsit/save_playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
@@ -35,6 +36,8 @@ class _EditPlaylistMusicAfterCreatePageState
     extends State<EditPlaylistMusicAfterCreatePage> {
   List<Musicdata> chartData = [];
   List<MusicGetResponse> musicRandNew = [];
+  List<MusicGetResponse> musicList = [];
+  List<Music> musiclist = [];
   late PlaylistDetailService playlistDetailServ;
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
@@ -51,6 +54,10 @@ class _EditPlaylistMusicAfterCreatePageState
       log(m.name);
       chartData.add(Musicdata(m.duration, m.bpm));
     }
+
+    musiclist = widget.music
+        .map((musicGetResponse) => musicGetResponse.toMusic())
+        .toList();
   }
 
   @override
@@ -84,10 +91,10 @@ class _EditPlaylistMusicAfterCreatePageState
             FontAwesomeIcons.shuffle,
             color: Colors.white,
           ),
-          onPressed: () { 
+          onPressed: () {
             randAll();
             // setState(() {
-             
+
             // });
           },
           shape: RoundedRectangleBorder(
@@ -167,7 +174,7 @@ class _EditPlaylistMusicAfterCreatePageState
       child: ListView.builder(
         padding: const EdgeInsets.only(bottom: 65),
         itemCount: widget.music.isEmpty ? 0 : widget.music.length,
-        itemBuilder: (context, index) => musicInfo(widget.music[index]),
+        itemBuilder: (context, index) => musicInfo(widget.music[index], index),
       ),
     );
   }
@@ -176,7 +183,7 @@ class _EditPlaylistMusicAfterCreatePageState
     Get.to(() => SavePlaylistPage(widget.music, widget.idx, widget.timeEx));
   }
 
-  Widget musicInfo(MusicGetResponse music) {
+  Widget musicInfo(MusicGetResponse music, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: Row(
@@ -231,9 +238,9 @@ class _EditPlaylistMusicAfterCreatePageState
               ),
               Row(
                 children: [
-                 Container(
-                    width: 30, 
-                    height: 30, 
+                  Container(
+                    width: 30,
+                    height: 30,
                     decoration: const BoxDecoration(
                       color: Colors.black,
                       shape: BoxShape.circle,
@@ -241,29 +248,32 @@ class _EditPlaylistMusicAfterCreatePageState
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
-                        
+                        log(index.toString());
+                        randMusic1Song(index);
                       },
-                      iconSize: 16, 
+                      iconSize: 16,
                       icon: const FaIcon(
                         FontAwesomeIcons.shuffle,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 5,),
+                  const SizedBox(
+                    width: 5,
+                  ),
                   Container(
-                    width: 30, 
-                    height: 30, 
+                    width: 30,
+                    height: 30,
                     decoration: const BoxDecoration(
                       color: Colors.red,
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      padding: EdgeInsets.zero, 
+                      padding: EdgeInsets.zero,
                       onPressed: () {
                         // Add your onPressed logic here
                       },
-                      iconSize: 16, 
+                      iconSize: 16,
                       icon: const FaIcon(
                         FontAwesomeIcons.trash,
                         color: Colors.white,
@@ -311,7 +321,7 @@ class _EditPlaylistMusicAfterCreatePageState
     );
   }
 
-Future<void> randAll() async {
+  Future<void> randAll() async {
     musicRandNew = await playlistDetailServ.getMusicDetailGen(widget.idx);
 
     setState(() {
@@ -321,7 +331,27 @@ Future<void> randAll() async {
 
     log(widget.music.length.toString());
 
-     // ignore: use_build_context_synchronously
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => widget),
+    );
+  }
+
+  Future<void> randMusic1Song(int idx) async {
+    log("1");
+    RandMusic1PostRequest randMusic = RandMusic1PostRequest(
+        musicList: musiclist, index: idx, wpid: widget.idx);
+    musicList = await playlistDetailServ.randomMusic(randMusic);
+    log(musicList.length.toString());
+    setState(() {
+      chartData.clear();
+      widget.music = musicList;
+    });
+
+    log(widget.music.length.toString());
+
+    // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (BuildContext context) => widget),

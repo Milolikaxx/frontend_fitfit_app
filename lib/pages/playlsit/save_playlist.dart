@@ -205,7 +205,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-            Get.to(const Barbottom());
+            Get.offAll(() => const Barbottom());
           } else {
             log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
           }
