@@ -15,4 +15,7 @@ abstract class PostService {
 
   @GET("/post/")
   Future<List<SocialAllPostResonse>> getPostAll();
+
+  @GET("/post/{id}")
+  Future<List<SocialAllPostResonse>> getPostByUid(@Path() int id);
 }

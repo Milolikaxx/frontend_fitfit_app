@@ -11,7 +11,7 @@ String randMusic1PostRequestToJson(RandMusic1PostRequest data) =>
     json.encode(data.toJson());
 
 class RandMusic1PostRequest {
-  List<MusicList> musicList;
+  List<Music> musicList;
   int index;
   int wpid;
 
@@ -23,8 +23,8 @@ class RandMusic1PostRequest {
 
   factory RandMusic1PostRequest.fromJson(Map<String, dynamic> json) =>
       RandMusic1PostRequest(
-        musicList: List<MusicList>.from(
-            json["MusicList"].map((x) => MusicList.fromJson(x))),
+        musicList: List<Music>.from(
+            json["MusicList"].map((x) => Music.fromJson(x))),
         index: json["Index"],
         wpid: json["Wpid"],
       );
@@ -36,10 +36,10 @@ class RandMusic1PostRequest {
       };
 }
 
-class MusicList {
+class Music {
   int mid;
   int mtid;
-  MusicType musicType;
+  MusicGenre musicType;
   String mLink;
   String name;
   String musicImage;
@@ -47,7 +47,7 @@ class MusicList {
   double duration;
   int bpm;
 
-  MusicList({
+  Music({
     required this.mid,
     required this.mtid,
     required this.musicType,
@@ -59,10 +59,10 @@ class MusicList {
     required this.bpm,
   });
 
-  factory MusicList.fromJson(Map<String, dynamic> json) => MusicList(
+  factory Music.fromJson(Map<String, dynamic> json) => Music(
         mid: json["Mid"],
         mtid: json["Mtid"],
-        musicType: MusicType.fromJson(json["MusicType"]),
+        musicType: MusicGenre.fromJson(json["MusicType"]),
         mLink: json["MLink"],
         name: json["Name"],
         musicImage: json["MusicImage"],
@@ -84,16 +84,16 @@ class MusicList {
       };
 }
 
-class MusicType {
+class MusicGenre {
   int mtid;
   String name;
 
-  MusicType({
+  MusicGenre({
     required this.mtid,
     required this.name,
   });
 
-  factory MusicType.fromJson(Map<String, dynamic> json) => MusicType(
+  factory MusicGenre.fromJson(Map<String, dynamic> json) => MusicGenre(
         mtid: json["Mtid"],
         name: json["Name"],
       );
