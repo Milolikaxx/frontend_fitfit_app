@@ -74,7 +74,7 @@ class _SocailPageState extends State<SocailPage> {
     );
   }
 
- Widget post(SocialAllPostResonse post) {
+  Widget post(SocialAllPostResonse post) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
@@ -226,21 +226,28 @@ class _SocailPageState extends State<SocailPage> {
 
   String calDateTime(String dt) {
     String res = '';
-    log(dt);
-    log(DateTime.now().toString());
-    if (DateTime.now().difference(DateTime.parse(dt)).inMinutes < 1) {
-      res = '${DateTime.now().difference(DateTime.parse(dt)).inSeconds} วินาที';
-      log(res);
-    } else if (DateTime.now().difference(DateTime.parse(dt)).inMinutes < 60) {
-      res = '${DateTime.now().difference(DateTime.parse(dt)).inMinutes} นาที';
-      log(res);
-    } else if (DateTime.now().difference(DateTime.parse(dt)).inMinutes < 1440) {
-      res = '${DateTime.now().difference(DateTime.parse(dt)).inHours} ชม.';
-      log(res);
+    List<String> parts = dt.split('.');
+    // สร้าง DateTime โดยแยกส่วนวันที่และเวลาออกจากกัน
+    DateTime postTime =
+        DateTime.parse(parts[0].trim()); 
+
+    log("เวลาของ post: $postTime");
+    DateTime now = DateTime.now();
+    log("เวลาปัจจุบัน: $now");
+
+    Duration difference = now.difference(postTime);
+
+    if (difference.inSeconds.abs() < 60) {
+      res = '${difference.inSeconds.abs()} วินาที';
+    } else if (difference.inMinutes.abs() < 60) {
+      res = '${difference.inMinutes.abs()} นาที';
+    } else if (difference.inHours.abs() < 24) {
+      res = '${difference.inHours.abs()} ชม.';
     } else {
-      res = '${DateTime.now().difference(DateTime.parse(dt)).inDays} วัน';
-      log(res);
+      res = '${difference.inDays.abs()} วัน';
     }
+
+    log(res);
     return res;
   }
 }

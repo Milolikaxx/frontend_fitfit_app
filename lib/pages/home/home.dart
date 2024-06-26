@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                   if (user.googleId!.isNotEmpty) {
                     await GoogleSignIn().signOut();
                   }
-                  Get.to(() => const WelcomePage());
+                  Get.offAll(() => const WelcomePage());
                 },
               ),
             ],

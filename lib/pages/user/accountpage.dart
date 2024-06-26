@@ -7,6 +7,7 @@ import 'package:frontend_fitfit_app/pages/user/editprofile.dart';
 import 'package:frontend_fitfit_app/service/api/post.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
 class AccountPage extends StatefulWidget {
@@ -27,15 +28,13 @@ class _AccountPageState extends State<AccountPage> {
   void initState() {
     super.initState();
     postService = context.read<AppData>().postService;
-    loadData = loadDataAsync();
     user = context.read<AppData>().user;
-
-    super.initState();
+    loadData = loadDataAsync();
   }
 
   loadDataAsync() async {
     try {
-      postAll = await postService.getPostAll();
+      postAll = await postService.getPostByUid(user.uid!);
       log(postAll.length.toString());
     } catch (e) {
       log(e.toString());
@@ -44,8 +43,6 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
@@ -58,49 +55,89 @@ class _AccountPageState extends State<AccountPage> {
                 onPressed: () {},
               ),
             ]),
-        body: Column(
-          children: [
-            CircleAvatar(
-                radius: 50.0,
-                backgroundImage: NetworkImage('${user.imageProfile}')),
-            const SizedBox(height: 10),
-            Text(
-              '${user.name}',
-              style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            OutlinedButton(
-                onPressed: () {
-                  Get.to(() => const EditProfilePage());
-                },
-                style: ButtonStyle(
-                  minimumSize:
-                      MaterialStateProperty.all<Size>(const Size(100, 50)),
-                  side: MaterialStateProperty.all<BorderSide>(const BorderSide(
-                    color: Color.fromARGB(255, 75, 75, 75),
-                    width: 2.0,
-                  )),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+        body: FutureBuilder(
+            future: loadData,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return Center(
+                  child: LoadingAnimationWidget.beat(
+                    color: Colors.white,
+                    size: 50,
                   ),
-                ),
-                child: const Text('แก้ไขโปรไฟล์',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color.fromARGB(255, 255, 255, 255)))),
-            const SizedBox(
-              height: 20,
-            ),
-            postMe(height, width)
-          ],
-        ));
+                );
+              }
+              return RefreshIndicator(
+                  color:
+                      const Color(0xFFF8721D), // เปลี่ยนสีของ RefreshIndicator
+                  onRefresh: () async {
+                    setState(() {
+                      loadData = loadDataAsync();
+                    });
+                  },
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                          radius: 50.0,
+                          backgroundImage:
+                              NetworkImage('${user.imageProfile}')),
+                      const SizedBox(height: 10),
+                      Text(
+                        '${user.name}',
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      OutlinedButton(
+                          onPressed: () {
+                            Get.to(() => const EditProfilePage());
+                          },
+                          style: ButtonStyle(
+                            minimumSize: MaterialStateProperty.all<Size>(
+                                const Size(100, 50)),
+                            side: MaterialStateProperty.all<BorderSide>(
+                                const BorderSide(
+                              color: Color.fromARGB(255, 75, 75, 75),
+                              width: 2.0,
+                            )),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          ),
+                          child: const Text('แก้ไขโปรไฟล์',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Color.fromARGB(255, 255, 255, 255)))),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      postAll.isNotEmpty
+                          ?   postMe(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width)
+                          : Expanded(
+                              child: Container(
+                                height: MediaQuery.of(context).size.height,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'ยังไม่มีเพลย์ลิสต์เพลงของคุณที่แชร์',
+                                    style: TextStyle(
+                                        fontSize: 20, color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ],
+                  ));
+            }));
   }
 
   Widget postMe(height, width) {
@@ -112,7 +149,7 @@ class _AccountPageState extends State<AccountPage> {
             color: Colors.white,
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15,),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               children: [
                 const SizedBox(
@@ -128,29 +165,28 @@ class _AccountPageState extends State<AccountPage> {
                 const Divider(
                   thickness: 2.5,
                 ),
-            
                 listPost(),
-               
               ],
             ),
           )),
     );
   }
+
   Widget listPost() {
     return Expanded(
       child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         itemCount: postAll.isEmpty ? 0 : postAll.length,
         itemBuilder: (context, index) => post(postAll[index]),
       ),
     );
   }
+
   Widget post(SocialAllPostResonse postMe) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       child: Container(
         width: 350,
-        padding: const EdgeInsets.only(top: 5),
         decoration: ShapeDecoration(
           color: const Color(0x66CCCCCC),
           shape: RoundedRectangleBorder(
@@ -164,46 +200,48 @@ class _AccountPageState extends State<AccountPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 45,
-                        height: 45,
-                        decoration:  ShapeDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(
-                               user.imageProfile.toString()),
-                            fit: BoxFit.cover,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 45,
+                          height: 45,
+                          decoration: ShapeDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(user.imageProfile.toString()),
+                              fit: BoxFit.cover,
+                            ),
+                            shape: const OvalBorder(),
                           ),
-                          shape: const OvalBorder(),
                         ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            user.name.toString(),
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user.name.toString(),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          const Text(
-                            '1 h',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                            Text(
+                              calDateTime(postMe.pDatetime.toString()),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   Row(
                     children: [
@@ -220,7 +258,8 @@ class _AccountPageState extends State<AccountPage> {
               ),
               Container(
                 width: 300,
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                 decoration: ShapeDecoration(
                   color: const Color(0x66CCCCCC),
                   shape: RoundedRectangleBorder(
@@ -238,7 +277,7 @@ class _AccountPageState extends State<AccountPage> {
               const SizedBox(
                 height: 10,
               ),
-             Container(
+              Container(
                 width: 300,
                 decoration: ShapeDecoration(
                   color: const Color.fromARGB(255, 255, 255, 255),
@@ -255,7 +294,8 @@ class _AccountPageState extends State<AccountPage> {
                           height: 120,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: NetworkImage(postMe.playlist.imagePlaylist),
+                              image:
+                                  NetworkImage(postMe.playlist.imagePlaylist),
                               fit: BoxFit.cover,
                             ),
                             borderRadius: const BorderRadius.only(
@@ -303,5 +343,35 @@ class _AccountPageState extends State<AccountPage> {
         ),
       ),
     );
+  }
+
+  String calDateTime(String dt) {
+    String res = '';
+
+    // Split ส่วนของวันที่และเวลา
+    List<String> parts = dt.split('.');
+
+    // สร้าง DateTime โดยแยกส่วนวันที่และเวลาออกจากกัน
+    DateTime postTime =
+        DateTime.parse(parts[0].trim()); // แปลงเฉพาะส่วนวันที่และเวลา
+
+    log("เวลาของ post: $postTime");
+    DateTime now = DateTime.now();
+    log("เวลาปัจจุบัน: $now");
+
+    Duration difference = now.difference(postTime);
+
+    if (difference.inSeconds.abs() < 60) {
+      res = '${difference.inSeconds.abs()} วินาที';
+    } else if (difference.inMinutes.abs() < 60) {
+      res = '${difference.inMinutes.abs()} นาที';
+    } else if (difference.inHours.abs() < 24) {
+      res = '${difference.inHours.abs()} ชม.';
+    } else {
+      res = '${difference.inDays.abs()} วัน';
+    }
+
+    log(res);
+    return res;
   }
 }

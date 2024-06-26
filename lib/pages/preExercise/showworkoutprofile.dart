@@ -7,7 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart' as GetWP;
 import 'package:frontend_fitfit_app/pages/playlsit/edit_playlsitpage.dart';
-import 'package:frontend_fitfit_app/pages/playlsitMusic/music_playlsitpage.dart';
+import 'package:frontend_fitfit_app/pages/playlsitMusic/playlsit_music_page.dart';
 import 'package:frontend_fitfit_app/pages/preExercise/preExercise.dart';
 import 'package:frontend_fitfit_app/pages/share/post.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
