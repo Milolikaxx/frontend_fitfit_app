@@ -327,20 +327,5 @@ class _HomePageState extends State<HomePage> {
       log("Error: $e");
     }
   }
-  // //ปุ่ม Sign Out การออกจากระบบ
-  // Widget _googleSignInButton() {
-  //   return Center(
-  //     child: SizedBox(
-  //       height: 50,
-  //       child: ElevatedButton(
-  //         child: const Text("Log Out"),
-  //         onPressed: () async {
-  //           await GoogleSignIn().disconnect();
-  //           log("Sign Out Success!!");
-  //           Get.to(() => const WelcomePage());
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
+ 
 }

@@ -13,17 +13,16 @@ class _AfterExercisePageState extends State<AfterExercisePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Column(
-        mainAxisAlignment:
-            MainAxisAlignment.center, // จัด Column ให้อยู่ตรงกลาง
+
         children: [
           Container(
             margin: const EdgeInsets.only(top: 60),
             child: const Text(
               "เสร็จสิ้นการออกกำลังกาย",
-              textAlign: TextAlign.center, // จัดข้อความให้อยู่ตรงกลาง
+              textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white, // กำหนดสีข้อความเป็นสีขาว
-                fontSize: 20.0, // ปรับขนาดฟอนต์ตามความเหมาะสม
+                color: Colors.white,
+                fontSize: 20,
               ),
             ),
           ),
@@ -76,7 +75,7 @@ class _AfterExercisePageState extends State<AfterExercisePage> {
       onPressed: () {},
       child: const Text(
         "กลับหน้าหลัก",
-        style: TextStyle(color: Colors.white), // กำหนดสีข้อความตามต้องการ
+        style: TextStyle(color: Colors.white), 
       ),
     );
   }
@@ -85,7 +84,7 @@ class _AfterExercisePageState extends State<AfterExercisePage> {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.grey[400],
-        borderRadius: BorderRadius.circular(20), // กำหนดขอบมน
+        borderRadius: BorderRadius.circular(20), 
       ),
       child: TextButton(
         onPressed: () {},
@@ -93,13 +92,13 @@ class _AfterExercisePageState extends State<AfterExercisePage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.share, // ไอคอนแชร์
-              color: Colors.white, // กำหนดสีไอคอน
+              Icons.share, 
+              color: Colors.white, 
             ),
-            SizedBox(width: 8), // ระยะห่างระหว่างไอคอนและข้อความ
+            SizedBox(width: 8), 
             Text(
-              'แชร์', // ข้อความแชร์
-              style: TextStyle(color: Colors.white), // กำหนดสีข้อความ
+              'แชร์', 
+              style: TextStyle(color: Colors.white), 
             ),
           ],
         ),

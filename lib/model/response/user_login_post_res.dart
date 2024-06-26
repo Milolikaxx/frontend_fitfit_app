@@ -46,6 +46,8 @@ class UserLoginPostResponse {
         updatedAt: DateTime.parse(json["UpdatedAt"]),
       );
 
+  get data => null;
+
   Map<String, dynamic> toJson() => {
         "Uid": uid,
         "Name": name,
