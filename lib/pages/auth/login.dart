@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/request/user_login%20google_req.dart';
 import 'package:frontend_fitfit_app/model/request/user_login_post_req.dart';
@@ -10,6 +11,7 @@ import 'package:frontend_fitfit_app/pages/register/signup.dart';
 import 'package:frontend_fitfit_app/service/api/user.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
@@ -273,6 +275,8 @@ class _LoginPageState extends State<LoginPage> {
             context.read<AppData>().user = res;
           }
           log('เข้าสู่ระบบ');
+        await GetStorage().write('user', res.toJson());
+
           Get.to(() => const Barbottom());
         } else {
           Get.snackbar('เข้าสู่ระบบไม่สำเร็จ', 'กรุณากรอกข้อมูลให้ถูกต้อง');
@@ -323,6 +327,5 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-   //ปุ่ม Sign Out การออกจากระบบ
+  //ปุ่ม Sign Out การออกจากระบบ
 }
-

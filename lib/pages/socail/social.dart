@@ -91,137 +91,149 @@ class _SocailPageState extends State<SocailPage> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 47,
-                      height: 47,
-                      decoration: ShapeDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(post.user.imageProfile),
-                          fit: BoxFit.cover,
-                        ),
-                        shape: const OvalBorder(),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          post.user.name,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          calDateTime(post.pDatetime.toString()),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                userDetail(post),
                 const SizedBox(
                   height: 10,
                 ),
-                Container(
-                  width: 300,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                  decoration: ShapeDecoration(
-                    color: const Color(0xFFF8721D),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Text(
-                    post.description,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
+                descriptionPost(post),
                 const SizedBox(
                   height: 10,
                 ),
-                Container(
-                  width: 300,
-                  decoration: ShapeDecoration(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return Row(
-                        children: [
-                          Container(
-                            width: 120,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image:
-                                    NetworkImage(post.playlist.imagePlaylist),
-                                fit: BoxFit.cover,
-                              ),
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(4),
-                                bottomLeft: Radius.circular(4),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          SizedBox(
-                            width: constraints.maxWidth -
-                                130, // 120 (image width) + 10 (SizedBox width)
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  post.playlistName,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                  ),
-                                  // overflow: TextOverflow.ellipsis,
-                                ),
-                                Text(
-                                  "playlist by ${post.user.name}",
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
+                playlist(post),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget userDetail(SocialAllPostResonse post) {
+    return Row(
+                children: [
+                  Container(
+                    width: 47,
+                    height: 47,
+                    decoration: ShapeDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(post.user.imageProfile),
+                        fit: BoxFit.cover,
+                      ),
+                      shape: const OvalBorder(),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        post.user.name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        calDateTime(post.pDatetime.toString()),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+  }
+
+  Widget descriptionPost(SocialAllPostResonse post) {
+    return Container(
+                width: 300,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                decoration: ShapeDecoration(
+                  color: const Color(0xFFF8721D),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  post.description,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                  ),
+                ),
+              );
+  }
+
+  Widget playlist(SocialAllPostResonse post) {
+    return Container(
+                width: 300,
+                decoration: ShapeDecoration(
+                  color: const Color.fromARGB(255, 255, 255, 255),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Row(
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image:
+                                  NetworkImage(post.playlist.imagePlaylist),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(4),
+                              bottomLeft: Radius.circular(4),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        SizedBox(
+                          width: constraints.maxWidth -
+                              130, // 120 (image width) + 10 (SizedBox width)
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                post.playlistName,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                                // overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                "playlist by ${post.user.name}",
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              );
   }
 
   String calDateTime(String dt) {

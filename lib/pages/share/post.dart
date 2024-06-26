@@ -138,6 +138,7 @@ class _PostPageState extends State<PostPage> {
                           key: _formKey,
                           child: Column(
                             children: [
+                              //desController
                               TextFormField(
                                 maxLength: 50,
                                 controller: desController,
@@ -200,6 +201,7 @@ class _PostPageState extends State<PostPage> {
                                       fontSize: 16, color: Colors.white),
                                 ),
                               ),
+                              //nameController playlsit
                               Padding(
                                 padding: const EdgeInsets.only(top: 5),
                                 child: TextFormField(

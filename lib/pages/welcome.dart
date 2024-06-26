@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/pages/auth/login.dart';
+import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/register/signup.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -11,6 +15,21 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
+  void checkLoginStatus() {
+    // final box = GetStorage();
+    // final user = box.read('user');
+    // log(user);
+    // if (user != null) {
+    //   Get.offAll(() => const Barbottom());
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,6 +115,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     ],
                   ),
                 ),
+               
               ],
             ),
           ],
