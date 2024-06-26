@@ -5,16 +5,20 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
+import 'package:frontend_fitfit_app/pages/afterExercise/afterExercise.dart';
 // import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:rxdart/rxdart.dart';
+// import 'package:rxdart/rxdart.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'dart:async';
+import 'package:rxdart/rxdart.dart';
+// import 'package:get/get.dart';
 
 // ignore: must_be_immutable
 class PlayMusicPage extends StatefulWidget {
@@ -373,26 +377,29 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
 
   void log(String message) {
     // You can use any logging mechanism you prefer
-    print(message);
+    // print(message);
   }
 
   AlertDialog alertConfirmDialog(BuildContext context) {
     return AlertDialog(
-      title: Text('Confirmation'),
-      content: Text('Are you sure you want to stop?'),
+      title: const Text('Confirmation'),
+      content: const Text('Are you sure you want to stop?'),
       actions: <Widget>[
         TextButton(
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
           onPressed: () {
             log('Cancel button pressed');
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-          child: Text('Confirm'),
+          child: const Text('Confirm'),
           onPressed: () {
             log('Confirm button pressed');
-            Navigator.of(context).pop();
+            navigator?.push(
+                MaterialPageRoute(builder: (context) => AfterExercisePage()));
+            // Navigator.of(context).pop();
+            // Get.to(() => AfterExercisePage());
           },
         ),
       ],
