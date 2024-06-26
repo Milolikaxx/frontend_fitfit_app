@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_detail_post_req.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
@@ -47,7 +48,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
-              Get.back();
+            Get.back();
           },
         ),
       ),
@@ -55,7 +56,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
           child: Form(
-             key: _formKey,
+            key: _formKey,
             child: Column(
               children: [
                 const Row(
@@ -76,8 +77,8 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                   child: TextFormField(
                     controller: namePlController,
                     style: const TextStyle(color: Colors.white),
-                     maxLength: 50,
-                      validator: (value) {
+                    maxLength: 50,
+                    validator: (value) {
                       // add email validation
                       if (value == null || value.isEmpty) {
                         return 'กรุณากรอกชื่อเพลย์ลิสต์';
@@ -86,21 +87,18 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                       return null;
                     },
                     decoration: const InputDecoration(
-                      hintText: 'ชื่อรายการเพลง',
-                      hintStyle: TextStyle(color: Colors.white),
-                      prefixIcon:
-                          Image(image: AssetImage("assets/images/playlist.png")),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                      ),
-                    
-                     counterStyle: TextStyle(
-                      color: Colors.white,height: 1
-                     )
-                    ),
+                        hintText: 'ชื่อรายการเพลง',
+                        hintStyle: TextStyle(color: Colors.white),
+                        prefixIcon: Image(
+                            image: AssetImage("assets/images/playlist.png")),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white, width: 2),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white, width: 2),
+                        ),
+                        counterStyle:
+                            TextStyle(color: Colors.white, height: 1)),
                   ),
                 ),
                 Padding(
@@ -205,7 +203,20 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-            Get.offAll(() => const Barbottom());
+            // ignore: use_build_context_synchronously
+            showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => CupertinoAlertDialog(
+                      title: const Text("สำเร็จ"),
+                      actions: [
+                        CupertinoDialogAction(
+                            onPressed: () {
+                              Get.offAll(() => const Barbottom());
+                            },
+                            child: const Text("ตกลง")),
+                      ],
+                      content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
+                    ));
           } else {
             log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
           }
@@ -239,7 +250,20 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-          Get.offAll(() => const Barbottom());
+            // ignore: use_build_context_synchronously
+            showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => CupertinoAlertDialog(
+                      title: const Text("สำเร็จ"),
+                      actions: [
+                        CupertinoDialogAction(
+                            onPressed: () {
+                              Get.offAll(() => const Barbottom());
+                            },
+                            child: const Text("ตกลง")),
+                      ],
+                      content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
+                    ));
           } else {
             log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
           }

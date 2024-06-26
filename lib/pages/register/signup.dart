@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:frontend_fitfit_app/model/request/user_login%20google_req.dart';
 import 'package:frontend_fitfit_app/model/request/user_register_post_req.dart';
@@ -41,7 +42,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime selectedBirthDate = DateTime.now();
   late UserService userService;
-   List<String> scopes = <String>[
+  List<String> scopes = <String>[
     'email',
   ];
   @override
@@ -108,8 +109,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       child: TextFormField(
                         controller: dateController,
                         style: const TextStyle(color: Colors.white),
-                          validator: (value) {
-                      
+                        validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'กรุณาเลือกวันเกิด';
                           }
@@ -344,33 +344,16 @@ class _SignUpPageState extends State<SignUpPage> {
               // ignore: use_build_context_synchronously
               showDialog<String>(
                   context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                        title: const Text('สมัครสมาชิกสำเร็จ'),
-                        // content: const Text('AlertDialog description'),
-                        actions: <Widget>[
-                          ElevatedButton(
-                            onPressed: () {
-                              Get.to(() => const LoginPage());
-                            },
-                            style: ButtonStyle(
-                              minimumSize: MaterialStateProperty.all<Size>(
-                                  const Size(330, 50)),
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  const Color(0xFFF8721D)),
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                              ),
-                            ),
-                            child: const Text(
-                              'ตกลง',
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                          ),
+                  builder: (BuildContext context) => CupertinoAlertDialog(
+                        title: const Text("สำเร็จ"),
+                        actions: [
+                          CupertinoDialogAction(
+                              onPressed: () {
+                                Get.offAll(() => const LoginPage());
+                              },
+                              child: const Text("ตกลง")),
                         ],
+                        content: const Text("สมัคสมาชิกสำเร็จ"),
                       ));
             } else if (res == 2) {
               Get.snackbar('อีเมลนี้มีอยู่แล้ว', 'กรุณากรอกอีเมลใหม่');
@@ -396,35 +379,18 @@ class _SignUpPageState extends State<SignUpPage> {
             int res = await userService.register(registerObj);
             if (res == 1) {
               // ignore: use_build_context_synchronously
-              showDialog<String>(
+                 showDialog<String>(
                   context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                        title: const Text('สมัครสมาชิกสำเร็จ'),
-                        // content: const Text('AlertDialog description'),
-                        actions: <Widget>[
-                          ElevatedButton(
-                            onPressed: () {
-                              Get.offAll(() => const LoginPage());
-                            },
-                            style: ButtonStyle(
-                              minimumSize: MaterialStateProperty.all<Size>(
-                                  const Size(330, 50)),
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  const Color(0xFFF8721D)),
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                              ),
-                            ),
-                            child: const Text(
-                              'ตกลง',
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                          ),
+                  builder: (BuildContext context) => CupertinoAlertDialog(
+                        title: const Text("สำเร็จ"),
+                        actions: [
+                          CupertinoDialogAction(
+                              onPressed: () {
+                                Get.off(() => const LoginPage());
+                              },
+                              child: const Text("ตกลง")),
                         ],
+                        content: const Text("สมัคสมาชิกสำเร็จ"),
                       ));
             } else if (res == 2) {
               Get.snackbar('อีเมลนี้มีอยู่แล้ว', 'กรุณากรอกอีเมลใหม่');

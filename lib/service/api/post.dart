@@ -18,4 +18,7 @@ abstract class PostService {
 
   @GET("/post/{id}")
   Future<List<SocialAllPostResonse>> getPostByUid(@Path() int id);
+
+  @DELETE("/post/del/{id}")
+  Future<int> deletePost(@Path() int id);
 }
