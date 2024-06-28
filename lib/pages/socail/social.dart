@@ -3,9 +3,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/social_all_post_res.dart';
+import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/pages/playlsitMusic/playlist_other_page.dart';
+import 'package:frontend_fitfit_app/pages/playlsitMusic/playlsit_music_page.dart';
+import 'package:frontend_fitfit_app/pages/preExercise/showworkoutprofile.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/post.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +24,7 @@ class SocailPage extends StatefulWidget {
 
 class _SocailPageState extends State<SocailPage> {
   List<SocialAllPostResonse> postAll = [];
+   late UserLoginPostResponse user;
   // List<List<WorkoutProfileMusicTypeGetResponse>> profileInfos = [];
   late var loadData;
   late PostService postService;
@@ -25,6 +32,7 @@ class _SocailPageState extends State<SocailPage> {
   void initState() {
     super.initState();
     postService = context.read<AppData>().postService;
+    user = context.read<AppData>().user;
     loadData = loadDataAsync();
   }
 
@@ -173,67 +181,82 @@ class _SocailPageState extends State<SocailPage> {
   }
 
   Widget playlist(SocialAllPostResonse post) {
-    return Container(
-                width: 300,
-                decoration: ShapeDecoration(
-                  color: const Color.fromARGB(255, 255, 255, 255),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+    return InkWell(
+       onTap: () {
+        if (user.uid == post.uid) {
+            Get.to(() => MusicPlaylistPage(post.pid));
+        }else {
+           Get.to(() => PlaylistUserOtherPage(post.pid,post.user.name,post.playlistName,post.user.imageProfile));
+        }
+     
+        // setState(() {
+        //    cardColor = Colors.orange;
+        // });
+      },
+      child: Card(
+        child: Container(
+                    width: 300,
+                    decoration: ShapeDecoration(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Row(
+                          children: [
+                            Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image:
+                                      NetworkImage(post.playlist.imagePlaylist),
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(4),
+                                  bottomLeft: Radius.circular(4),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                              width: constraints.maxWidth -
+                                  130, // 120 (image width) + 10 (SizedBox width)
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    post.playlistName,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                    ),
+                                    // overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    "playlist by ${post.user.name}",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
-                ),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Row(
-                      children: [
-                        Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image:
-                                  NetworkImage(post.playlist.imagePlaylist),
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(4),
-                              bottomLeft: Radius.circular(4),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        SizedBox(
-                          width: constraints.maxWidth -
-                              130, // 120 (image width) + 10 (SizedBox width)
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                post.playlistName,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                ),
-                                // overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                "playlist by ${post.user.name}",
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              );
+      ),
+    );
   }
 
   String calDateTime(String dt) {

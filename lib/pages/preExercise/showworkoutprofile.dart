@@ -5,8 +5,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
-import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart' as GetWP;
+import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart'
+    as GetWP;
+import 'package:frontend_fitfit_app/pages/playlistAfterCreate/playlist_after_create.dart';
 import 'package:frontend_fitfit_app/pages/playlsit/edit_playlsitpage.dart';
+import 'package:frontend_fitfit_app/pages/playlsit/playlist_wp_page.dart';
 import 'package:frontend_fitfit_app/pages/playlsitMusic/playlsit_music_page.dart';
 import 'package:frontend_fitfit_app/pages/preExercise/preExercise.dart';
 import 'package:frontend_fitfit_app/pages/share/post.dart';
@@ -36,7 +39,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   late PlaylistService playlsitService;
   List<PlaylistWithWorkoutGetResponse> playlistWp = [];
   @override
-    void initState() {
+  void initState() {
     super.initState();
     wpService = context.read<AppData>().workoutProfileService;
     playlsitService = context.read<AppData>().playlistService;
@@ -44,20 +47,18 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   }
 
   loadDataAsync() async {
-    try {  
+    try {
       profile = await wpService.getProfileByWpid(widget.idx);
-      log(profile.wpid.toString()); 
+      log(profile.wpid.toString());
       playlistWp = await playlsitService.getPlaylistByWpid(profile.wpid);
-       if (playlistWp.isNotEmpty) {
+      if (playlistWp.isNotEmpty) {
         log(playlistWp.first.playlistName);
       } else {
         log("Playlist is null or empty");
       }
     } catch (e) {
       log(e.toString());
-    } finally {
-     
-    }
+    } finally {}
   }
 
   @override
@@ -71,9 +72,19 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () {
-               Get.back();
+              Get.back();
             },
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add_box_rounded,
+                  color: Color.fromARGB(255, 255, 255, 255)),
+              onPressed: () async {
+                Get.to(() =>
+                    CreatePlaylsitPage(profile.wpid, profile.duration));
+              },
+            ),
+          ],
         ),
         body: RefreshIndicator(
           color: const Color(0xFFF8721D),
@@ -282,7 +293,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
       padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: InkWell(
         onTap: () {
-          Get.to(() =>  PreExercisePage(pl.wpid,pl.pid));
+          Get.to(() => PreExercisePage(pl.wpid, pl.pid));
         },
         child: Card(
           child: Container(
@@ -310,7 +321,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                 const SizedBox(
                   width: 10,
                 ),
-                 Flexible(
+                Flexible(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -337,7 +348,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                               Get.to(() => MusicPlaylistPage(pl.pid));
                               break;
                             case Menu.share:
-                              Get.to(() =>PostPage(pl.pid));
+                              Get.to(() => PostPage(pl.pid));
                               break;
                             case Menu.remove:
                               delPlaylist(pl.pid);
@@ -363,7 +374,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                               title: Text('แชร์'),
                             ),
                           ),
-                  
+
                           // const PopupMenuDivider(),
                           const PopupMenuItem<Menu>(
                             value: Menu.remove,

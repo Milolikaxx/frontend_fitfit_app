@@ -49,28 +49,34 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           backgroundColor: const Color(0xFFF8721D),
           automaticallyImplyLeading: false,
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(
-              '${user.imageProfile}',
+          leading: Padding(
+            padding: const EdgeInsets.symmetric(
+                vertical: 8.0), // Adjust the vertical padding as needed
+            child: CircleAvatar(
+                radius: 50, 
+                backgroundImage: NetworkImage('${user.imageProfile}'),
+              )
+          ),
+          centerTitle: false, 
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "${user.name}",
+              style: const TextStyle(color: Colors.white),
             ),
           ),
-          centerTitle: true,
-          title: Text(
-            "${user.name}",
-            style: const TextStyle(color: Colors.white),
-          ),
-              actions: [
-              IconButton(
-                icon: const Icon(Icons.exit_to_app_rounded,
-                    color: Color.fromARGB(255, 255, 255, 255)),
-                onPressed: () async {
-                  if (user.googleId!.isNotEmpty) {
-                    await GoogleSignIn().signOut();
-                  }
-                  Get.offAll(() => const WelcomePage());
-                },
-              ),
-            ],
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.exit_to_app_rounded,
+                  color: Color.fromARGB(255, 255, 255, 255)),
+              onPressed: () async {
+                if (user.googleId!.isNotEmpty) {
+                  await GoogleSignIn().signOut();
+                }
+                Get.offAll(() => const WelcomePage());
+              },
+            ),
+          ],
         ),
         body: FutureBuilder(
             future: loadData,
@@ -327,5 +333,4 @@ class _HomePageState extends State<HomePage> {
       log("Error: $e");
     }
   }
- 
 }

@@ -6,7 +6,9 @@ import 'package:frontend_fitfit_app/pages/home/home.dart';
 import 'package:frontend_fitfit_app/pages/socail/social.dart';
 
 class Barbottom extends StatefulWidget {
-  const Barbottom({super.key});
+  final int initialIndex;
+
+  const Barbottom({super.key, this.initialIndex = 0});
 
   @override
   State<Barbottom> createState() => _BarbottomState();
@@ -22,6 +24,11 @@ class _BarbottomState extends State<Barbottom> {
     const ExercisePage(),
     const AccountPage()
   ];
+    @override
+  void initState() {
+    super.initState();
+    currentInx = widget.initialIndex; // Set the initial index here
+  }
   @override
   Widget build(BuildContext context) {
     return PopScope(
