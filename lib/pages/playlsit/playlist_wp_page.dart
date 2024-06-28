@@ -15,14 +15,14 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 // ignore: must_be_immutable
-class PlaylistAfterCreatePage extends StatefulWidget {
+class CreatePlaylsitPage extends StatefulWidget {
   int idx = 0;
   int timeEx = 0;
-  PlaylistAfterCreatePage(this.idx, this.timeEx, {super.key});
+  CreatePlaylsitPage(this.idx, this.timeEx, {super.key});
 
   @override
-  State<PlaylistAfterCreatePage> createState() =>
-      _PlaylistAfterCreatePageState();
+  State<CreatePlaylsitPage> createState() =>
+      _CreatePlaylsitPageState();
 }
 
 class Musicdata {
@@ -32,7 +32,7 @@ class Musicdata {
   Musicdata(this.musictime, this.bpm);
 }
 
-class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
+class _CreatePlaylsitPageState extends State<CreatePlaylsitPage> {
   List<Musicdata> chartData = [];
   List<MusicGetResponse> music = [];
   late PlaylistDetailService playlistDetailServ;
@@ -49,11 +49,12 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   loadDataAsync() async {
     music = await playlistDetailServ.getMusicDetailGen(widget.idx);
     log(music.length.toString());
-  
-  for (var m in music) {
+
+    for (var m in music) {
       log(m.name);
       chartData.add(Musicdata(m.duration, m.bpm));
-    }  }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () {
-                Get.back();
+              Get.back();
             },
           ),
           title: Center(
@@ -86,8 +87,8 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
             color: Colors.white,
           ),
           onPressed: () {
-            Get.to(() =>
-                EditPlaylistMusicAfterCreatePage(music, widget.idx, widget.timeEx));
+            Get.to(() => EditPlaylistMusicAfterCreatePage(
+                music, widget.idx, widget.timeEx));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -123,8 +124,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Title"),
-                          Icon(Icons.access_time_rounded,
-                              color: Colors.black),
+                          Icon(Icons.access_time_rounded, color: Colors.black),
                         ],
                       ),
                     ),
@@ -212,7 +212,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   String formatMusicName(String name) {
     // Remove .mp extension
     if (name.endsWith('.mp')) {
-      name = name.substring(0,name.length - 3);
+      name = name.substring(0, name.length - 3);
     }
     // Truncate to 10 characters and add ellipsis if necessary
     if (name.length > 25) {

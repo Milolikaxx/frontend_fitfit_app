@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/social_all_post_res.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/user/editprofile.dart';
 import 'package:frontend_fitfit_app/service/api/post.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
@@ -19,7 +21,6 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   late UserLoginPostResponse user;
-
   List<SocialAllPostResonse> postAll = [];
   // List<List<WorkoutProfileMusicTypeGetResponse>> profileInfos = [];
   late var loadData;
@@ -118,7 +119,8 @@ class _AccountPageState extends State<AccountPage> {
                         height: 20,
                       ),
                       postAll.isNotEmpty
-                          ?   postMe(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width)
+                          ? postMe(MediaQuery.of(context).size.height,
+                              MediaQuery.of(context).size.width)
                           : Expanded(
                               child: Container(
                                 height: MediaQuery.of(context).size.height,
@@ -247,7 +249,33 @@ class _AccountPageState extends State<AccountPage> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {},
+                        onPressed: () {
+                          try {
+                            // ignore: use_build_context_synchronously
+                            showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    CupertinoAlertDialog(
+                                      title: const Text("สำเร็จ"),
+                                      actions: [
+                                        CupertinoDialogAction(
+                                            onPressed: () async {
+                                              int res = await postService
+                                                  .deletePost(postMe.postid);
+                                              if (res == 1) {
+                                                Get.off(() => const Barbottom(
+                                                      initialIndex: 4,
+                                                    ));
+                                              }
+                                            },
+                                            child: const Text("ตกลง")),
+                                      ],
+                                      content: const Text("สมัคสมาชิกสำเร็จ"),
+                                    ));
+                          } catch (e) {
+                            log(e.toString());
+                          }
+                        },
                       ),
                     ],
                   )

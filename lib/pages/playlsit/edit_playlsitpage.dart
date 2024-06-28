@@ -2,9 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:frontend_fitfit_app/model/request/playlist_put_req.dart';
-import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
-import 'package:frontend_fitfit_app/pages/preExercise/showworkoutprofile.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -27,6 +25,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late PlaylistService playlsitService;
   late PlaylistWithWorkoutGetResponse dePlaylist;
+  // ignore: prefer_typing_uninitialized_variables
   late var loadData;
   @override
   void initState() {
@@ -48,7 +47,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () {
-               Get.back();
+              Get.back();
             },
           ),
         ),
@@ -95,12 +94,12 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                 child: TextFormField(
                   maxLength: 50,
                   controller: namePlController,
-                 validator: (value) {
+                  validator: (value) {
                     // add email validation
                     if (value == null || value.isEmpty) {
                       return 'กรุณากรอกชื่อเพลย์ลิสต์';
                     }
-                
+
                     return null;
                   },
                   style: const TextStyle(color: Colors.white),
@@ -188,49 +187,6 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
         ),
       ),
     );
-  }
-
-  void edit() async {
-    if (_formKey.currentState?.validate() ?? true) {
-      if (imgPick == "") {
-        PlaylsitPutRequest editPl = PlaylsitPutRequest(
-            playlistName: namePlController.text == ""
-                ? dePlaylist.playlistName
-                : namePlController.text,
-            imagePlaylist: dePlaylist.imagePlaylist);
-        try {
-          int res = await playlsitService.editPlaylist(widget.pid, editPl);
-          if (res > 0) {
-            log('แก้ไขเพลย์ลิสต์สำเร็จ');
-            // ignore: use_build_context_synchronously
-            Navigator.pop(context);
-            // Get.to(() => ShowWorkoutProfilePage(dePlaylist.wpid));
-          } else {
-            log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
-          }
-        } catch (e) {
-          log(e.toString());
-        }
-      } else {
-        PlaylsitPutRequest editPl = PlaylsitPutRequest(
-            playlistName: namePlController.text == ""
-                ? dePlaylist.playlistName
-                : namePlController.text,
-            imagePlaylist: imgPick);
-        try {
-          int res = await playlsitService.editPlaylist(dePlaylist.pid, editPl);
-          if (res > 0) {
-            log('แก้ไขเพลย์ลิสต์สำเร็จ');
-
-            Get.back();
-          } else {
-            log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
-          }
-        } catch (e) {
-          log(e.toString());
-        }
-      }
-    }
   }
 
   Widget noImg() {
@@ -338,6 +294,55 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
       //     imgPick = result.data['fileUrl'];
       //   });
       // }
+    }
+  }
+
+  void edit() async {
+    if (imgPick == "" && namePlController.text == "") {
+      Get.snackbar(
+        'ไม่มีการแก้ไขของข้อมูล', 'หากต้องการแก้ไขกรอกข้อมูล',
+        backgroundColor: Colors.white, // Background color
+        colorText: Colors.black,
+      );
+    } else {
+      if (imgPick == "") {
+        PlaylsitPutRequest editPl = PlaylsitPutRequest(
+            playlistName: namePlController.text == ""
+                ? dePlaylist.playlistName
+                : namePlController.text,
+            imagePlaylist: dePlaylist.imagePlaylist);
+        try {
+          int res = await playlsitService.editPlaylist(widget.pid, editPl);
+          if (res > 0) {
+            log('แก้ไขเพลย์ลิสต์สำเร็จ');
+            // ignore: use_build_context_synchronously
+            Get.back();
+          
+            // Get.to(() => ShowWorkoutProfilePage(dePlaylist.wpid));
+          } else {
+            log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
+          }
+        } catch (e) {
+          log(e.toString());
+        }
+      } else {
+        PlaylsitPutRequest editPl = PlaylsitPutRequest(
+            playlistName: namePlController.text == ""
+                ? dePlaylist.playlistName
+                : namePlController.text,
+            imagePlaylist: imgPick);
+        try {
+          int res = await playlsitService.editPlaylist(dePlaylist.pid, editPl);
+          if (res > 0) {
+            log('แก้ไขเพลย์ลิสต์สำเร็จ');
+            Get.back();
+          } else {
+            log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
+          }
+        } catch (e) {
+          log(e.toString());
+        }
+      }
     }
   }
 }
