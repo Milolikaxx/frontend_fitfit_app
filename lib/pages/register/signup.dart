@@ -353,7 +353,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         actions: [
                           ElevatedButton(
                             onPressed: () {
-                               Get.to(() => const LoginPage());
+                               Get.offAll(() => const LoginPage());
                             },
                             style: ButtonStyle(
                               minimumSize: MaterialStateProperty.all<Size>(
@@ -412,7 +412,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         actions: [
                           ElevatedButton(
                             onPressed: () {
-                              Get.to(() => const LoginPage());
+                              Get.offAll(() => const LoginPage());
                             },
                             style: ButtonStyle(
                               minimumSize: MaterialStateProperty.all<Size>(
