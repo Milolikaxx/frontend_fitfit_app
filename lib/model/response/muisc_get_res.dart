@@ -75,6 +75,8 @@ class MusicGetResponse {
       bpm: bpm,
     );
   }
+
+  
 }
 
 class MusicType {

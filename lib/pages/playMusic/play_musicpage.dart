@@ -52,7 +52,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   ConcatenatingAudioSource? playlist;
   int currentIndex = 0;
   late Duration totalDuration; // Total duration of all songs
-
+  Timer? countdownTimer;
   Stream<PositionData> get _positionDataStream =>
       rx.Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
         _audioPlayer.positionStream,
@@ -69,14 +69,14 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   void initState() {
     super.initState();
     playlistService = context.read<AppData>().playlistService;
-
     _audioPlayer = AudioPlayer();
     _audioPlayer.currentIndexStream.listen((index) {
       setState(() {
         currentIndex = index ?? 0;
       });
+     adjustVolumeBasedOnBPM(currentIndex); 
     });
-
+  
     loadData = loadDataAsync();
   }
 
@@ -106,14 +106,14 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
               }))
           .toList(),
     );
-    await _audioPlayer.setLoopMode(LoopMode.all);
+    await _audioPlayer.setLoopMode(LoopMode.off);
     await _audioPlayer.setAudioSource(playlist!);
     fullTime();
     startCountdown();
   }
 
   void startCountdown() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         countdown--;
       });
@@ -123,7 +123,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           isCountdownFinished = true;
           isPlaying = true; // Set isPlaying to true when countdown finishes
         });
-        _audioPlayer.play(); // Start playing music
+        _audioPlayer.play();
       }
     });
   }
@@ -139,9 +139,35 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
     }
   }
 
+  void adjustVolumeBasedOnBPM(int index) {
+    if (musicList.isNotEmpty && index < musicList.length) {
+      final bpm = musicList[index].bpm;
+      double volume;
+      if (bpm <= 100) {
+        volume = 0.2;
+      } else if (bpm <= 114) {
+        volume = 0.4;
+      } else if (bpm <= 133) {
+        volume = 0.6;
+      } else if (bpm <= 152) {
+        volume = 0.8;
+      } else if (bpm <= 171) {
+        volume = 1.0;
+      } else {
+        volume = 1.0; // Ensure to handle cases beyond 171 BPM
+      }
+
+      log("Adjusted volume for BPM $bpm: $volume");
+      _audioPlayer.setVolume(volume);
+    } else {
+      log("No music or invalid currentIndex: ${musicList.length}, $currentIndex");
+    }
+  }
+
   @override
   void dispose() {
     _audioPlayer.dispose();
+    countdownTimer?.cancel();
     super.dispose();
   }
 
@@ -203,7 +229,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           child: controller(),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(1),
           child: stopButton(),
         ),
       ],
@@ -227,7 +253,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   Widget circleImage() {
     return Container(
       width: 300,
-      height: 300,
+      height: 250,
       decoration: const BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
@@ -235,7 +261,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
       child: Center(
         child: Container(
           width: 280,
-          height: 280,
+          height: 240,
           decoration: BoxDecoration(
             color: Colors.black,
             shape: BoxShape.circle,
@@ -251,14 +277,16 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
 
   Widget detailMusic() {
     return Column(
+      // mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "ชื่อเพลง : ${musicList[currentIndex].name}",
-          style: const TextStyle(color: Colors.white, fontSize: 20),
+          style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
         Text(
           "ศิลปิน : ${musicList[currentIndex].artist}",
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: const TextStyle(color: Colors.grey, fontSize: 14),
         ),
       ],
     );

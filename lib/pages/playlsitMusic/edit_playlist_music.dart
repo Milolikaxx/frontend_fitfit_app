@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:frontend_fitfit_app/model/request/rand_music1_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
-import 'package:frontend_fitfit_app/pages/playlsit/save_playlist.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
@@ -13,16 +12,17 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 // ignore: must_be_immutable
-class EditPlaylistMusicAfterCreatePage extends StatefulWidget {
-  List<MusicGetResponse> music = [];
+class EditPlaylistMusicPage extends StatefulWidget {
+  // List<MusicGetResponse> music = [];
   int wpid = 0;
-  int timeEx = 0;
-  EditPlaylistMusicAfterCreatePage(this.music, this.wpid, this.timeEx,
+    int pid = 0;
+  // int timeEx = 0;
+  EditPlaylistMusicPage(this.wpid, this.pid, 
       {super.key});
 
   @override
-  State<EditPlaylistMusicAfterCreatePage> createState() =>
-      _EditPlaylistMusicAfterCreatePageState();
+  State<EditPlaylistMusicPage> createState() =>
+      _EditPlaylistMusicPageState();
 }
 
 class Musicdata {
@@ -32,32 +32,37 @@ class Musicdata {
   Musicdata(this.musictime, this.bpm);
 }
 
-class _EditPlaylistMusicAfterCreatePageState
-    extends State<EditPlaylistMusicAfterCreatePage> {
+class _EditPlaylistMusicPageState
+  extends State<EditPlaylistMusicPage> {
   List<Musicdata> chartData = [];
-  List<MusicGetResponse> musicRandNew = [];
-  List<MusicGetResponse> musicList = [];
-  List<Music> musiclist = [];
-  late PlaylistDetailService playlistDetailServ;
+  // ignore: non_constant_identifier_names
+  late PlaylsitMusicGetResponse music_pl;
+  late PlaylistService playlistService;
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
-
+  // List<Music> musiclist = [];
+   List<MusicGetResponse> musicRandNew = [];
+  late UserLoginPostResponse user;
+  double totalDuration = 0;
+late PlaylistDetailService playlistDetailServ;
   @override
   void initState() {
     super.initState();
-    playlistDetailServ = context.read<AppData>().playlistDetailService;
+    playlistService = context.read<AppData>().playlistService;
+    user = context.read<AppData>().user;
     loadData = loadDataAsync();
   }
 
   loadDataAsync() async {
-    for (var m in widget.music) {
-      log(m.name);
-      chartData.add(Musicdata(m.duration, m.bpm));
+    music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
+    chartData.clear();
+    totalDuration = 0;
+    for (var m in music_pl.playlistDetail) {
+      chartData.add(Musicdata(m.music.duration, m.music.bpm));
+      totalDuration += m.music.duration;
     }
-
-    musiclist = widget.music
-        .map((musicGetResponse) => musicGetResponse.toMusic())
-        .toList();
+     
+    setState(() {});
   }
 
   @override
@@ -72,16 +77,18 @@ class _EditPlaylistMusicAfterCreatePageState
               Get.back();
             },
           ),
-          title: const Center(
-            child: Text(
-              "เวลา 40 นาที",
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
+          // title: const Center(
+          //   child: Text(
+          //     "เวลา 40 นาที",
+          //     style: TextStyle(color: Colors.black),
+          //   ),
+          // ),
           actions: [
             IconButton(
               icon: const Icon(Icons.save_rounded, color: Colors.black),
-              onPressed: savePlaylist,
+              onPressed: () {
+                
+              },
             ),
           ],
         ),
@@ -92,9 +99,8 @@ class _EditPlaylistMusicAfterCreatePageState
             color: Colors.white,
           ),
           onPressed: () {
-            randAll();
+            // randAll();
             // setState(() {
-
             // });
           },
           shape: RoundedRectangleBorder(
@@ -151,41 +157,54 @@ class _EditPlaylistMusicAfterCreatePageState
                           ),
                         ),
                       ),
-                      musicGraph(),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 100, right: 35),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Title"),
-                            Icon(Icons.access_time_rounded,
-                                color: Colors.black),
-                          ],
+                       Expanded(
+                        child: SingleChildScrollView(
+                          physics: const ScrollPhysics(),
+                          child: Column(
+                            children: [
+                              musicGraph(),
+                              const Padding(
+                                padding: EdgeInsets.only(
+                                    left: 85, right: 35, top: 5),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Title",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16),
+                                    ),
+                                    Icon(Icons.access_time_rounded,
+                                        color: Colors.black),
+                                  ],
+                                ),
+                              ),
+                              listMusic(),
+                            ],
+                          ),
                         ),
                       ),
-                      listMusic(),
                     ],
                   ));
             }));
   }
 
-  Widget listMusic() {
-    return Expanded(
-      child: ListView.builder(
-        padding: const EdgeInsets.only(bottom: 65),
-        itemCount: widget.music.isEmpty ? 0 : widget.music.length,
-        itemBuilder: (context, index) => musicInfo(widget.music[index], index),
-      ),
+    Widget listMusic() {
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(bottom: 70),
+      shrinkWrap: true,
+      itemCount:
+          music_pl.playlistDetail.isEmpty ? 0 : music_pl.playlistDetail.length,
+      itemBuilder: (context, index) =>
+          musicInfo(music_pl.playlistDetail[index]),
     );
   }
 
-  void savePlaylist() {
-    Get.to(() => SavePlaylistPage(widget.music, widget.wpid, widget.timeEx));
-  }
-
-  Widget musicInfo(MusicGetResponse music, int index) {
+  Widget musicInfo(PlaylistDetail playlistDetail) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -194,7 +213,7 @@ class _EditPlaylistMusicAfterCreatePageState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Image(
-                image: NetworkImage(music.musicImage),
+                image: NetworkImage(playlistDetail.music.musicImage),
                 width: 65,
                 height: 65,
                 fit: BoxFit.cover,
@@ -206,14 +225,14 @@ class _EditPlaylistMusicAfterCreatePageState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      formatMusicName(music.name),
+                      formatMusicName(playlistDetail.music.name),
                       style: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w800),
                     ),
                     Text(
-                      music.artist,
+                      playlistDetail.music.artist,
                       style:
                           const TextStyle(color: Color.fromARGB(161, 0, 0, 0)),
                     ),
@@ -227,16 +246,16 @@ class _EditPlaylistMusicAfterCreatePageState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                music.duration.toString(),
+                playlistDetail.music.duration.toString(),
                 style: const TextStyle(
                     color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
               ),
               Text(
-                "${music.bpm} bpm",
+                "${playlistDetail.music.bpm} bpm",
                 style: const TextStyle(
                     color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
               ),
-              Row(
+                        Row(
                 children: [
                   Container(
                     width: 30,
@@ -248,8 +267,8 @@ class _EditPlaylistMusicAfterCreatePageState
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
-                        log(index.toString());
-                        randMusic1Song(index);
+                        // log(index.toString());
+                        // randMusic1Song(index);
                       },
                       iconSize: 16,
                       icon: const FaIcon(
@@ -284,6 +303,7 @@ class _EditPlaylistMusicAfterCreatePageState
               )
             ],
           ),
+
         ],
       ),
     );
@@ -302,9 +322,12 @@ class _EditPlaylistMusicAfterCreatePageState
   }
 
   Widget musicGraph() {
-    return SizedBox(
-      height: 250,
-      child: SfCartesianChart(
+    return Container(
+      color: Colors.white,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height * 0.2,
+        child: SfCartesianChart(
           primaryXAxis: const CategoryAxis(),
           legend: const Legend(
             isVisible: false,
@@ -312,49 +335,51 @@ class _EditPlaylistMusicAfterCreatePageState
           tooltipBehavior: TooltipBehavior(enable: true),
           series: <CartesianSeries<Musicdata, double>>[
             LineSeries<Musicdata, double>(
-                dataSource: chartData,
-                xValueMapper: (Musicdata m, _) => m.musictime,
-                yValueMapper: (Musicdata m, _) => m.bpm,
-                color: Colors.red,
-                dataLabelSettings: const DataLabelSettings(isVisible: false))
-          ]),
+              dataSource: chartData,
+              xValueMapper: (Musicdata m, _) => m.musictime,
+              yValueMapper: (Musicdata m, _) => m.bpm,
+              color: Colors.red,
+              dataLabelSettings: const DataLabelSettings(isVisible: false),
+            ),
+          ],
+        ),
+      ),
     );
   }
+  // Future<void> randAll() async {
+  //   musicRandNew = await playlistDetailServ.getMusicDetailGen(widget.wpid);
 
-  Future<void> randAll() async {
-    musicRandNew = await playlistDetailServ.getMusicDetailGen(widget.wpid);
+  //   setState(() {
+  //     chartData.clear();
+  //     music_pl.playlistDetail = musicRandNew;
+  //   });
 
-    setState(() {
-      chartData.clear();
-      widget.music = musicRandNew;
-    });
+  //   // log(widget.music.length.toString());
 
-    log(widget.music.length.toString());
+  //   // ignore: use_build_context_synchronously
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (BuildContext context) => widget),
+  //   );
+  // }
 
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => widget),
-    );
-  }
+  // Future<void> randMusic1Song(int idx) async {
+  //   log("1");
+  //   RandMusic1PostRequest randMusic = RandMusic1PostRequest(
+  //       musicList: musiclist, index: idx, wpid: widget.idx);
+  //   musicList = await playlistDetailServ.randomMusic(randMusic);
+  //   log(musicList.length.toString());
+  //   setState(() {
+  //     chartData.clear();
+  //     widget.music = musicList;
+  //   });
 
-  Future<void> randMusic1Song(int idx) async {
-    log("1");
-    RandMusic1PostRequest randMusic = RandMusic1PostRequest(
-        musicList: musiclist, index: idx, wpid: widget.wpid);
-    musicList = await playlistDetailServ.randomMusic(randMusic);
-    log(musicList.length.toString());
-    setState(() {
-      chartData.clear();
-      widget.music = musicList;
-    });
+  //   log(widget.music.length.toString());
 
-    log(widget.music.length.toString());
-
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => widget),
-    );
-  }
+  //   // ignore: use_build_context_synchronously
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (BuildContext context) => widget),
+  //   );
+  // }
 }

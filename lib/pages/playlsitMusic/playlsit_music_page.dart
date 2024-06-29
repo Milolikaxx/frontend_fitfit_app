@@ -3,8 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/pages/playlsit/edit_playlsitpage.dart';
+import 'package:frontend_fitfit_app/pages/playlsitMusic/edit_playlist_music.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -69,18 +73,18 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          child: const Icon(
-            Icons.edit,
-            color: Colors.white,
-          ),
           onPressed: () {
-            // Get.to(() =>
-            //     EditPlaylistAfterCreatePage(music, widget.idx, widget.timeEx));
+            Get.to(() =>
+                EditPlaylistMusicPage(music_pl.wpid, music_pl.wpid));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
-          backgroundColor: const Color(0xFFF8721D), // สีพื้นหลังของปุ่ม
+          backgroundColor: const Color(0xFFF8721D),
+          child: const Icon(
+            Icons.edit,
+            color: Colors.white,
+          ), // สีพื้นหลังของปุ่ม
         ),
         floatingActionButtonLocation:
             FloatingActionButtonLocation.endFloat, // ตำแหน่งของปุ่ม
