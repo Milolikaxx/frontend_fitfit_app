@@ -50,14 +50,13 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: const Color(0xFFF8721D),
           automaticallyImplyLeading: false,
           leading: Padding(
-            padding: const EdgeInsets.symmetric(
-                vertical: 8.0), // Adjust the vertical padding as needed
-            child: CircleAvatar(
-                radius: 50, 
+              padding: const EdgeInsets.symmetric(
+                  vertical: 8.0), // Adjust the vertical padding as needed
+              child: CircleAvatar(
+                radius: 50,
                 backgroundImage: NetworkImage('${user.imageProfile}'),
-              )
-          ),
-          centerTitle: false, 
+              )),
+          centerTitle: false,
           title: Align(
             alignment: Alignment.centerLeft,
             child: Text(
