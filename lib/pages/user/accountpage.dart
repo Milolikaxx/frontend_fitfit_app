@@ -23,6 +23,7 @@ class _AccountPageState extends State<AccountPage> {
   late UserLoginPostResponse user;
   List<SocialAllPostResonse> postAll = [];
   // List<List<WorkoutProfileMusicTypeGetResponse>> profileInfos = [];
+  // ignore: prefer_typing_uninitialized_variables
   late var loadData;
   late PostService postService;
   @override

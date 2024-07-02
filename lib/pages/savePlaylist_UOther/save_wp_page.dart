@@ -5,7 +5,7 @@ import 'package:frontend_fitfit_app/model/request/workoutMusicType_post_req.dart
 import 'package:frontend_fitfit_app/model/request/workoutProfile_post_req.dart';
 import 'package:frontend_fitfit_app/model/response/musictype_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
-import 'package:frontend_fitfit_app/pages/playlistAfterCreate/playlist_after_create.dart';
+import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
 import 'package:frontend_fitfit_app/service/api/musictype.dart';
 import 'package:frontend_fitfit_app/service/api/workout_musictype.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
@@ -16,25 +16,23 @@ import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
 
-class AddProfilePage extends StatefulWidget {
-  const AddProfilePage({super.key});
+// ignore: must_be_immutable
+class SaveProfilePage extends StatefulWidget {
+  WorkoutProfileGetResponse profile;
+  SaveProfilePage(this.profile, {super.key});
 
   @override
-  State<AddProfilePage> createState() => _AddProfilePageState();
+  State<SaveProfilePage> createState() => _SaveProfilePageState();
 }
 
-class _AddProfilePageState extends State<AddProfilePage> {
-  String dropdownValue = 'การเดิน';
-  late List<MusictypeGetResponse> tagMusictype = [];
-  List<MusictypeGetResponse> selectedTags = [];
-  int duration = 10;
-  int lv = 1;
-  String lvText = 'เบามาก';
+class _SaveProfilePageState extends State<SaveProfilePage> {
   late MusicTypeService musictypeService;
+  // ignore: prefer_typing_uninitialized_variables
   late var loadData;
   late UserLoginPostResponse user;
   late WorkoutProfileService wpService;
   late WorkoutMusicTypeService wpMusictypeService;
+  String levelDescription = '';
   @override
   void initState() {
     super.initState();
@@ -46,14 +44,25 @@ class _AddProfilePageState extends State<AddProfilePage> {
   }
 
   loadDataAsync() async {
-    // String url = 'http://202.28.34.197/tripbooking/trip/${widget.idx}';
-    // var value = await http.get(Uri.parse(url));
-    // trip = tripGetResponseFromJson(value.body);
-    // log(value.body);
-    tagMusictype = await musictypeService.getMusictype();
-    // setState(() {
-    //   trip = tripGetResponseFromJson(value.body);
-    // });
+    switch (widget.profile.levelExercise) {
+      case 5:
+        levelDescription = 'หนักมาก';
+        break;
+      case 4:
+        levelDescription = 'หนัก';
+        break;
+      case 3:
+        levelDescription = 'ปานกลาง';
+        break;
+      case 2:
+        levelDescription = 'เบา';
+        break;
+      case 1:
+        levelDescription = 'เบามาก';
+        break;
+      default:
+        levelDescription = '';
+    }
   }
 
   @override
@@ -61,21 +70,26 @@ class _AddProfilePageState extends State<AddProfilePage> {
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-          automaticallyImplyLeading: false,
+          backgroundColor: Colors.black,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () {
+              Get.back();
+            },
+          ),
         ),
         body: FutureBuilder(
             future: loadData,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-               return Center(
-                   child: LoadingAnimationWidget.beat(
+                return Center(
+                  child: LoadingAnimationWidget.beat(
                     color: Colors.white,
                     size: 50,
                   ),
                 );
               }
-             
+
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10, top: 50),
@@ -106,13 +120,13 @@ class _AddProfilePageState extends State<AddProfilePage> {
                               color: Color.fromARGB(255, 255, 255, 255),
                               size: 42,
                             ),
-                            onPressed: decreaseDuration,
+                            onPressed: () {},
                           ),
                           const SizedBox(
                             width: 10,
                           ),
                           Text(
-                            "$duration นาที",
+                            "${widget.profile.duration} นาที",
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 25,
@@ -127,7 +141,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                               color: Color.fromARGB(255, 255, 255, 255),
                               size: 42,
                             ),
-                            onPressed: addDuration,
+                            onPressed: () {},
                           ),
                         ],
                       ),
@@ -161,7 +175,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                             padding: const EdgeInsets.only(left: 2, right: 2),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
-                                value: dropdownValue,
+                                value: widget.profile.exerciseType,
                                 alignment: Alignment.center,
                                 dropdownColor:
                                     const Color.fromARGB(255, 0, 0, 0),
@@ -188,11 +202,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                                     ),
                                   );
                                 }).toList(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    dropdownValue = newValue!;
-                                  });
-                                },
+                                onChanged: null,
                               ),
                             ),
                           ),
@@ -210,13 +220,13 @@ class _AddProfilePageState extends State<AddProfilePage> {
                               color: Color.fromARGB(255, 255, 255, 255),
                               size: 42,
                             ),
-                            onPressed: decreaseLv,
+                            onPressed: () {},
                           ),
                           const SizedBox(
                             width: 18,
                           ),
                           Text(
-                            "LV. $lv $lvText",
+                            "LV. ${widget.profile.levelExercise} $levelDescription",
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 25,
@@ -231,7 +241,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                               color: Color.fromARGB(255, 255, 255, 255),
                               size: 42,
                             ),
-                            onPressed: addLv,
+                            onPressed: () {},
                           ),
                         ],
                       ),
@@ -257,49 +267,12 @@ class _AddProfilePageState extends State<AddProfilePage> {
                             children: [
                               const Icon(Icons.music_note_rounded,
                                   color: Colors.white, size: 35),
-                              MultiSelectDialogField(
-                                title: const Text('เลือกแนวเพลงที่คุณชอบ'),
-                                dialogHeight: 350,
-                                items: tagMusictype
-                                    .map((e) =>
-                                        MultiSelectItem<MusictypeGetResponse>(
-                                            e, e.name))
-                                    .toList(),
-                                // initialValue: selectedTags,
-                                onConfirm: (values) {
-                                  selectedTags = values;
-                                  log(values.toString());
-                                  setState(() {
-                                    
-                                  });
-                                },
-                                selectedItemsTextStyle:
-                                    const TextStyle(color: Colors.black),
-                                buttonIcon: const Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                  color: Colors.white,
-                                  size: 32,
-                                ),
-                                buttonText: const Text(
-                                  "เลือกแนวเพลงที่คุณชอบ",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600),
-                                ),
-
-                                checkColor: Colors
-                                    .white, // เปลี่ยนสีของ checkbox เมื่อถูกเลือก
-                                selectedColor: const Color(
-                                    0xFFF8721D), // เปลี่ยนสีของรายการที่ถูกเลือก
-                              ),
+                            getTextMusicName(widget.profile.workoutMusictype)
                             ],
                           ),
-                        
                         ),
-                      
                       ),
-                    //  (selectedTags.isEmpty) ? const Text("***กรุณาเลือกแนวเพลง",style: TextStyle(fontSize: 16, color: Colors.white)) : Container(),
+                      //  (selectedTags.isEmpty) ? const Text("***กรุณาเลือกแนวเพลง",style: TextStyle(fontSize: 16, color: Colors.white)) : Container(),
                       const SizedBox(
                         height: 50,
                       ),
@@ -331,37 +304,49 @@ class _AddProfilePageState extends State<AddProfilePage> {
               );
             }));
   }
-
+  Widget getTextMusicName(List<WorkoutMusictype> musicTypes) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: musicTypes
+              .asMap()
+              .map((index, musicType) {
+                String text = musicType.musicType.name;
+                if (index != musicTypes.length-1) {
+                  text="$text : ";
+                }
+                return MapEntry(
+                  index,
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      fontSize: 25,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              })
+              .values
+              .toList()),
+    );
+  }
   Future<void> addProfile() async {
-    log("เวลาออกกำลังกาย $duration");
-    log("ประเภทออกกำลงักาย  $dropdownValue");
-    log("เลเวลออกกำลังกาย $lv");
-    for (var element in selectedTags) {
-      log(element.mtid.toString());
-    }
+    log("เวลาออกกำลังกาย ${widget.profile.duration}");
+    log("ประเภทออกกำลงักาย  ${widget.profile.exerciseType}");
+    log("เลเวลออกกำลังกาย ${widget.profile.levelExercise}");
 
-    if (selectedTags.isEmpty) {
-     Get.snackbar(
-        'กรุณาเลือกแนวเพลง', // Title
-        'กรุณาเลือกแนวเพลงที่คุณชอบ', // Message
-        backgroundColor: Colors.white, // Background color
-        colorText: Colors
-            .black, // Text color to ensure it's visible on white background
-      );
-     setState(() {
-       
-     });
-    } else {
       WorkoutProfilePostRequest wpObj = WorkoutProfilePostRequest(
           uid: user.uid!,
-          levelExercise: lv,
-          duration: duration,
-          exerciseType: dropdownValue);
+          levelExercise: widget.profile.levelExercise,
+          duration: widget.profile.duration,
+          exerciseType: widget.profile.exerciseType);
       try {
         int res = await wpService.saveWP(wpObj);
         if (res != 0) {
           log(res.toString());
-          for (var element in selectedTags) {
+          for (var element in widget.profile.workoutMusictype) {
             log(element.mtid.toString());
             WorkoutMusicTypePostRequest wpMtObj =
                 WorkoutMusicTypePostRequest(wpid: res, mtid: element.mtid);
@@ -375,71 +360,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
             }
           }
           log('เพิ่มโปรไฟล์ออกกำลังกายสำเร็จ');
-          var profile = await wpService.getProfileByWpid(res);
-          if (profile.uid > 0 ){
-            Get.to(() => PlaylistAfterCreatePage(res,profile.duration));
-          }
           
         }
       } catch (e) {
         log(e.toString());
       }
-    }
-  }
 
-  void decreaseLv() {
-    if (lv > 1) {
-      setState(() {
-        lv -= 1;
-        if (lv == 5) {
-          lvText = 'หนักมาก';
-        } else if (lv == 4) {
-          lvText = 'หนัก';
-        } else if (lv == 3) {
-          lvText = 'ปานกลาง';
-        } else if (lv == 2) {
-          lvText = 'เบา';
-        } else if (lv == 1) {
-          lvText = 'เบามาก';
-        }
-        lvText;
-      });
-    }
-  }
-
-  void addLv() {
-    if (lv < 5) {
-      if (lv == 4) {
-        lvText = 'หนักมาก';
-      } else if (lv == 3) {
-        lvText = 'หนัก';
-      } else if (lv == 2) {
-        lvText = 'ปานกลาง';
-      } else if (lv == 1) {
-        lvText = 'เบา';
-      } else if (lv == 0) {
-        lvText = 'เบามาก';
-      }
-      setState(() {
-        lv += 1;
-        lvText;
-      });
-    }
-  }
-
-  void decreaseDuration() {
-    if (duration > 10) {
-      setState(() {
-        duration -= 10;
-      });
-    }
-  }
-
-  void addDuration() {
-    if (duration < 180) {
-      setState(() {
-        duration += 10;
-      });
-    }
   }
 }

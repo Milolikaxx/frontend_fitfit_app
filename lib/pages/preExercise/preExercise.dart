@@ -224,29 +224,32 @@ class _PreExercisePageState extends State<PreExercisePage> {
   }
 
   Widget getTextMusicName(List<WorkoutMusictype> musicTypes) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: musicTypes
-            .asMap()
-            .map((index, musicType) {
-              String text = musicType.musicType.name;
-              if (index != musicTypes.length - 1) {
-                text;
-              }
-              return MapEntry(
-                index,
-                Text(
-                  text,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: musicTypes
+              .asMap()
+              .map((index, musicType) {
+                String text = musicType.musicType.name;
+                if (index != musicTypes.length - 1) {
+                  text;
+                }
+                return MapEntry(
+                  index,
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-              );
-            })
-            .values
-            .toList());
+                );
+              })
+              .values
+              .toList()),
+    );
   }
 
   Widget playlsitWork(PlaylistWithWorkoutGetResponse dePlaylist) {
