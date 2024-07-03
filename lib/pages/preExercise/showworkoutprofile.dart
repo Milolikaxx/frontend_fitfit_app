@@ -404,20 +404,74 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   }
 
   Future<void> delPlaylist(pid) async {
-    try {
-      log(pid.toString());
-      int res = await playlsitService.deletePlaylsit(pid);
-      log(res.toString());
-      if (res == 1) {
-        log("deleted successfully. Response code: $res");
-        setState(() {
-          loadData = loadDataAsync();
-        });
-      } else {
-        log("Failed . Response code: $res");
-      }
-    } catch (e) {
-      log("Error: $e");
-    }
+      // ignore: use_build_context_synchronously
+    showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: const Text("ต้องการเพลย์ลิสต์หรือไม่!"),
+              titleTextStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontSize: 20),
+              actionsOverflowButtonSpacing: 20,
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFFF8721D)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    "ยกเลิก",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                   try {
+                      log(pid.toString());
+                      int res = await playlsitService.deletePlaylsit(pid);
+                      log(res.toString());
+                      if (res == 1) {
+                        log("deleted successfully. Response code: $res");
+                        setState(() {
+                          loadData = loadDataAsync();
+                        });
+                      } else {
+                        log("Failed . Response code: $res");
+                      }
+                    } catch (e) {
+                      log("Error: $e");
+                    }
+                     Get.back();
+                    setState(() {
+                      loadData = loadDataAsync();
+                    });
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFFF8721D)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    "ยืนยัน",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ],
+              content: const Text("กรุณายืนยันการลบ"),
+            ));
+   
   }
 }

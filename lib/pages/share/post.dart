@@ -284,7 +284,7 @@ class _PostPageState extends State<PostPage> {
                         ),
                       ),
                     ],
-                    content: const Text("สมัครสมาชิกสำเร็จ"),
+                    content: const Text("แชร์เพลย์ลิสต์สำเร็จ"),
                   ));
         }
       } catch (e) {

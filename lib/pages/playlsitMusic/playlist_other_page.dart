@@ -114,7 +114,7 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
                   size: 30, color: Color.fromARGB(255, 255, 255, 255)),
               onPressed: () async {
                 log(profile.duration.toString());
-                Get.to(() => SaveProfilePage(profile));
+                Get.to(() => SaveProfilePage(profile, music_pl.playlistDetail));
               },
             ),
           ],

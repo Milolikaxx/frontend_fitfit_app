@@ -203,17 +203,40 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-            // ignore: use_build_context_synchronously
+              // ignore: use_build_context_synchronously
             showDialog<String>(
                 context: context,
-                builder: (BuildContext context) => CupertinoAlertDialog(
-                      title: const Text("สำเร็จ"),
+                builder: (BuildContext context) => AlertDialog(
+                      title: const Text("สำเร็จ!"),
+                      titleTextStyle: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 20),
+                      actionsOverflowButtonSpacing: 20,
                       actions: [
-                        CupertinoDialogAction(
-                            onPressed: () {
-                              Get.offAll(() => const Barbottom());
-                            },
-                            child: const Text("ตกลง")),
+                        ElevatedButton(
+                          onPressed: () {
+                            Get.to(() => const Barbottom(
+                                  
+                                ));
+                          },
+                          style: ButtonStyle(
+                            // minimumSize: MaterialStateProperty.all<Size>(
+                            //     const Size(330, 50)),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                const Color(0xFFF8721D)),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
+                          ),
+                          child: const Text(
+                            "ตกลง",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
                       ],
                       content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
                     ));
@@ -250,17 +273,38 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-            // ignore: use_build_context_synchronously
+               // ignore: use_build_context_synchronously
             showDialog<String>(
                 context: context,
-                builder: (BuildContext context) => CupertinoAlertDialog(
-                      title: const Text("สำเร็จ"),
+                builder: (BuildContext context) => AlertDialog(
+                      title: const Text("สำเร็จ!"),
+                      titleTextStyle: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 20),
+                      actionsOverflowButtonSpacing: 20,
                       actions: [
-                        CupertinoDialogAction(
-                            onPressed: () {
-                              Get.offAll(() => const Barbottom());
-                            },
-                            child: const Text("ตกลง")),
+                        ElevatedButton(
+                          onPressed: () {
+                            Get.to(() => const Barbottom());
+                          },
+                          style: ButtonStyle(
+                            // minimumSize: MaterialStateProperty.all<Size>(
+                            //     const Size(330, 50)),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                const Color(0xFFF8721D)),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
+                          ),
+                          child: const Text(
+                            "ตกลง",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
                       ],
                       content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
                     ));
