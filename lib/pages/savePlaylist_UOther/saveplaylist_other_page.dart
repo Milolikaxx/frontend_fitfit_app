@@ -1,13 +1,17 @@
 import 'dart:developer';
-import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:dio/dio.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_detail_post_req.dart';
 import 'package:frontend_fitfit_app/model/request/playlsit_post_req.dart';
-import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
+import 'package:frontend_fitfit_app/model/request/workoutMusicType_post_req.dart';
+import 'package:frontend_fitfit_app/model/request/workoutProfile_post_req.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
+import 'package:frontend_fitfit_app/service/api/workout_musictype.dart';
+import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:flutter/material.dart';
@@ -16,10 +20,9 @@ import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class SavePlaylistOtherPage extends StatefulWidget {
-  List<MusicGetResponse> music = [];
-  int idx = 0;
-  int time = 0;
-  SavePlaylistOtherPage(this.music, this.idx, this.time, {super.key});
+  WorkoutProfileGetResponse profile;
+  List<PlaylistDetail> playlistDetail;
+  SavePlaylistOtherPage(this.profile, this.playlistDetail, {super.key});
 
   @override
   State<SavePlaylistOtherPage> createState() => _SavePlaylistOtherPageState();
@@ -32,11 +35,17 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late PlaylistService playlsitService;
   late PlaylistDetailService playlsitDeService;
+  late UserLoginPostResponse user;
+  late WorkoutProfileService wpService;
+  late WorkoutMusicTypeService wpMusictypeService;
   @override
   void initState() {
     super.initState();
+    user = context.read<AppData>().user;
     playlsitDeService = context.read<AppData>().playlistDetailService;
     playlsitService = context.read<AppData>().playlistService;
+    wpService = context.read<AppData>().workoutProfileService;
+    wpMusictypeService = context.read<AppData>().workoutMusicType;
   }
 
   @override
@@ -50,6 +59,13 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
           onPressed: () {
             Get.back();
           },
+        ),
+        title: const Align(
+          alignment: Alignment.topLeft,
+          child: Text(
+            "2/2 บันทึกข้อมูล",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -175,101 +191,174 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
 
   Future<void> save() async {
     if (_formKey.currentState?.validate() ?? true) {
-      if (imgPick == "") {
-        PlaylsitPostRequest plObj = PlaylsitPostRequest(
-            wpid: widget.idx,
-            playlistName: namePlController.text,
-            durationPlaylist: widget.time,
-            imagePlaylist:
-                "http://202.28.34.197:8888/contents/fc032ca0-1f03-4b21-baf3-b97bd04e88b7.jpg");
-        try {
-          int res = await playlsitService.addPlaylsit(plObj);
-          if (res > 0) {
-            log('เพิ่มเพลย์ลิสต์สำเร็จ');
-            for (var m in widget.music) {
-              log(m.name);
-              log(m.mid.toString());
-              PlaylsitDetailPostRequest addMusicToPL =
-                  PlaylsitDetailPostRequest(pid: res, mid: m.mid);
-              try {
-                int resAddmusic =
-                    await playlsitDeService.addMusicToPlaylist(addMusicToPL);
-                if (resAddmusic != 0) {
-                  log('เพิ่มเพลงในเพลย์ลิสต์สำเร็จ');
-                } else {
-                  log('เพิ่มเพลงในเพลย์ลิสต์ไม่สำเร็จ');
-                }
-              } catch (e) {
-                log(e.toString());
+      WorkoutProfilePostRequest wpObj = WorkoutProfilePostRequest(
+          uid: user.uid!,
+          levelExercise: widget.profile.levelExercise,
+          duration: widget.profile.duration,
+          exerciseType: widget.profile.exerciseType);
+      try {
+        int res = await wpService.saveWP(wpObj);
+        if (res != 0) {
+          log(res.toString());
+          for (var element in widget.profile.workoutMusictype) {
+            log(element.mtid.toString());
+            WorkoutMusicTypePostRequest wpMtObj =
+                WorkoutMusicTypePostRequest(wpid: res, mtid: element.mtid);
+            try {
+              int response = await wpMusictypeService.saveWPMT(wpMtObj);
+              if (response > 0) {
+                log('เพิ่มแนวเพลงโปรไฟล์ออกกำลังกายสำเร็จ');
               }
+            } catch (e) {
+              log(e.toString());
             }
-            // ignore: use_build_context_synchronously
-            showDialog<String>(
-                context: context,
-                builder: (BuildContext context) => CupertinoAlertDialog(
-                      title: const Text("สำเร็จ"),
-                      actions: [
-                        CupertinoDialogAction(
-                            onPressed: () {
-                              Get.offAll(() => const Barbottom());
-                            },
-                            child: const Text("ตกลง")),
-                      ],
-                      content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
-                    ));
-          } else {
-            log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
           }
-        } catch (e) {
-          log(e.toString());
-        }
-      } else {
-        PlaylsitPostRequest plObj = PlaylsitPostRequest(
-            wpid: widget.idx,
-            playlistName: namePlController.text,
-            durationPlaylist: widget.time,
-            imagePlaylist: imgPick);
-        try {
-          int res = await playlsitService.addPlaylsit(plObj);
-          if (res > 0) {
-            log('เพิ่มเพลย์ลิสต์สำเร็จ');
-            for (var m in widget.music) {
-              log(m.name);
-              log(m.mid.toString());
-              PlaylsitDetailPostRequest addMusicToPL =
-                  PlaylsitDetailPostRequest(pid: res, mid: m.mid);
-              try {
-                int resAddmusic =
-                    await playlsitDeService.addMusicToPlaylist(addMusicToPL);
-                if (resAddmusic != 0) {
-                  log('เพิ่มเพลงในเพลย์ลิสต์สำเร็จ');
-                } else {
-                  log('เพิ่มเพลงในเพลย์ลิสต์ไม่สำเร็จ');
+          log('เพิ่มโปรไฟล์ออกกำลังกายสำเร็จ');
+          if (imgPick == "") {
+            PlaylsitPostRequest plObj = PlaylsitPostRequest(
+                wpid: res,
+                playlistName: namePlController.text,
+                durationPlaylist: widget.profile.duration,
+                imagePlaylist:
+                    "http://202.28.34.197:8888/contents/fc032ca0-1f03-4b21-baf3-b97bd04e88b7.jpg");
+            try {
+              int res = await playlsitService.addPlaylsit(plObj);
+              if (res > 0) {
+                log('เพิ่มเพลย์ลิสต์สำเร็จ');
+                for (var m in widget.playlistDetail) {
+                  log(m.music.name);
+                  log(m.mid.toString());
+                  PlaylsitDetailPostRequest addMusicToPL =
+                      PlaylsitDetailPostRequest(pid: res, mid: m.mid);
+                  try {
+                    int resAddmusic = await playlsitDeService
+                        .addMusicToPlaylist(addMusicToPL);
+                    if (resAddmusic != 0) {
+                      log('เพิ่มเพลงในเพลย์ลิสต์สำเร็จ');
+                    } else {
+                      log('เพิ่มเพลงในเพลย์ลิสต์ไม่สำเร็จ');
+                    }
+                  } catch (e) {
+                    log(e.toString());
+                  }
                 }
-              } catch (e) {
-                log(e.toString());
+                // ignore: use_build_context_synchronously
+                showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                          title: const Text("สำเร็จ!"),
+                          titleTextStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontSize: 20),
+                          actionsOverflowButtonSpacing: 20,
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Get.to(() => const Barbottom());
+                              },
+                              style: ButtonStyle(
+                                // minimumSize: MaterialStateProperty.all<Size>(
+                                //     const Size(330, 50)),
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        const Color(0xFFF8721D)),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                ),
+                              ),
+                              child: const Text(
+                                "ตกลง",
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                          content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
+                        ));
+              } else {
+                log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
               }
+            } catch (e) {
+              log(e.toString());
             }
-            // ignore: use_build_context_synchronously
-            showDialog<String>(
-                context: context,
-                builder: (BuildContext context) => CupertinoAlertDialog(
-                      title: const Text("สำเร็จ"),
-                      actions: [
-                        CupertinoDialogAction(
-                            onPressed: () {
-                              Get.offAll(() => const Barbottom());
-                            },
-                            child: const Text("ตกลง")),
-                      ],
-                      content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
-                    ));
           } else {
-            log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
+            PlaylsitPostRequest plObj = PlaylsitPostRequest(
+                wpid: res,
+                playlistName: namePlController.text,
+                durationPlaylist: widget.profile.duration,
+                imagePlaylist: imgPick);
+            try {
+              int res = await playlsitService.addPlaylsit(plObj);
+              if (res > 0) {
+                log('เพิ่มเพลย์ลิสต์สำเร็จ');
+                for (var m in widget.playlistDetail) {
+                  log(m.music.name);
+                  log(m.mid.toString());
+                  PlaylsitDetailPostRequest addMusicToPL =
+                      PlaylsitDetailPostRequest(pid: res, mid: m.mid);
+                  try {
+                    int resAddmusic = await playlsitDeService
+                        .addMusicToPlaylist(addMusicToPL);
+                    if (resAddmusic != 0) {
+                      log('เพิ่มเพลงในเพลย์ลิสต์สำเร็จ');
+                    } else {
+                      log('เพิ่มเพลงในเพลย์ลิสต์ไม่สำเร็จ');
+                    }
+                  } catch (e) {
+                    log(e.toString());
+                  }
+                }
+                // ignore: use_build_context_synchronously
+                showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                          title: const Text("สำเร็จ!"),
+                          titleTextStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontSize: 20),
+                          actionsOverflowButtonSpacing: 20,
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Get.to(() => const Barbottom());
+                              },
+                              style: ButtonStyle(
+                                // minimumSize: MaterialStateProperty.all<Size>(
+                                //     const Size(330, 50)),
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        const Color(0xFFF8721D)),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                ),
+                              ),
+                              child: const Text(
+                                "ตกลง",
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                          content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
+                        ));
+              } else {
+                log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
+              }
+            } catch (e) {
+              log(e.toString());
+            }
           }
-        } catch (e) {
-          log(e.toString());
         }
+      } catch (e) {
+        log(e.toString());
       }
     }
   }
@@ -348,37 +437,29 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
     );
   }
 
-  File? _image;
   void pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      setState(() {
-        _image = File(image.path);
-      });
-      try {
-        FirebaseStorage storage = FirebaseStorage.instance;
-        Reference ref = storage.ref().child('uploadsImg/${image.name}');
-        UploadTask uploadTask = ref.putFile(_image!);
-        await uploadTask.whenComplete(() async {
-          String downloadURL = await ref.getDownloadURL();
-          log('File uploaded at $downloadURL');
-          setState(() {
-            imgPick = downloadURL;
-          });
+      var filePath = image.path;
+      var fileName = image.name;
+      if (filePath.isNotEmpty && fileName.isNotEmpty) {
+        var formData = FormData.fromMap({
+          'file': await MultipartFile.fromFile(
+            filePath,
+            filename: fileName,
+          )
         });
-      } catch (e) {
-        log(e.toString());
-      }
 
-      // var result = await Dio()
-      //     .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
-      // if (result.statusCode == 201) {
-      //   log(result.data['fileUrl']);
-      //   setState(() {
-      //     imgPick = result.data['fileUrl'];
-      //   });
-      // }
+        var result = await Dio()
+            .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
+        if (result.statusCode == 201) {
+          log(result.data['fileUrl']);
+          setState(() {
+            imgPick = result.data['fileUrl'];
+          });
+        }
+      }
     }
   }
 }

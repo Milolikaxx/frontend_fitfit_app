@@ -1,25 +1,23 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:frontend_fitfit_app/model/request/workoutMusicType_post_req.dart';
-import 'package:frontend_fitfit_app/model/request/workoutProfile_post_req.dart';
-import 'package:frontend_fitfit_app/model/response/musictype_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
+import 'package:frontend_fitfit_app/pages/savePlaylist_UOther/saveplaylist_other_page.dart';
 import 'package:frontend_fitfit_app/service/api/musictype.dart';
 import 'package:frontend_fitfit_app/service/api/workout_musictype.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
-import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class SaveProfilePage extends StatefulWidget {
   WorkoutProfileGetResponse profile;
-  SaveProfilePage(this.profile, {super.key});
+  List<PlaylistDetail> playlistDetail;
+  SaveProfilePage(this.profile, this.playlistDetail, {super.key});
 
   @override
   State<SaveProfilePage> createState() => _SaveProfilePageState();
@@ -76,6 +74,13 @@ class _SaveProfilePageState extends State<SaveProfilePage> {
             onPressed: () {
               Get.back();
             },
+          ),
+           title: const Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              "1/2 บันทึกข้อมูล",
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
         body: FutureBuilder(
@@ -267,7 +272,7 @@ class _SaveProfilePageState extends State<SaveProfilePage> {
                             children: [
                               const Icon(Icons.music_note_rounded,
                                   color: Colors.white, size: 35),
-                            getTextMusicName(widget.profile.workoutMusictype)
+                              getTextMusicName(widget.profile.workoutMusictype)
                             ],
                           ),
                         ),
@@ -304,6 +309,7 @@ class _SaveProfilePageState extends State<SaveProfilePage> {
               );
             }));
   }
+
   Widget getTextMusicName(List<WorkoutMusictype> musicTypes) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -314,8 +320,8 @@ class _SaveProfilePageState extends State<SaveProfilePage> {
               .asMap()
               .map((index, musicType) {
                 String text = musicType.musicType.name;
-                if (index != musicTypes.length-1) {
-                  text="$text : ";
+                if (index != musicTypes.length - 1) {
+                  text = "$text : ";
                 }
                 return MapEntry(
                   index,
@@ -332,39 +338,15 @@ class _SaveProfilePageState extends State<SaveProfilePage> {
               .toList()),
     );
   }
+
   Future<void> addProfile() async {
     log("เวลาออกกำลังกาย ${widget.profile.duration}");
     log("ประเภทออกกำลงักาย  ${widget.profile.exerciseType}");
     log("เลเวลออกกำลังกาย ${widget.profile.levelExercise}");
 
-      WorkoutProfilePostRequest wpObj = WorkoutProfilePostRequest(
-          uid: user.uid!,
-          levelExercise: widget.profile.levelExercise,
-          duration: widget.profile.duration,
-          exerciseType: widget.profile.exerciseType);
-      try {
-        int res = await wpService.saveWP(wpObj);
-        if (res != 0) {
-          log(res.toString());
-          for (var element in widget.profile.workoutMusictype) {
-            log(element.mtid.toString());
-            WorkoutMusicTypePostRequest wpMtObj =
-                WorkoutMusicTypePostRequest(wpid: res, mtid: element.mtid);
-            try {
-              int response = await wpMusictypeService.saveWPMT(wpMtObj);
-              if (response > 0) {
-                log('เพิ่มแนวเพลงโปรไฟล์ออกกำลังกายสำเร็จ');
-              }
-            } catch (e) {
-              log(e.toString());
-            }
-          }
-          log('เพิ่มโปรไฟล์ออกกำลังกายสำเร็จ');
-          
-        }
-      } catch (e) {
-        log(e.toString());
-      }
-
+    for (var element in widget.profile.workoutMusictype) {
+      log(element.musicType.name);
+    }
+    Get.to(() => SavePlaylistOtherPage(widget.profile, widget.playlistDetail));
   }
 }
