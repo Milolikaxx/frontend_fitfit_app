@@ -312,6 +312,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
       );
     } else {
       if (imgPick == "") {
+        
         PlaylsitPutRequest editPl = PlaylsitPutRequest(
             playlistName: namePlController.text == ""
                 ? dePlaylist.playlistName

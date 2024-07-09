@@ -20,7 +20,7 @@ abstract class UserService {
   Future<UserLoginPostResponse> loginGoogle(@Body() UserLoginGooglePostRequest userLoginGoogle);
 
   @PUT("/user/update/{id}")
-  Future<int> edit(@Path() int id, @Body() UserEditPutRequest edituser);
+  Future<UserLoginPostResponse> edit(@Path() int id, @Body() UserEditPutRequest edituser);
 
   @POST("/user/updatepassword/{id}")
   Future<int> editPassword(
