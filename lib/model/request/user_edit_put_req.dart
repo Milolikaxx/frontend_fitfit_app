@@ -15,14 +15,14 @@ class UserEditPutRequest {
   DateTime birthday;
   String email;
   String imageProfile;
-  String googleId;
+  dynamic googleId;
 
   UserEditPutRequest({
     required this.name,
     required this.birthday,
     required this.email,
     required this.imageProfile,
-    required this.googleId,
+    this.googleId,
   });
 
   factory UserEditPutRequest.fromJson(Map<String, dynamic> json) =>

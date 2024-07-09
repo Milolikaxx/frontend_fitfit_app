@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
+import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/user/accountpage.dart';
 import 'package:frontend_fitfit_app/pages/user/editpasswordpage.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
@@ -31,37 +32,52 @@ class _EditProfilePageState extends State<EditProfilePage> {
   DateTime? _selectedDate;
   var dateController = TextEditingController();
   DateTime selectedBirthDate = DateTime.now();
+  String birthdayDateMe = "";
 
   void editUser() async {
-    // "1990-12-23T00:00:00Z"
     String birthdayStr = selectedBirthDate.toIso8601String();
     log(birthdayStr);
     String bStr = "${birthdayStr.split(".")[0]}z";
-    // String birthdayStr = _selectedDate!.toIso8601String();
-    // String bStr = "${birthdayStr.split(".")[0]}z";
     DateTime birthdayDateTime = DateTime.parse(bStr);
-    UserEditPutRequest editObj = UserEditPutRequest(
+    if (nameController.text == "" &&
+        emailController.text == "" &&
+        dateController.text == "") {
+     Get.snackbar(
+        'ไม่มีการแก้ไขของข้อมูล', 'หากต้องการแก้ไขกรอกข้อมูล',
+        backgroundColor: Colors.white, // Background color
+        colorText: Colors.black,
+      ); 
+    } else {
+       UserEditPutRequest editObj = UserEditPutRequest(
         name: nameController.text,
         birthday: birthdayDateTime,
         email: emailController.text,
         imageProfile: imgPick,
-        googleId: "Null");
-    try {
-      // ส่ง request ไปยังเซิร์ฟเวอร์และรอการตอบกลับ
-      var res = await userService.edit(1, editObj);
+      );
+      try {
+        // ส่ง request ไปยังเซิร์ฟเวอร์และรอการตอบกลับ
+        UserLoginPostResponse res = await userService.edit(user.uid!, editObj);
 
-      // ตรวจสอบ response ที่ได้รับจากเซิร์ฟเวอร์
-      if (res == 1) {
-        log((_selectedDate).toString());
-        log(imgPick);
-        log("Pass");
-      } else if (res == 0) {
-        log("Not Pass");
-      } else {
-        log("Other");
+        // ตรวจสอบ response ที่ได้รับจากเซิร์ฟเวอร์
+        if (res.uid! > 0) {
+          log((_selectedDate).toString());
+          log(imgPick);
+          if (context.mounted) {
+            context.read<AppData>().user = res;
+          }
+          log('เข้าสู่ระบบ');
+          Get.to(() => const Barbottom(
+                initialIndex: 4,
+              ));
+          log("Pass");
+        } else if (res == 0) {
+          log("Not Pass");
+        } else {
+          log("Other");
+        }
+      } catch (e) {
+        log("Error: $e");
       }
-    } catch (e) {
-      log("Error: $e");
     }
   }
 
@@ -72,11 +88,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
     user = context.read<AppData>().user;
     userService = context.read<AppData>().userService;
     loadData = loadDataAsync();
-    dateController.text = "วันเกิด";
+     // "1990-12-23T00:00:00Z"
+   
   }
 
   loadDataAsync() async {
-    // liseWorkoutPdrofile = await wpService.getMorkoutProfile(user.uid!);
+ 
+    var formatter = DateFormat.yMMMd();
+    var dateInBuddhistCalendarFormat =
+        formatter.formatInBuddhistCalendarThai(user.birthday!);
+   birthdayDateMe= dateInBuddhistCalendarFormat;
   }
 
   @override
@@ -136,117 +157,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   editDataSet("อีเมล", "${user.email}", emailController),
                   Padding(
                     padding: const EdgeInsets.only(top: 10, bottom: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            "วันเดือนปีเกิด",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 77, 60, 60),
+                    child: TextFormField(
+                      controller: dateController,
+                      style: const TextStyle(color: Colors.black),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'กรุณาเลือกวันเกิด';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.black, width: 2),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.black, width: 2),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+
+                          // label: const Text('วันเกิด'),
+                          hintText: 'วันเกิด $birthdayDateMe',
+                          hintStyle: const TextStyle(color: Colors.black),
+                          suffixIcon: const Padding(
+                            padding: EdgeInsets.all(15),
+                            child: FaIcon(
+                              FontAwesomeIcons.calendar,
+                              color: Colors.black,
+                              size: 20,
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(0),
-                          child: TextFormField(
-                            controller: dateController,
-
-                            style: const TextStyle(color: Colors.black),
-                            decoration: InputDecoration(
-                                // label: const Text('วันเกิด'),
-                                // hintText: 'วันเกิด',
-                                hintStyle: const TextStyle(color: Colors.black),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.black, width: 2),
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.black, width: 2),
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.red,
-                                      width: 2), // สีเส้นขอบเมื่อมี error
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.red,
-                                      width:
-                                          2), // สีเส้นขอบเมื่อโฟกัสและมี error
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                errorStyle:
-                                    const TextStyle(color: Colors.black),
-                                suffixIcon: const Center(
-                                  child: FaIcon(
-                                    FontAwesomeIcons.calendar,
-                                    color: Colors.black,
-                                    size: 20,
-                                  ),
-                                )),
-                            readOnly:
-                                true, //set it true, so that user will not able to edit text
-                            onTap: () async {
-                              DateTime? newDateTime =
-                                  await showRoundedDatePicker(
-                                      era: EraMode.BUDDHIST_YEAR,
-                                      context: context,
-                                      initialDate: selectedBirthDate,
-                                      firstDate:
-                                          DateTime(DateTime.now().year - 100),
-                                      borderRadius: 10,
-                                      height: 300,
-                                      styleDatePicker:
-                                          MaterialRoundedDatePickerStyle(
-                                        textStyleButtonPositive:
-                                            Get.textTheme.bodyLarge!.copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary),
-                                        textStyleButtonNegative:
-                                            Get.textTheme.bodyLarge!.copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary),
-                                        textStyleDayOnCalendarSelected:
-                                            Get.textTheme.bodyMedium!.copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimary),
-                                        textStyleDayButton:
-                                            Get.textTheme.titleLarge!.copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimary),
-                                        textStyleYearButton:
-                                            Get.textTheme.titleLarge!.copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimary),
-                                      ),
-                                      theme: Theme.of(context));
-
-                              if (newDateTime != null) {
-                                selectedBirthDate = newDateTime;
-                                var formatter = DateFormat.yMMMd();
-                                var dateInBuddhistCalendarFormat =
-                                    formatter.formatInBuddhistCalendarThai(
-                                        selectedBirthDate);
-                                dateController.text =
-                                    dateInBuddhistCalendarFormat;
-                              }
-                            },
-                          ),
-                        ),
-                      ],
+                          )),
+                      readOnly:
+                          true, //set it true, so that user will not able to edit text
+                      onTap: () async {
+                        calendar();
+                      },
                     ),
                   ),
                   Padding(
@@ -310,6 +257,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  Future<void> calendar() async {
+    DateTime? newDateTime = await showRoundedDatePicker(
+        era: EraMode.BUDDHIST_YEAR,
+        context: context,
+        initialDate: selectedBirthDate,
+        firstDate: DateTime(DateTime.now().year - 100),
+        borderRadius: 10,
+        height: 300,
+        styleDatePicker: MaterialRoundedDatePickerStyle(
+          textStyleButtonPositive:
+              Get.textTheme.bodyLarge!.copyWith(color: const Color(0xFFF8721D)),
+          textStyleButtonNegative:
+              Get.textTheme.bodyLarge!.copyWith(color: const Color(0xFFF8721D)),
+          textStyleDayOnCalendarSelected:
+              Get.textTheme.bodyMedium!.copyWith(color: Colors.white),
+          textStyleDayButton:
+              Get.textTheme.titleLarge!.copyWith(color: Colors.white),
+          textStyleYearButton:
+              Get.textTheme.titleLarge!.copyWith(color: Colors.white),
+          decorationDateSelected: const BoxDecoration(
+            color: Color(0xFFF8721D), // This is the orange color
+            shape: BoxShape.circle,
+          ),
+        ),
+        theme: ThemeData(
+          primaryColor: const Color(0xFFF8721D),
+        ));
+
+    if (newDateTime != null) {
+      selectedBirthDate = newDateTime;
+      var formatter = DateFormat.yMMMd();
+      var dateInBuddhistCalendarFormat =
+          formatter.formatInBuddhistCalendarThai(selectedBirthDate);
+      dateController.text = "วันเกิด $dateInBuddhistCalendarFormat";
+    }
+  }
+
   Widget editDataSet(title, detail, textController) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -342,8 +326,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
               style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 hintText: detail,
-                // hintStyle: const TextStyle(color: Color.fromARGB(159, 0, 0, 0)),
-                // contentPadding: const EdgeInsets.only(left: 10.0),
                 hintStyle: const TextStyle(color: Colors.black),
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.black, width: 2),

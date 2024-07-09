@@ -408,7 +408,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              title: const Text("ต้องการเพลย์ลิสต์หรือไม่!"),
+              title: const Text("ยืนยันเพลย์ลิสต์!"),
               titleTextStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -440,7 +440,8 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                       int res = await playlsitService.deletePlaylsit(pid);
                       log(res.toString());
                       if (res == 1) {
-                        log("deleted successfully. Response code: $res");
+                        log("deleted successfully. Response code: $res");  
+                         Get.back();
                         setState(() {
                           loadData = loadDataAsync();
                         });
@@ -450,10 +451,8 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                     } catch (e) {
                       log("Error: $e");
                     }
-                     Get.back();
-                    setState(() {
-                      loadData = loadDataAsync();
-                    });
+                  
+                
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
