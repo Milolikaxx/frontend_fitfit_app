@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:frontend_fitfit_app/model/request/playlist_put_req.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
+import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -56,7 +57,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
             future: loadData,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-               return Center(
+                return Center(
                   child: LoadingAnimationWidget.beat(
                     color: Colors.white,
                     size: 50,
@@ -85,7 +86,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
               // crossAxisAlignment:CrossAxisAlignment.center,
               children: [
                 Text(
-                  "โปรดใส่ชื่อรายการเพลงของคุณ",
+                  "โปรดใส่ชื่อเพลย์ลิสต์ของคุณ",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -312,43 +313,149 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
       );
     } else {
       if (imgPick == "") {
-        
-        PlaylsitPutRequest editPl = PlaylsitPutRequest(
-            playlistName: namePlController.text == ""
-                ? dePlaylist.playlistName
-                : namePlController.text,
-            imagePlaylist: dePlaylist.imagePlaylist);
-        try {
-          int res = await playlsitService.editPlaylist(widget.pid, editPl);
-          if (res > 0) {
-            log('แก้ไขเพลย์ลิสต์สำเร็จ');
-            // ignore: use_build_context_synchronously
-            Get.back();
-          
-            // Get.to(() => ShowWorkoutProfilePage(dePlaylist.wpid));
-          } else {
-            log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
-          }
-        } catch (e) {
-          log(e.toString());
-        }
+        // ignore: use_build_context_synchronously
+        showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: const Text("ยืนยันการแก้ไขเพลย์ลิสต์หรือไม่!"),
+                  titleTextStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20),
+                  actionsOverflowButtonSpacing: 20,
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFFF8721D)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        "ยกเลิก",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        PlaylsitPutRequest editPl = PlaylsitPutRequest(
+                            playlistName: namePlController.text == ""
+                                ? dePlaylist.playlistName
+                                : namePlController.text,
+                            imagePlaylist: dePlaylist.imagePlaylist);
+                        try {
+                          int res = await playlsitService.editPlaylist(
+                              widget.pid, editPl);
+                          if (res > 0) {
+                            log('แก้ไขเพลย์ลิสต์สำเร็จ');
+                            Get.until((route) => Get.isOverlaysClosed);
+                            Get.back();
+                            Get.back();
+                          
+                          } else {
+                            log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
+                          }
+                        } catch (e) {
+                          log(e.toString());
+                        }
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFFF8721D)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        "ยืนยัน",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                  content: const Text("กรุณายืนยันการแก้ไข"),
+                ));
       } else {
-        PlaylsitPutRequest editPl = PlaylsitPutRequest(
-            playlistName: namePlController.text == ""
-                ? dePlaylist.playlistName
-                : namePlController.text,
-            imagePlaylist: imgPick);
-        try {
-          int res = await playlsitService.editPlaylist(dePlaylist.pid, editPl);
-          if (res > 0) {
-            log('แก้ไขเพลย์ลิสต์สำเร็จ');
-            Get.back();
-          } else {
-            log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
-          }
-        } catch (e) {
-          log(e.toString());
-        }
+        // ignore: use_build_context_synchronously
+        showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: const Text("ยืนยันการแก้ไขเพลย์ลิสต์หรือไม่!"),
+                  titleTextStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20),
+                  actionsOverflowButtonSpacing: 20,
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFFF8721D)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        "ยกเลิก",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        PlaylsitPutRequest editPl = PlaylsitPutRequest(
+                            playlistName: namePlController.text == ""
+                                ? dePlaylist.playlistName
+                                : namePlController.text,
+                            imagePlaylist: imgPick);
+                        try {
+                          int res = await playlsitService.editPlaylist(
+                              dePlaylist.pid, editPl);
+                          if (res > 0) {
+                            log('แก้ไขเพลย์ลิสต์สำเร็จ');
+                            Get.until((route) => Get.isOverlaysClosed);
+                            Get.back();
+                            Get.back();
+                        
+                          } else {
+                            log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
+                          }
+                        } catch (e) {
+                          log(e.toString());
+                        }
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFFF8721D)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        "ยืนยัน",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                  content: const Text("กรุณายืนยันการแก้ไข"),
+                ));
       }
     }
   }

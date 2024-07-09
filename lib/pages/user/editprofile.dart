@@ -32,22 +32,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
   DateTime? _selectedDate;
   var dateController = TextEditingController();
   DateTime selectedBirthDate = DateTime.now();
+  String birthdayDateMe = "";
 
   void editUser() async {
-    // "1990-12-23T00:00:00Z"
     String birthdayStr = selectedBirthDate.toIso8601String();
     log(birthdayStr);
     String bStr = "${birthdayStr.split(".")[0]}z";
-    // String birthdayStr = _selectedDate!.toIso8601String();
-    // String bStr = "${birthdayStr.split(".")[0]}z";
     DateTime birthdayDateTime = DateTime.parse(bStr);
-    if(nameController.text != "" && emailController.text != "" && dateController.text != ""){
+    if (nameController.text == "" &&
+        emailController.text == "" &&
+        dateController.text == "") {
+     Get.snackbar(
+        'ไม่มีการแก้ไขของข้อมูล', 'หากต้องการแก้ไขกรอกข้อมูล',
+        backgroundColor: Colors.white, // Background color
+        colorText: Colors.black,
+      ); 
+    } else {
        UserEditPutRequest editObj = UserEditPutRequest(
-          name: nameController.text,
-          birthday: birthdayDateTime,
-          email: emailController.text,
-          imageProfile: imgPick,
-          googleId: "Null");
+        name: nameController.text,
+        birthday: birthdayDateTime,
+        email: emailController.text,
+        imageProfile: imgPick,
+      );
       try {
         // ส่ง request ไปยังเซิร์ฟเวอร์และรอการตอบกลับ
         UserLoginPostResponse res = await userService.edit(user.uid!, editObj);
@@ -72,15 +78,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       } catch (e) {
         log("Error: $e");
       }
-    }else {
-       Get.snackbar(
-        'ไม่มีการแก้ไขของข้อมูล', 'หากต้องการแก้ไขกรอกข้อมูล',
-        backgroundColor: Colors.white, // Background color
-        colorText: Colors.black,
-      );
     }
-    
-   
   }
 
   late UserService userService;
@@ -90,11 +88,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
     user = context.read<AppData>().user;
     userService = context.read<AppData>().userService;
     loadData = loadDataAsync();
-    dateController.text = "วันเกิด";
+     // "1990-12-23T00:00:00Z"
+   
   }
 
   loadDataAsync() async {
-    // liseWorkoutPdrofile = await wpService.getMorkoutProfile(user.uid!);
+ 
+    var formatter = DateFormat.yMMMd();
+    var dateInBuddhistCalendarFormat =
+        formatter.formatInBuddhistCalendarThai(user.birthday!);
+   birthdayDateMe= dateInBuddhistCalendarFormat;
   }
 
   @override
@@ -152,7 +155,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 children: [
                   editDataSet("ชื่อผู้ใช้", "${user.name}", nameController),
                   editDataSet("อีเมล", "${user.email}", emailController),
-                   Padding(
+                  Padding(
                     padding: const EdgeInsets.only(top: 10, bottom: 10),
                     child: TextFormField(
                       controller: dateController,
@@ -164,8 +167,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         return null;
                       },
                       decoration: InputDecoration(
-                        
-                         enabledBorder: OutlineInputBorder(
+                          enabledBorder: OutlineInputBorder(
                             borderSide:
                                 const BorderSide(color: Colors.black, width: 2),
                             borderRadius: BorderRadius.circular(18),
@@ -175,9 +177,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 const BorderSide(color: Colors.black, width: 2),
                             borderRadius: BorderRadius.circular(18),
                           ),
-                        
+
                           // label: const Text('วันเกิด'),
-                          hintText: 'วันเกิด',
+                          hintText: 'วันเกิด $birthdayDateMe',
                           hintStyle: const TextStyle(color: Colors.black),
                           suffixIcon: const Padding(
                             padding: EdgeInsets.all(15),
@@ -324,7 +326,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
               style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
                 hintText: detail,
-                 
                 hintStyle: const TextStyle(color: Colors.black),
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.black, width: 2),
@@ -347,7 +348,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
                 errorStyle: const TextStyle(color: Colors.black),
               ),
-            
             ),
           ),
         ],

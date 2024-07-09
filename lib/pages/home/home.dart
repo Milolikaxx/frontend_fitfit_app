@@ -316,20 +316,71 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> delProfile(wpid) async {
-    try {
-      log(wpid.toString());
-      var responseCode = await wpService.deleteWorkoutProfileByWpid(wpid);
-      log(responseCode.toString());
-      if (responseCode == 1) {
-        log("Profile deleted successfully. Response code: $responseCode");
-        setState(() {
-          loadData = loadDataAsync();
-        });
-      } else {
-        log("Failed to delete profile. Response code: $responseCode");
-      }
-    } catch (e) {
-      log("Error: $e");
-    }
+      // ignore: use_build_context_synchronously
+    showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: const Text("ยืนยันการลบโปรไฟล์ออกกำลังกาย!"),
+              titleTextStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontSize: 20),
+              actionsOverflowButtonSpacing: 20,
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFFF8721D)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    "ยกเลิก",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    try {
+                      log(wpid.toString());
+                      var responseCode =
+                          await wpService.deleteWorkoutProfileByWpid(wpid);
+                      log(responseCode.toString());
+                      if (responseCode == 1) {
+                        log("Profile deleted successfully. Response code: $responseCode");
+                        setState(() {
+                          loadData = loadDataAsync();
+                        });
+                      } else {
+                        log("Failed to delete profile. Response code: $responseCode");
+                      }
+                    } catch (e) {
+                      log("Error: $e");
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFFF8721D)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    "ยืนยัน",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ],
+              content: const Text("กรุณายืนยันการลบ"),
+            ));
+   
   }
 }
