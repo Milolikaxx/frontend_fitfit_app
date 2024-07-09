@@ -11,4 +11,7 @@ abstract class HistoryExerciseService {
 
   @GET("/exercise")
   Future<List<HistoryExerciseGetResponse>> getAllHistoryExercise();
+
+  @GET("/exercise/{id}")
+  Future<List<HistoryExerciseGetResponse>> getHisExByUid(@Path() int id);
 }
