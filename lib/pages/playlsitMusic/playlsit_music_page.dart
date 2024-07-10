@@ -75,7 +75,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Get.to(() =>
-                EditPlaylistMusicPage(music_pl.wpid, music_pl.wpid));
+                EditPlaylistMusicPage(music_pl.wpid, music_pl.pid));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),

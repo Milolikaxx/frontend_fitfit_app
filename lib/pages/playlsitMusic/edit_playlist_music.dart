@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
@@ -15,14 +17,12 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 class EditPlaylistMusicPage extends StatefulWidget {
   // List<MusicGetResponse> music = [];
   int wpid = 0;
-    int pid = 0;
+  int pid = 0;
   // int timeEx = 0;
-  EditPlaylistMusicPage(this.wpid, this.pid, 
-      {super.key});
+  EditPlaylistMusicPage(this.wpid, this.pid, {super.key});
 
   @override
-  State<EditPlaylistMusicPage> createState() =>
-      _EditPlaylistMusicPageState();
+  State<EditPlaylistMusicPage> createState() => _EditPlaylistMusicPageState();
 }
 
 class Musicdata {
@@ -32,36 +32,38 @@ class Musicdata {
   Musicdata(this.musictime, this.bpm);
 }
 
-class _EditPlaylistMusicPageState
-  extends State<EditPlaylistMusicPage> {
+class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   List<Musicdata> chartData = [];
   // ignore: non_constant_identifier_names
   late PlaylsitMusicGetResponse music_pl;
   late PlaylistService playlistService;
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
-  // List<Music> musiclist = [];
-   List<MusicGetResponse> musicRandNew = [];
+  List<MusicGetResponse> musicRandNew = [];
   late UserLoginPostResponse user;
   double totalDuration = 0;
-late PlaylistDetailService playlistDetailServ;
+  late PlaylistDetailService playlistDetailServ;
   @override
   void initState() {
     super.initState();
     playlistService = context.read<AppData>().playlistService;
     user = context.read<AppData>().user;
+    log("1");
+    log(widget.pid.toString());
     loadData = loadDataAsync();
+    log("1");
   }
 
   loadDataAsync() async {
     music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
+    log(music_pl.toString());
     chartData.clear();
     totalDuration = 0;
     for (var m in music_pl.playlistDetail) {
       chartData.add(Musicdata(m.music.duration, m.music.bpm));
       totalDuration += m.music.duration;
     }
-     
+
     setState(() {});
   }
 
@@ -86,9 +88,7 @@ late PlaylistDetailService playlistDetailServ;
           actions: [
             IconButton(
               icon: const Icon(Icons.save_rounded, color: Colors.black),
-              onPressed: () {
-                
-              },
+              onPressed: () {},
             ),
           ],
         ),
@@ -157,7 +157,7 @@ late PlaylistDetailService playlistDetailServ;
                           ),
                         ),
                       ),
-                       Expanded(
+                      Expanded(
                         child: SingleChildScrollView(
                           physics: const ScrollPhysics(),
                           child: Column(
@@ -190,7 +190,7 @@ late PlaylistDetailService playlistDetailServ;
             }));
   }
 
-    Widget listMusic() {
+  Widget listMusic() {
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.only(bottom: 70),
@@ -255,7 +255,7 @@ late PlaylistDetailService playlistDetailServ;
                 style: const TextStyle(
                     color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
               ),
-                        Row(
+              Row(
                 children: [
                   Container(
                     width: 30,
@@ -303,7 +303,6 @@ late PlaylistDetailService playlistDetailServ;
               )
             ],
           ),
-
         ],
       ),
     );
