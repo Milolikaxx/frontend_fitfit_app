@@ -206,13 +206,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
               // ignore: use_build_context_synchronously
             showDialog<String>(
                 context: context,
-                builder: (BuildContext context) => AlertDialog(
-                      title: const Text("สำเร็จ!"),
-                      titleTextStyle: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontSize: 20),
-                      actionsOverflowButtonSpacing: 20,
+               
                 builder: (BuildContext context) => AlertDialog(
                       title: const Text("สำเร็จ!"),
                       titleTextStyle: const TextStyle(
@@ -283,13 +277,6 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                // ignore: use_build_context_synchronously
             showDialog<String>(
                 context: context,
-                builder: (BuildContext context) => AlertDialog(
-                      title: const Text("สำเร็จ!"),
-                      titleTextStyle: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontSize: 20),
-                      actionsOverflowButtonSpacing: 20,
                 builder: (BuildContext context) => AlertDialog(
                       title: const Text("สำเร็จ!"),
                       titleTextStyle: const TextStyle(
