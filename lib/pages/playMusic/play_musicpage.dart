@@ -53,6 +53,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   int currentIndex = 0;
   late Duration totalDuration; // Total duration of all songs
   Timer? countdownTimer;
+  late DateTime endTime; // Persistent reference for the end time
   Stream<PositionData> get _positionDataStream =>
       rx.Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
         _audioPlayer.positionStream,
@@ -74,9 +75,9 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
       setState(() {
         currentIndex = index ?? 0;
       });
-     adjustVolumeBasedOnBPM(currentIndex); 
+      adjustVolumeBasedOnBPM(currentIndex);
     });
-  
+
     loadData = loadDataAsync();
   }
 
@@ -87,13 +88,10 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
     } catch (e) {
       log(e.toString());
     }
-    // totalDuration = Duration.zero; // Initialize total duration
     for (var m in music_pl.playlistDetail) {
       final music = Musicdata(m.music.mLink, m.music.name, m.music.musicImage,
           m.music.artist, m.music.duration, m.music.bpm);
       musicList.add(music);
-      // totalDuration += Duration(
-      //     seconds: (music.duration * 60).toInt()); // Add each song's duration
     }
     playlist = ConcatenatingAudioSource(
       children: musicList
@@ -124,19 +122,16 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           isPlaying = true; // Set isPlaying to true when countdown finishes
         });
         _audioPlayer.play();
+        endTime = DateTime.now().add(totalDuration); // Set end time once
       }
     });
   }
 
   void fullTime() {
-    totalDuration = Duration.zero; // Initialize total duration
-    for (var m in music_pl.playlistDetail) {
-      final music = Musicdata(m.music.mLink, m.music.name, m.music.musicImage,
-          m.music.artist, m.music.duration, m.music.bpm);
-      musicList.add(music);
-      totalDuration += Duration(
-          seconds: (music.duration * 60).toInt()); // Add each song's duration
-    }
+    totalDuration = Duration(
+      minutes: (music_pl.totalDuration).toInt(),
+      seconds: ((music_pl.totalDuration % 1) * 60).toInt(),
+    ); // Use music_pl.totalDuration directly
   }
 
   void adjustVolumeBasedOnBPM(int index) {
@@ -239,13 +234,14 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   Widget timerCounter() {
     return TimerCountdown(
       format: CountDownTimerFormat.hoursMinutesSeconds,
-      endTime: DateTime.now().add(totalDuration), // Use total duration
+      endTime: endTime, // Use the persistent end time
       onEnd: () {
         log("Timer finished");
+        Get.to(() => const AfterExercisePage());
       },
       timeTextStyle: const TextStyle(
-        color: Colors.white, // กำหนดสีตัวหนังสือเป็นสีขาว
-        fontSize: 20, // กำหนดขนาดตัวหนังสือ
+        color: Colors.white,
+        fontSize: 20,
       ),
     );
   }
@@ -277,7 +273,6 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
 
   Widget detailMusic() {
     return Column(
-      // mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -309,7 +304,8 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           radius: 35,
           backgroundColor: Colors.white,
           child: IconButton(
-            icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+            icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow,
+                color: Colors.black),
             iconSize: 50,
             onPressed: () async {
               setState(() {
@@ -417,9 +413,6 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           child: const Text('Confirm'),
           onPressed: () {
             log('Confirm button pressed');
-            // navigator?.push(
-            //     MaterialPageRoute(builder: (context) => AfterExercisePage()));
-            // Navigator.of(context).pop();
             Get.to(() => const AfterExercisePage());
           },
         ),

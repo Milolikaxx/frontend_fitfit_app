@@ -13,28 +13,33 @@ String playlsitMusicGetResponseToJson(PlaylsitMusicGetResponse data) =>
 class PlaylsitMusicGetResponse {
   int pid;
   int wpid;
+  WorkoutProfile workoutProfile;
   String playlistName;
   int durationPlaylist;
   String imagePlaylist;
   DateTime createdAt;
   DateTime updatedAt;
   List<PlaylistDetail> playlistDetail;
+  double totalDuration;
 
   PlaylsitMusicGetResponse({
     required this.pid,
     required this.wpid,
+    required this.workoutProfile,
     required this.playlistName,
     required this.durationPlaylist,
     required this.imagePlaylist,
     required this.createdAt,
     required this.updatedAt,
     required this.playlistDetail,
+    required this.totalDuration,
   });
 
   factory PlaylsitMusicGetResponse.fromJson(Map<String, dynamic> json) =>
       PlaylsitMusicGetResponse(
         pid: json["Pid"],
         wpid: json["Wpid"],
+        workoutProfile: WorkoutProfile.fromJson(json["WorkoutProfile"]),
         playlistName: json["PlaylistName"],
         durationPlaylist: json["DurationPlaylist"],
         imagePlaylist: json["ImagePlaylist"],
@@ -42,11 +47,13 @@ class PlaylsitMusicGetResponse {
         updatedAt: DateTime.parse(json["UpdatedAt"]),
         playlistDetail: List<PlaylistDetail>.from(
             json["PlaylistDetail"].map((x) => PlaylistDetail.fromJson(x))),
+        totalDuration: json["TotalDuration"]?.toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
         "Pid": pid,
         "Wpid": wpid,
+        "WorkoutProfile": workoutProfile.toJson(),
         "PlaylistName": playlistName,
         "DurationPlaylist": durationPlaylist,
         "ImagePlaylist": imagePlaylist,
@@ -54,6 +61,7 @@ class PlaylsitMusicGetResponse {
         "UpdatedAt": updatedAt.toIso8601String(),
         "PlaylistDetail":
             List<dynamic>.from(playlistDetail.map((x) => x.toJson())),
+        "TotalDuration": totalDuration,
       };
 }
 
@@ -135,7 +143,7 @@ class Music {
 
 class MusicType {
   int mtid;
-  String name;
+  Name name;
 
   MusicType({
     required this.mtid,
@@ -144,11 +152,75 @@ class MusicType {
 
   factory MusicType.fromJson(Map<String, dynamic> json) => MusicType(
         mtid: json["Mtid"],
-        name: json["Name"],
+        name: nameValues.map[json["Name"]]!,
       );
 
   Map<String, dynamic> toJson() => {
         "Mtid": mtid,
-        "Name": name,
+        "Name": nameValues.reverse[name],
       };
+}
+
+enum Name { EMPTY, NAME, PURPLE }
+
+final nameValues = EnumValues({
+  "เพลงลูกทุ่ง": Name.EMPTY,
+  "เพลงเกาหลี": Name.NAME,
+  "เพลงสากล": Name.PURPLE
+});
+
+class WorkoutProfile {
+  int wpid;
+  int uid;
+  int levelExercise;
+  int duration;
+  String exerciseType;
+  DateTime createdAt;
+  DateTime updatedAt;
+  dynamic workoutMusictype;
+
+  WorkoutProfile({
+    required this.wpid,
+    required this.uid,
+    required this.levelExercise,
+    required this.duration,
+    required this.exerciseType,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.workoutMusictype,
+  });
+
+  factory WorkoutProfile.fromJson(Map<String, dynamic> json) => WorkoutProfile(
+        wpid: json["Wpid"],
+        uid: json["Uid"],
+        levelExercise: json["LevelExercise"],
+        duration: json["Duration"],
+        exerciseType: json["ExerciseType"],
+        createdAt: DateTime.parse(json["CreatedAt"]),
+        updatedAt: DateTime.parse(json["UpdatedAt"]),
+        workoutMusictype: json["WorkoutMusictype"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "Wpid": wpid,
+        "Uid": uid,
+        "LevelExercise": levelExercise,
+        "Duration": duration,
+        "ExerciseType": exerciseType,
+        "CreatedAt": createdAt.toIso8601String(),
+        "UpdatedAt": updatedAt.toIso8601String(),
+        "WorkoutMusictype": workoutMusictype,
+      };
+}
+
+class EnumValues<T> {
+  Map<String, T> map;
+  late Map<T, String> reverseMap;
+
+  EnumValues(this.map);
+
+  Map<T, String> get reverse {
+    reverseMap = map.map((k, v) => MapEntry(v, k));
+    return reverseMap;
+  }
 }
