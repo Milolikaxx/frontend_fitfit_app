@@ -16,6 +16,9 @@ class AppData with ChangeNotifier {
   String baseUrl = "http://192.168.101.130:8080";
   // String baseUrl = "http://172.20.10.8:8080";
   String baseUrl = "http://172.16.1.98:8080";
+  // String baseUrl = "http://172.31.99.34:8080";
+  // String baseUrl = "http://172.20.10.8:8080";
+  String baseUrl = "http://172.16.1.98:8080";
 
   late UserLoginPostResponse user = UserLoginPostResponse();
 
