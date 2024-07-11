@@ -5,13 +5,15 @@ import 'package:frontend_fitfit_app/pages/home/home.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+// import '../../model/response/musictype_get_res.dart';
 import '../../model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import '../../model/response/workoutProfile_get_res.dart';
+import '../../model/response/workout_profile_musictype_get_res.dart';
 import '../../service/api/playlist.dart';
+import '../../service/api/workout_musictype.dart';
 import '../../service/api/workout_profile.dart';
 import '../../service/provider/appdata.dart';
 
-// ignore: must_be_immutable
 class AfterExercisePage extends StatefulWidget {
   final int pid;
   final int wpid;
@@ -23,27 +25,33 @@ class AfterExercisePage extends StatefulWidget {
 
 class _AfterExercisePageState extends State<AfterExercisePage> {
   late Future<void> loadData;
-  PlaylistWithWorkoutGetResponse? dePlaylist;
-  WorkoutProfileService? wpService;
-  PlaylistService? playlsitService;
-  WorkoutProfileGetResponse? profile;
+  late PlaylistWithWorkoutGetResponse? dePlaylist;
+  late WorkoutProfileService? wpService;
+  late PlaylistService? playlsitService;
+  late WorkoutProfileGetResponse? profile;
+  late WorkoutMusicTypeService mtypeService;
+  late List<WorkoutProfileMusictypeGetResponse> mtype = [];
 
   @override
   void initState() {
     super.initState();
     wpService = context.read<AppData>().workoutProfileService;
     playlsitService = context.read<AppData>().playlistService;
+    mtypeService = context.read<AppData>().workoutMusicType;
     loadData = loadDataAsync();
   }
 
-  Future<void> loadDataAsync() async {
+  loadDataAsync() async {
     try {
       profile = await wpService!.getProfileByWpid(widget.wpid);
       dePlaylist =
           await playlsitService!.getPlaylistWithOutMusicByPid(widget.pid);
+      mtype = await mtypeService.getMusicTypeByWpid(widget.wpid);
     } catch (e) {
       log(e.toString());
     }
+    log(widget.wpid.toString());
+    log("Length : ${mtype.length}");
     log(profile?.duration.toString() ?? 'No duration');
   }
 
@@ -75,7 +83,7 @@ class _AfterExercisePageState extends State<AfterExercisePage> {
                   ),
                 ),
                 Expanded(
-                  child: detailBox(profile!),
+                  child: detailBox(profile!, mtype),
                 ),
                 Container(
                   margin: const EdgeInsets.only(bottom: 40),
@@ -96,70 +104,78 @@ class _AfterExercisePageState extends State<AfterExercisePage> {
     );
   }
 
-  Widget detailBox(WorkoutProfileGetResponse profile) {
+  Widget detailBox(WorkoutProfileGetResponse profile,
+      List<WorkoutProfileMusictypeGetResponse> mtype) {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 5),
       decoration: BoxDecoration(
         color: Colors.orange,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 60.0),
-                child: Column(
-                  children: [
-                    const Text(
-                      'ทำเวลาทั้งหมดไป',
-                      style: TextStyle(color: Colors.white, fontSize: 20.0),
-                    ),
-                    Text(
-                      "${profile.duration} นาที",
-                      style:
-                          const TextStyle(color: Colors.white, fontSize: 36.0),
-                    ),
-                    const Text(
-                      'ระยะเวลา',
-                      style: TextStyle(color: Colors.white, fontSize: 14.0),
-                    ),
-                  ],
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 60.0),
+            child: Column(
+              children: [
+                const Text(
+                  'ทำเวลาทั้งหมดไป',
+                  style: TextStyle(color: Colors.white, fontSize: 20.0),
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 60),
-                child: Text(
-                  'การวิ่ง',
-                  style: TextStyle(color: Colors.white, fontSize: 32.0),
+                Text(
+                  "${profile.duration} นาที",
+                  style: const TextStyle(color: Colors.white, fontSize: 36.0),
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 60.0),
-                child: Column(
-                  children: [
-                    Text(
-                      'Lv. 3',
-                      style: TextStyle(color: Colors.white, fontSize: 32.0),
-                    ),
-                    Text(
-                      'ระดับการออกกำลังกาย',
-                      style: TextStyle(color: Colors.white, fontSize: 16.0),
-                    ),
-                  ],
+                const Text(
+                  'ระยะเวลา',
+                  style: TextStyle(color: Colors.white, fontSize: 14.0),
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 60),
-                child: Text(
-                  'เพลงสากล',
-                  style: TextStyle(color: Colors.white, fontSize: 24.0),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.only(top: 60),
+            child: Center(
+              child: Text(
+                profile.exerciseType,
+                style: const TextStyle(color: Colors.white, fontSize: 32.0),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 60.0),
+            child: Column(
+              children: [
+                Text(
+                  'Lv. ${profile.levelExercise}',
+                  style: const TextStyle(color: Colors.white, fontSize: 32.0),
+                ),
+                const Text(
+                  'ระดับการออกกำลังกาย',
+                  style: TextStyle(color: Colors.white, fontSize: 16.0),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: mtype.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: musicType(mtype[index]),
+              ),
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget musicType(WorkoutProfileMusictypeGetResponse mtype) {
+    return Text(
+      mtype.mtid.toString(),
+      style: const TextStyle(color: Colors.white, fontSize: 24.0),
     );
   }
 
