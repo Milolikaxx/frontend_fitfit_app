@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
@@ -16,7 +17,8 @@ import 'package:rxdart/rxdart.dart' as rx;
 // ignore: must_be_immutable
 class PlayMusicPage extends StatefulWidget {
   int pid = 0;
-  PlayMusicPage(this.pid, {super.key});
+  int wpid = 0;
+  PlayMusicPage(this.pid, this.wpid, {super.key});
 
   @override
   State<PlayMusicPage> createState() => _PlayMusicPageState();
@@ -237,7 +239,8 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
       endTime: endTime, // Use the persistent end time
       onEnd: () {
         log("Timer finished");
-        Get.to(() => const AfterExercisePage());
+        _audioPlayer.stop();
+        Get.to(() => AfterExercisePage(widget.pid, widget.wpid));
       },
       timeTextStyle: const TextStyle(
         color: Colors.white,
@@ -406,6 +409,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           child: const Text('Cancel'),
           onPressed: () {
             log('Cancel button pressed');
+            _audioPlayer.stop();
             Navigator.of(context).pop();
           },
         ),
@@ -413,7 +417,8 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           child: const Text('Confirm'),
           onPressed: () {
             log('Confirm button pressed');
-            Get.to(() => const AfterExercisePage());
+            _audioPlayer.stop();
+            Get.to(() => AfterExercisePage(widget.pid, widget.wpid));
           },
         ),
       ],

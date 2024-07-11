@@ -25,6 +25,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
   late var loadData;
   late PlaylistService playlsitService;
   late PlaylistWithWorkoutGetResponse dePlaylist;
+
   @override
   void initState() {
     super.initState();
@@ -270,31 +271,32 @@ class _PreExercisePageState extends State<PreExercisePage> {
               fit: BoxFit.cover,
             ),
           ),
-         
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15 ,vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    dePlaylist.playlistName.length > 15 ? "${dePlaylist.playlistName}..." : dePlaylist.playlistName,
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  const Icon(
-                Icons.playlist_play_rounded,
-                color: Colors.black,
-                size: 30,
-              ),
-                ],
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  dePlaylist.playlistName.length > 15
+                      ? "${dePlaylist.playlistName}..."
+                      : dePlaylist.playlistName,
+                  style: const TextStyle(fontSize: 18),
+                ),
+                const Icon(
+                  Icons.playlist_play_rounded,
+                  color: Colors.black,
+                  size: 30,
+                ),
+              ],
             ),
-             
-          
-           Padding(
-            padding: const EdgeInsets.only(bottom: 20,right: 20,left: 20),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20, right: 20, left: 20),
             child: ElevatedButton(
               onPressed: () {
-                Get.to(() => PlayMusicPage(dePlaylist.pid));
+                Get.to(() => PlayMusicPage(dePlaylist.pid, widget.wpid));
+                log("pid : ${dePlaylist.pid}");
+                log("wpid : ${widget.wpid}");
               },
               style: ButtonStyle(
                 minimumSize:
