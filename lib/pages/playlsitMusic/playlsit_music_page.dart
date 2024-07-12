@@ -52,7 +52,6 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
     chartData.clear();
     for (var m in music_pl.playlistDetail) {
       chartData.add(Musicdata(m.music.duration, m.music.bpm));
-     
     }
     setState(() {});
   }
@@ -279,8 +278,8 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
     return Container(
       color: Colors.white,
       child: SizedBox(
-        // width: MediaQuery.of(context).size.width,
-        // height: MediaQuery.of(context).size.height * 0.2,
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height * 0.2,
         child: SfCartesianChart(
           primaryXAxis: const CategoryAxis(),
           legend: const Legend(

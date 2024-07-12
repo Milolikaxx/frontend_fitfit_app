@@ -18,6 +18,7 @@ import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -443,7 +444,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                       log(res.toString());
                       if (res == 1) {
                         log("deleted successfully. Response code: $res");
-                        Get.to(() => const Barbottom());
+                        Get.back();
                         setState(() {
                           loadData = loadDataAsync();
                         });

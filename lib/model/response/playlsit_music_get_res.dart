@@ -1,13 +1,13 @@
 // To parse this JSON data, do
 //
-//     final playlsitMusicGetResponse = playlsitMusicGetResponseFromJson(jsonString);
+//     final PlaylsitMusicGetResponse = socialAllPostResonseFromJson(jsonString);
 
 import 'dart:convert';
 
-PlaylsitMusicGetResponse playlsitMusicGetResponseFromJson(String str) =>
+PlaylsitMusicGetResponse socialAllPostResonseFromJson(String str) =>
     PlaylsitMusicGetResponse.fromJson(json.decode(str));
 
-String playlsitMusicGetResponseToJson(PlaylsitMusicGetResponse data) =>
+String socialAllPostResonseToJson(PlaylsitMusicGetResponse data) =>
     json.encode(data.toJson());
 
 class PlaylsitMusicGetResponse {
@@ -143,7 +143,7 @@ class Music {
 
 class MusicType {
   int mtid;
-  Name name;
+  String name;
 
   MusicType({
     required this.mtid,
@@ -152,22 +152,14 @@ class MusicType {
 
   factory MusicType.fromJson(Map<String, dynamic> json) => MusicType(
         mtid: json["Mtid"],
-        name: nameValues.map[json["Name"]]!,
+        name: json["Name"],
       );
 
   Map<String, dynamic> toJson() => {
         "Mtid": mtid,
-        "Name": nameValues.reverse[name],
+        "Name": name,
       };
 }
-
-enum Name { EMPTY, NAME, PURPLE }
-
-final nameValues = EnumValues({
-  "เพลงลูกทุ่ง": Name.EMPTY,
-  "เพลงเกาหลี": Name.NAME,
-  "เพลงสากล": Name.PURPLE
-});
 
 class WorkoutProfile {
   int wpid;
@@ -211,16 +203,4 @@ class WorkoutProfile {
         "UpdatedAt": updatedAt.toIso8601String(),
         "WorkoutMusictype": workoutMusictype,
       };
-}
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
 }
