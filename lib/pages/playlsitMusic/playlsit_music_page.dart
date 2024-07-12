@@ -31,7 +31,7 @@ class Musicdata {
 
 class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   List<Musicdata> chartData = [];
-  late PlaylsitMusicGetResponse pl;
+  late PlaylsitMusicGetResponse music_pl;
   late PlaylistService playlistService;
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
@@ -47,10 +47,10 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   }
 
   loadDataAsync() async {
-    pl = await playlistService.getPlaylistMusicByPid(widget.pid);
-    log(pl.playlistName);
+    music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
+    log(music_pl.playlistName);
     chartData.clear();
-    for (var m in pl.playlistDetail) {
+    for (var m in music_pl.playlistDetail) {
       chartData.add(Musicdata(m.music.duration, m.music.bpm));
      
     }
@@ -117,7 +117,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                           child: Column(
                             children: [
                               Image.network(
-                                pl.imagePlaylist,
+                               music_pl.imagePlaylist,
                                 width: 200,
                                 height: 200,
                               ),
@@ -141,7 +141,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "${music_pl.playlistName} ($totalDuration นาที)",
+                                          "${music_pl.playlistName} (${music_pl.durationPlaylist} นาที)",
                                           style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 16),
@@ -198,8 +198,8 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.only(bottom: 60),
       shrinkWrap: true,
-      itemCount: pl.playlistDetail.isEmpty ? 0 : pl.playlistDetail.length,
-      itemBuilder: (context, index) => musicInfo(pl.playlistDetail[index]),
+      itemCount: music_pl.playlistDetail.isEmpty ? 0 : music_pl.playlistDetail.length,
+      itemBuilder: (context, index) => musicInfo(music_pl.playlistDetail[index]),
     );
   }
 
