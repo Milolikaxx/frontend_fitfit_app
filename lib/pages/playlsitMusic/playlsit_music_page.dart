@@ -36,7 +36,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
   late UserLoginPostResponse user;
-  double totalDuration = 0;
+  // double totalDuration = 0;
 
   @override
   void initState() {
@@ -49,11 +49,11 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   loadDataAsync() async {
     music_pl = await playlistService.getPlaylistMusicByPid(widget.idx);
     chartData.clear();
-    totalDuration = 0;
-    for (var m in music_pl.playlistDetail) {
-      chartData.add(Musicdata(m.music.duration, m.music.bpm));
-      totalDuration += m.music.duration;
-    }
+    // totalDuration = 0;
+    // for (var m in music_pl.playlistDetail) {
+    //   chartData.add(Musicdata(m.music.duration, m.music.bpm));
+    //   totalDuration += m.music.duration;
+    // }
     setState(() {});
   }
 
@@ -74,8 +74,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Get.to(() =>
-                EditPlaylistMusicPage(music_pl.wpid, music_pl.pid));
+            Get.to(() => EditPlaylistMusicPage(music_pl.wpid, music_pl.pid));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -141,7 +140,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "${music_pl.playlistName} ($totalDuration นาที)",
+                                          "${music_pl.playlistName} (${music_pl.totalDuration} นาที)",
                                           style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 16),
@@ -165,25 +164,25 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                           physics: const ScrollPhysics(),
                           child: Column(
                             children: [
-                                musicGraph(),
-                                const Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 85, right: 35, top: 5),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Title",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 16),
-                                      ),
-                                      Icon(Icons.access_time_rounded,
-                                          color: Colors.black),
-                                    ],
-                                  ),
+                              musicGraph(),
+                              const Padding(
+                                padding: EdgeInsets.only(
+                                    left: 85, right: 35, top: 5),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Title",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16),
+                                    ),
+                                    Icon(Icons.access_time_rounded,
+                                        color: Colors.black),
+                                  ],
                                 ),
-                                listMusic(),
+                              ),
+                              listMusic(),
                             ],
                           ),
                         ),
