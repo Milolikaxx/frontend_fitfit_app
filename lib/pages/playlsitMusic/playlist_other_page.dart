@@ -49,7 +49,7 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
   late var loadData;
   late WorkoutProfileService wpService;
   late UserLoginPostResponse user;
-  double totalDuration = 0;
+  // double totalDuration = 0;
 
   @override
   void initState() {
@@ -170,7 +170,7 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "${widget.playlistname} ($totalDuration นาที)",
+                                          "${widget.playlistname} (${music_pl.totalDuration} นาที)",
                                           style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 16),

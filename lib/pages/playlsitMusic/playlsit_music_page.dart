@@ -36,7 +36,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
   late UserLoginPostResponse user;
-  double totalDuration = 0;
+  // double totalDuration = 0;
 
   @override
   void initState() {
@@ -74,7 +74,8 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Get.to(() => EditPlaylistMusicPage(pl.wpid, pl.pid));
+            Get.to(() =>
+                EditPlaylistMusicPage(music_pl.wpid, music_pl.pid));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -140,7 +141,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "${pl.playlistName} ($totalDuration นาที)",
+                                          "${music_pl.playlistName} ($totalDuration นาที)",
                                           style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 16),
