@@ -78,12 +78,12 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
   Widget uiEditPlaylist(PlaylistWithWorkoutGetResponse dePlaylist) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
+        padding: const EdgeInsets.symmetric(horizontal: 40, ),
         child: Column(
           children: [
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              // crossAxisAlignment:CrossAxisAlignment.center,
+       
               children: [
                 Text(
                   "โปรดใส่ชื่อเพลย์ลิสต์ของคุณ",
@@ -101,14 +101,6 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                 child: TextFormField(
                   maxLength: 50,
                   controller: namePlController,
-                  validator: (value) {
-                    // add email validation
-                    if (value == null || value.isEmpty) {
-                      return 'กรุณากรอกชื่อเพลย์ลิสต์';
-                    }
-
-                    return null;
-                  },
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                       hintText: dePlaylist.playlistName,
@@ -152,38 +144,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                       ),
                     ),
                     child: const Text(
-                      'บันทึกรายการเพลง',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  OutlinedButton(
-                    onPressed: () {
-                      // Get.to(() => const LoginPage());
-                    },
-                    style: ButtonStyle(
-                      minimumSize:
-                          MaterialStateProperty.all<Size>(const Size(300, 50)),
-                      side: MaterialStateProperty.all<BorderSide>(
-                          const BorderSide(
-                        color: Colors.white,
-                        width: 2.0,
-                      )),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    child: const Text(
-                      'บันทึกและเริ่มออกกำลังกาย',
+                      'บันทึกการแก้ไขเพลย์ลิสต์',
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),

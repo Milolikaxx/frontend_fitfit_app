@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart'
     as GetWP;
+import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/playlistAfterCreate/playlist_after_create.dart';
 import 'package:frontend_fitfit_app/pages/playlsit/edit_playlsitpage.dart';
 import 'package:frontend_fitfit_app/pages/playlsit/playlist_wp_page.dart';
@@ -80,8 +81,8 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
               icon: const Icon(Icons.add_box_rounded,
                   color: Color.fromARGB(255, 255, 255, 255)),
               onPressed: () async {
-                Get.to(() =>
-                    CreatePlaylsitPage(profile.wpid, profile.duration));
+                Get.to(
+                    () => CreatePlaylsitPage(profile.wpid, profile.duration));
               },
             ),
           ],
@@ -345,6 +346,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                         onSelected: (Menu item) {
                           switch (item) {
                             case Menu.preview:
+                              log(pl.pid.toString());
                               Get.to(() => MusicPlaylistPage(pl.pid));
                               break;
                             case Menu.share:
@@ -404,7 +406,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   }
 
   Future<void> delPlaylist(pid) async {
-      // ignore: use_build_context_synchronously
+    // ignore: use_build_context_synchronously
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -435,13 +437,13 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                   try {
+                    try {
                       log(pid.toString());
                       int res = await playlsitService.deletePlaylsit(pid);
                       log(res.toString());
                       if (res == 1) {
-                        log("deleted successfully. Response code: $res");  
-                         Get.back();
+                        log("deleted successfully. Response code: $res");
+                        Get.to(() => const Barbottom());
                         setState(() {
                           loadData = loadDataAsync();
                         });
@@ -451,8 +453,6 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                     } catch (e) {
                       log("Error: $e");
                     }
-                  
-                
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
@@ -471,6 +471,5 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
               ],
               content: const Text("กรุณายืนยันการลบ"),
             ));
-   
   }
 }

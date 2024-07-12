@@ -1,11 +1,8 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/pages/auth/login.dart';
-import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/register/signup.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});

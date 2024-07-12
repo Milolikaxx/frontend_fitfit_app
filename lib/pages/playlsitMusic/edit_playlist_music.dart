@@ -58,12 +58,9 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
     music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
     log(music_pl.toString());
     chartData.clear();
-    totalDuration = 0;
     for (var m in music_pl.playlistDetail) {
       chartData.add(Musicdata(m.music.duration, m.music.bpm));
-      totalDuration += m.music.duration;
     }
-
     setState(() {});
   }
 
@@ -345,22 +342,22 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
       ),
     );
   }
-  // Future<void> randAll() async {
-  //   musicRandNew = await playlistDetailServ.getMusicDetailGen(widget.wpid);
+  Future<void> randAll() async {
+    musicRandNew = await playlistDetailServ.getMusicDetailGen(widget.wpid);
 
-  //   setState(() {
-  //     chartData.clear();
-  //     music_pl.playlistDetail = musicRandNew;
-  //   });
+    setState(() {
+      chartData.clear();
+      // music_pl.playlistDetail = musicRandNew;
+    });
 
-  //   // log(widget.music.length.toString());
+    // log(widget.music.length.toString());
 
-  //   // ignore: use_build_context_synchronously
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(builder: (BuildContext context) => widget),
-  //   );
-  // }
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => widget),
+    );
+  }
 
   // Future<void> randMusic1Song(int idx) async {
   //   log("1");

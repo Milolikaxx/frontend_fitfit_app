@@ -141,19 +141,18 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
       final bpm = musicList[index].bpm;
       double volume;
       if (bpm <= 100) {
-        volume = 0.2;
-      } else if (bpm <= 114) {
         volume = 0.4;
-      } else if (bpm <= 133) {
+      } else if (bpm <= 114) {
         volume = 0.6;
+      } else if (bpm <= 133) {
+        volume = 0.7;
       } else if (bpm <= 152) {
         volume = 0.8;
       } else if (bpm <= 171) {
         volume = 1.0;
       } else {
-        volume = 1.0; // Ensure to handle cases beyond 171 BPM
+        volume = 1.0; 
       }
-
       log("Adjusted volume for BPM $bpm: $volume");
       _audioPlayer.setVolume(volume);
     } else {

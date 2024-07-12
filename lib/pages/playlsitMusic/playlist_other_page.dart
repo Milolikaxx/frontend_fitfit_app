@@ -66,10 +66,8 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
       profile = await wpService.getProfileByWpid(music_pl.wpid);
       log(profile.exerciseType);
       chartData.clear();
-      totalDuration = 0;
-      for (var m in music_pl.playlistDetail) {
+      for (var m in  music_pl.playlistDetail) {
         chartData.add(Musicdata(m.music.duration, m.music.bpm));
-        totalDuration += m.music.duration;
       }
     } catch (e) {
       log(e.toString());

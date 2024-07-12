@@ -14,9 +14,9 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 // ignore: must_be_immutable
 class MusicPlaylistPage extends StatefulWidget {
-  int idx = 0;
+  int pid = 0;
 
-  MusicPlaylistPage(this.idx, {super.key});
+  MusicPlaylistPage(this.pid, {super.key});
 
   @override
   State<MusicPlaylistPage> createState() => _MusicPlaylistPageState();
@@ -31,7 +31,7 @@ class Musicdata {
 
 class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   List<Musicdata> chartData = [];
-  late PlaylsitMusicGetResponse music_pl;
+  late PlaylsitMusicGetResponse pl;
   late PlaylistService playlistService;
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
@@ -47,12 +47,12 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   }
 
   loadDataAsync() async {
-    music_pl = await playlistService.getPlaylistMusicByPid(widget.idx);
+    pl = await playlistService.getPlaylistMusicByPid(widget.pid);
+    log(pl.playlistName);
     chartData.clear();
-    totalDuration = 0;
-    for (var m in music_pl.playlistDetail) {
+    for (var m in pl.playlistDetail) {
       chartData.add(Musicdata(m.music.duration, m.music.bpm));
-      totalDuration += m.music.duration;
+     
     }
     setState(() {});
   }
@@ -74,8 +74,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Get.to(() =>
-                EditPlaylistMusicPage(music_pl.wpid, music_pl.pid));
+            Get.to(() => EditPlaylistMusicPage(pl.wpid, pl.pid));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -117,7 +116,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                           child: Column(
                             children: [
                               Image.network(
-                                music_pl.imagePlaylist,
+                                pl.imagePlaylist,
                                 width: 200,
                                 height: 200,
                               ),
@@ -141,7 +140,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "${music_pl.playlistName} ($totalDuration นาที)",
+                                          "${pl.playlistName} ($totalDuration นาที)",
                                           style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 16),
@@ -165,25 +164,25 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                           physics: const ScrollPhysics(),
                           child: Column(
                             children: [
-                                musicGraph(),
-                                const Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 85, right: 35, top: 5),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Title",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 16),
-                                      ),
-                                      Icon(Icons.access_time_rounded,
-                                          color: Colors.black),
-                                    ],
-                                  ),
+                              musicGraph(),
+                              const Padding(
+                                padding: EdgeInsets.only(
+                                    left: 85, right: 35, top: 5),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Title",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16),
+                                    ),
+                                    Icon(Icons.access_time_rounded,
+                                        color: Colors.black),
+                                  ],
                                 ),
-                                listMusic(),
+                              ),
+                              listMusic(),
                             ],
                           ),
                         ),
@@ -198,10 +197,8 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.only(bottom: 60),
       shrinkWrap: true,
-      itemCount:
-          music_pl.playlistDetail.isEmpty ? 0 : music_pl.playlistDetail.length,
-      itemBuilder: (context, index) =>
-          musicInfo(music_pl.playlistDetail[index]),
+      itemCount: pl.playlistDetail.isEmpty ? 0 : pl.playlistDetail.length,
+      itemBuilder: (context, index) => musicInfo(pl.playlistDetail[index]),
     );
   }
 
@@ -270,7 +267,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
     if (name.endsWith('.mp')) {
       name = name.substring(0, name.length - 3);
     }
-    // Truncate to 10 characters and add ellipsis if necessary
+
     if (name.length > 25) {
       return '${name.substring(0, 25)}..';
     }
@@ -281,8 +278,8 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
     return Container(
       color: Colors.white,
       child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.2,
+        // width: MediaQuery.of(context).size.width,
+        // height: MediaQuery.of(context).size.height * 0.2,
         child: SfCartesianChart(
           primaryXAxis: const CategoryAxis(),
           legend: const Legend(
