@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/model/response/social_all_post_res.dart';
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
-import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/user/editprofile.dart';
 import 'package:frontend_fitfit_app/service/api/post.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';

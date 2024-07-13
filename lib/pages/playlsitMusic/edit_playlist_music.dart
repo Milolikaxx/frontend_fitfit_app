@@ -15,11 +15,11 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 // ignore: must_be_immutable
 class EditPlaylistMusicPage extends StatefulWidget {
-  // List<MusicGetResponse> music = [];
+  late PlaylsitMusicGetResponse? musicPL;
   int wpid = 0;
   int pid = 0;
   // int timeEx = 0;
-  EditPlaylistMusicPage(this.wpid, this.pid, {super.key});
+  EditPlaylistMusicPage(this.wpid, this.pid, {this.musicPL, super.key});
 
   @override
   State<EditPlaylistMusicPage> createState() => _EditPlaylistMusicPageState();
@@ -39,29 +39,43 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   late PlaylistService playlistService;
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
-  List<MusicGetResponse> musicRandNew = [];
+  List<MusicGetResponse> newMusicList = [];
   late UserLoginPostResponse user;
   double totalDuration = 0;
   late PlaylistDetailService playlistDetailServ;
+  List<Music> musiclist = [];
   @override
   void initState() {
     super.initState();
     playlistService = context.read<AppData>().playlistService;
+    playlistDetailServ = context.read<AppData>().playlistDetailService;
     user = context.read<AppData>().user;
-    log("1");
-    log(widget.pid.toString());
+    log("pid :${widget.pid}");
     loadData = loadDataAsync();
-    log("1");
   }
 
   loadDataAsync() async {
-    music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
-    log(music_pl.toString());
-    chartData.clear();
-    for (var m in music_pl.playlistDetail) {
-      chartData.add(Musicdata(m.music.duration, m.music.bpm));
+    try {
+      if (widget.musicPL == null) {
+        music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
+        log(music_pl.playlistName);
+        chartData.clear();
+        for (var m in music_pl.playlistDetail) {
+          chartData.add(Musicdata(m.music.duration, m.music.bpm));
+        }
+        setState(() {});
+      } else {
+        music_pl = widget.musicPL!;
+
+        chartData.clear();
+        for (var m in music_pl.playlistDetail) {
+          chartData.add(Musicdata(m.music.duration, m.music.bpm));
+        }
+        setState(() {});
+      }
+    } catch (e) {
+      log(e.toString());
     }
-    setState(() {});
   }
 
   @override
@@ -96,9 +110,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
             color: Colors.white,
           ),
           onPressed: () {
-            // randAll();
-            // setState(() {
-            // });
+            randAll();
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -312,7 +324,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
     }
     // Truncate to 10 characters and add ellipsis if necessary
     if (name.length > 25) {
-      return '${name.substring(0, 25)}..';
+      return '${name.substring(0, 20)}..';
     }
     return name;
   }
@@ -324,41 +336,63 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.2,
         child: SfCartesianChart(
-          primaryXAxis: const CategoryAxis(),
+          primaryXAxis: const CategoryAxis(
+             ),
           legend: const Legend(
             isVisible: false,
           ),
-          tooltipBehavior: TooltipBehavior(enable: true),
+          title: ChartTitle(
+              text: 'เวลาเพลย์ลิสต์ : ${music_pl.durationPlaylist} นาที'),
+          tooltipBehavior: TooltipBehavior(
+            enable: true, tooltipPosition: TooltipPosition.pointer,
+            format: 'เวลาเพลง point.x นาที : point.y BPM', // Default tooltip format
+            header: '',
+          ),
           series: <CartesianSeries<Musicdata, double>>[
             LineSeries<Musicdata, double>(
               dataSource: chartData,
               xValueMapper: (Musicdata m, _) => m.musictime,
               yValueMapper: (Musicdata m, _) => m.bpm,
               color: Colors.red,
-              dataLabelSettings: const DataLabelSettings(isVisible: false),
+              // dataLabelSettings: const DataLabelSettings(isVisible: true),
             ),
           ],
         ),
       ),
     );
   }
+
   Future<void> randAll() async {
-    musicRandNew = await playlistDetailServ.getMusicDetailGen(widget.wpid);
+    try {
+      log("start");
+      newMusicList = await playlistDetailServ.getMusicDetailGen(widget.wpid);
+      log(newMusicList.length.toString());
+      //เปลี่ยน MusicGetResponse ===> music ของ playlist_get  ใช้ แทนที่ใน  music_pl.playlistDetail.music
+      musiclist = newMusicList
+          .map((musicGetResponse) => musicGetResponse.toMusicPl())
+          .toList();
 
-    setState(() {
-      chartData.clear();
-      // music_pl.playlistDetail = musicRandNew;
-    });
+      setState(() {
+        chartData.clear();
+        for (int i = 0; i < music_pl.playlistDetail.length; i++) {
+          if (i < newMusicList.length) {
+            music_pl.playlistDetail[i].music = musiclist[i];
+          }
+        }
+      });
 
-    // log(widget.music.length.toString());
-
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => widget),
-    );
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => EditPlaylistMusicPage(
+                widget.wpid, widget.pid,
+                musicPL: music_pl)),
+      );
+    } catch (e) {
+      log(e.toString());
+    }
   }
-
   // Future<void> randMusic1Song(int idx) async {
   //   log("1");
   //   RandMusic1PostRequest randMusic = RandMusic1PostRequest(
