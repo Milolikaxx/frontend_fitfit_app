@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:frontend_fitfit_app/model/request/rand_music1_post_req.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart' as getPlaylist;
 
 List<MusicGetResponse> musicGetResponseFromJson(String str) =>
     List<MusicGetResponse>.from(
@@ -75,7 +76,20 @@ class MusicGetResponse {
       bpm: bpm,
     );
   }
-
+  
+  getPlaylist.Music toMusicPl() {
+      return getPlaylist.Music(
+      mid: mid,
+      mtid: mtid,
+      musicType: getPlaylist.MusicType(mtid: mtid, name: name),
+      mLink: mLink,
+      name: name,
+      musicImage: musicImage,
+      artist: artist,
+      duration: duration,
+      bpm: bpm,
+    );
+  }
   
 }
 

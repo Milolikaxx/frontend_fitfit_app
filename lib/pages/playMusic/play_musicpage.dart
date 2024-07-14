@@ -1,7 +1,7 @@
 import 'dart:developer';
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
+import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
 import 'package:frontend_fitfit_app/pages/afterExercise/after_exercise.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
@@ -56,6 +56,8 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   late Duration totalDuration; // Total duration of all songs
   Timer? countdownTimer;
   late DateTime endTime; // Persistent reference for the end time
+
+  double setVolumeValue = 0;
   Stream<PositionData> get _positionDataStream =>
       rx.Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
         _audioPlayer.positionStream,
@@ -79,37 +81,44 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
       });
       adjustVolumeBasedOnBPM(currentIndex);
     });
-
+    FlutterVolumeController.getVolume()
+        .then((volume) => setVolumeValue = volume ?? 0.0);
+    // Listen to system volume change
+    FlutterVolumeController.addListener((volume) {
+      setState(() =>
+          // set is value in listener value
+          setVolumeValue = volume);
+    });
     loadData = loadDataAsync();
   }
 
   loadDataAsync() async {
     try {
       music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
-      // log(widget.pid.toString());
+      log("play pid : ${widget.pid}");
+      for (var m in music_pl.playlistDetail) {
+        final music = Musicdata(m.music.mLink, m.music.name, m.music.musicImage,
+            m.music.artist, m.music.duration, m.music.bpm);
+        musicList.add(music);
+      }
+      playlist = ConcatenatingAudioSource(
+        children: musicList
+            .map((music) => AudioSource.uri(Uri.parse(music.mLink), tag: {
+                  'name': music.name,
+                  'musicImage': music.musicImage,
+                  'artist': music.artist,
+                  'duration': music.duration,
+                  'bpm': music.bpm,
+                }))
+            .toList(),
+      );
+      await _audioPlayer.setLoopMode(LoopMode.off);
+      await _audioPlayer.setAudioSource(playlist!);
+      fullTime();
+      startCountdown();
     } catch (e) {
       log(e.toString());
     }
-    for (var m in music_pl.playlistDetail) {
-      final music = Musicdata(m.music.mLink, m.music.name, m.music.musicImage,
-          m.music.artist, m.music.duration, m.music.bpm);
-      musicList.add(music);
-    }
-    playlist = ConcatenatingAudioSource(
-      children: musicList
-          .map((music) => AudioSource.uri(Uri.parse(music.mLink), tag: {
-                'name': music.name,
-                'musicImage': music.musicImage,
-                'artist': music.artist,
-                'duration': music.duration,
-                'bpm': music.bpm,
-              }))
-          .toList(),
-    );
-    await _audioPlayer.setLoopMode(LoopMode.off);
-    await _audioPlayer.setAudioSource(playlist!);
-    fullTime();
-    startCountdown();
   }
 
   void startCountdown() {
@@ -133,30 +142,50 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
     totalDuration = Duration(
       minutes: (music_pl.totalDuration).toInt(),
       seconds: ((music_pl.totalDuration % 1) * 60).toInt(),
-    ); // Use music_pl.totalDuration directly
+    );
   }
 
-  void adjustVolumeBasedOnBPM(int index) {
+  Future<void> adjustVolumeBasedOnBPM(int index) async {
+    log("เพิ่มลด เสียง");
     if (musicList.isNotEmpty && index < musicList.length) {
       final bpm = musicList[index].bpm;
       double volume;
       if (bpm <= 100) {
-        volume = 0.4;
+        volume = 0.40;
       } else if (bpm <= 114) {
-        volume = 0.6;
+        volume = 0.60;
       } else if (bpm <= 133) {
-        volume = 0.7;
+        volume = 0.70;
       } else if (bpm <= 152) {
-        volume = 0.8;
+        volume = 0.80;
       } else if (bpm <= 171) {
         volume = 1.0;
       } else {
-        volume = 1.0; 
+        volume = 1.0;
       }
-      log("Adjusted volume for BPM $bpm: $volume");
-      _audioPlayer.setVolume(volume);
+      log("Adjusted volume for BPM  เพลง ${musicList[index].name} $bpm: $volume");
+      await _audioPlayer.setVolume(volume);
+      setVolumeValue = volume;
+      FlutterVolumeController.setVolume(setVolumeValue);
     } else {
       log("No music or invalid currentIndex: ${musicList.length}, $currentIndex");
+    }
+  }
+
+  double calculateVolume(int bpm) {
+    if (bpm <= 100) {
+      return 0.4;
+    } else if (bpm <= 114) {
+      return 0.4 +
+          (bpm - 100) * 0.02; // Linear interpolation for smoother transition
+    } else if (bpm <= 133) {
+      return 0.6 + (bpm - 114) * 0.02;
+    } else if (bpm <= 152) {
+      return 0.7 + (bpm - 133) * 0.02;
+    } else if (bpm <= 171) {
+      return 0.8 + (bpm - 152) * 0.02;
+    } else {
+      return 1.0;
     }
   }
 
@@ -164,6 +193,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   void dispose() {
     _audioPlayer.dispose();
     countdownTimer?.cancel();
+    FlutterVolumeController.removeListener();
     super.dispose();
   }
 
@@ -213,22 +243,82 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           child: circleImage(),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: detailMusic(),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(top: 5),
           child: timeBar(),
         ),
+        volume(),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: controller(),
         ),
+        showVolumeSystem(),
         Padding(
           padding: const EdgeInsets.all(1),
           child: stopButton(),
         ),
       ],
+    );
+  }
+
+  Widget volume() {
+    return SizedBox(
+      width: 250,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('volume: ${setVolumeValue.toStringAsFixed(2)}',
+              style: const TextStyle(color: Colors.white)),
+          Row(
+            children: [
+              const Icon(
+                Icons.volume_up_rounded,
+                color: Colors.white,
+              ),
+              SizedBox(
+                width: 100,
+                child: Flexible(
+                  child: Slider(
+                    min: 0,
+                    max: 1,
+                    activeColor: const Color(0xFFF8721D),
+                    onChanged: (double value) async {
+                      setState(() {});
+                    },
+                    value: setVolumeValue,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  SizedBox showVolumeSystem() {
+    return SizedBox(
+      width: 500,
+      child: SwitchListTile.adaptive(
+        title: const Text(
+          'Show volume system UI',
+          style: TextStyle(
+              color: Colors.white), // Set the color for the title text
+        ),
+        value: FlutterVolumeController.showSystemUI,
+        onChanged: (val) async {
+          // Change the state of volume controller
+          await FlutterVolumeController.updateShowSystemUI(val);
+          setState(() {});
+        },
+        activeColor:
+            const Color(0xFFF8721D), // Set the active color for the switch
+        inactiveThumbColor:
+            Colors.grey, // Set the inactive thumb color for the switch
+      ),
     );
   }
 
@@ -371,10 +461,14 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           },
         );
       },
-      style: ElevatedButton.styleFrom(
-        primary: Colors.red,
-        onPrimary: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(
+            const Color.fromARGB(255, 255, 0, 0)),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+        ),
       ),
       child: const Row(
         mainAxisSize: MainAxisSize.min,
@@ -384,19 +478,14 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
             color: Colors.black,
             size: 50.0,
           ),
-          SizedBox(width: 8), // เพิ่มระยะห่างระหว่างไอคอนกับข้อความ
+          SizedBox(width: 8),
           Text(
-            'STOP',
-            style: TextStyle(fontSize: 18),
+            'หยุด',
+            style: TextStyle(fontSize: 18, color: Colors.white),
           ),
         ],
       ),
     );
-  }
-
-  void log(String message) {
-    // You can use any logging mechanism you prefer
-    // print(message);
   }
 
   AlertDialog alertConfirmDialog(BuildContext context) {

@@ -7,7 +7,7 @@ import 'package:frontend_fitfit_app/pages/playMusic/play_musicpage.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:get/get.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
+
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 

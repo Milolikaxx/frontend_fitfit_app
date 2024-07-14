@@ -1,13 +1,14 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/home/home.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 // import '../../model/response/musictype_get_res.dart';
 import '../../model/response/playlsit_with_wp_workoutprofile_get_res.dart';
-import '../../model/response/workoutProfile_get_res.dart';
+import '../../model/response/workoutProfile_get_res.dart' as pro;
 import '../../model/response/workout_profile_musictype_get_res.dart';
 import '../../service/api/playlist.dart';
 import '../../service/api/workout_musictype.dart';
@@ -26,9 +27,9 @@ class AfterExercisePage extends StatefulWidget {
 class _AfterExercisePageState extends State<AfterExercisePage> {
   late Future<void> loadData;
   late PlaylistWithWorkoutGetResponse? dePlaylist;
-  late WorkoutProfileService? wpService;
-  late PlaylistService? playlsitService;
-  late WorkoutProfileGetResponse? profile;
+  late WorkoutProfileService wpService;
+  late PlaylistService playlsitService;
+  late pro.WorkoutProfileGetResponse profile;
   late WorkoutMusicTypeService mtypeService;
   late List<WorkoutProfileMusictypeGetResponse> mtype = [];
 
@@ -43,16 +44,15 @@ class _AfterExercisePageState extends State<AfterExercisePage> {
 
   loadDataAsync() async {
     try {
-      profile = await wpService!.getProfileByWpid(widget.wpid);
+      profile = await wpService.getProfileByWpid(widget.wpid);
       dePlaylist =
-          await playlsitService!.getPlaylistWithOutMusicByPid(widget.pid);
-      mtype = await mtypeService.getMusicTypeByWpid(widget.wpid);
+          await playlsitService.getPlaylistWithOutMusicByPid(widget.pid);
     } catch (e) {
       log(e.toString());
     }
     log(widget.wpid.toString());
     log("Length : ${mtype.length}");
-    log(profile?.duration.toString() ?? 'No duration');
+    log(profile.duration.toString() ?? 'No duration');
   }
 
   @override
@@ -82,9 +82,7 @@ class _AfterExercisePageState extends State<AfterExercisePage> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: detailBox(profile!, mtype),
-                ),
+                detailBox(profile, mtype),
                 Container(
                   margin: const EdgeInsets.only(bottom: 40),
                   child: Row(
@@ -104,85 +102,104 @@ class _AfterExercisePageState extends State<AfterExercisePage> {
     );
   }
 
-  Widget detailBox(WorkoutProfileGetResponse profile,
+  Widget detailBox(pro.WorkoutProfileGetResponse profile,
       List<WorkoutProfileMusictypeGetResponse> mtype) {
-    return Container(
-      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 5),
-      decoration: BoxDecoration(
-        color: Colors.orange,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 60.0),
-            child: Column(
-              children: [
-                const Text(
-                  'ทำเวลาทั้งหมดไป',
-                  style: TextStyle(color: Colors.white, fontSize: 20.0),
-                ),
-                Text(
-                  "${profile.duration} นาที",
-                  style: const TextStyle(color: Colors.white, fontSize: 36.0),
-                ),
-                const Text(
-                  'ระยะเวลา',
-                  style: TextStyle(color: Colors.white, fontSize: 14.0),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 60),
-            child: Center(
-              child: Text(
-                profile.exerciseType,
-                style: const TextStyle(color: Colors.white, fontSize: 32.0),
-                textAlign: TextAlign.center,
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 5),
+        decoration: BoxDecoration(
+          color: Colors.orange,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 60.0),
+              child: Column(
+                children: [
+                  const Text(
+                    'ทำเวลาทั้งหมดไป',
+                    style: TextStyle(color: Colors.white, fontSize: 20.0),
+                  ),
+                  Text(
+                    "${profile.duration} นาที",
+                    style: const TextStyle(color: Colors.white, fontSize: 36.0),
+                  ),
+                  const Text(
+                    'ระยะเวลา',
+                    style: TextStyle(color: Colors.white, fontSize: 14.0),
+                  ),
+                ],
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 60.0),
-            child: Column(
-              children: [
-                Text(
-                  'Lv. ${profile.levelExercise}',
+            Padding(
+              padding: const EdgeInsets.only(top: 60),
+              child: Center(
+                child: Text(
+                  profile.exerciseType,
                   style: const TextStyle(color: Colors.white, fontSize: 32.0),
+                  textAlign: TextAlign.center,
                 ),
-                const Text(
-                  'ระดับการออกกำลังกาย',
-                  style: TextStyle(color: Colors.white, fontSize: 16.0),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: mtype.length,
-              itemBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: musicType(mtype[index]),
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(top: 60.0),
+              child: Column(
+                children: [
+                  Text(
+                    'Lv. ${profile.levelExercise}',
+                    style: const TextStyle(color: Colors.white, fontSize: 32.0),
+                  ),
+                  const Text(
+                    'ระดับการออกกำลังกาย',
+                    style: TextStyle(color: Colors.white, fontSize: 16.0),
+                  ),
+                ],
+              ),
+            ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 60),
+                  child: Column(
+                    children: [
+                      const Text(
+                      'แนวเพลง',
+                      style: TextStyle(color: Colors.white, fontSize: 32.0),
+                                  ),
+                                  getTextMusicName()
+                    ],
+                  ),
+                ),
+              ),
+           
+          ], 
+        ),
       ),
     );
   }
 
-  Widget musicType(WorkoutProfileMusictypeGetResponse mtype) {
-    return Text(
-      mtype.mtid.toString(),
-      style: const TextStyle(color: Colors.white, fontSize: 24.0),
+  Widget getTextMusicName() {
+    return Expanded(
+      child: ListView.builder(
+                          itemCount: profile.workoutMusictype.length,
+                          itemBuilder: (context, index) => musicType(profile.workoutMusictype[index]),
+                        ),
     );
   }
 
+  Widget musicType(pro.WorkoutMusictype musicTypes){
+    return Column(
+      children: [
+          Text(musicTypes.musicType.name,
+          style: const TextStyle(color: Colors.white, fontSize: 18),
+        )
+      ],
+    );
+  }
   Widget homeButton() {
     return TextButton(
       onPressed: () {
-        Get.to(() => const HomePage());
+        Get.to(() => const Barbottom(initialIndex: 0,));
       },
       child: const Text(
         "กลับหน้าหลัก",

@@ -274,25 +274,33 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
     return name;
   }
 
-  Widget musicGraph() {
+    Widget musicGraph() {
     return Container(
       color: Colors.white,
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.2,
         child: SfCartesianChart(
-          primaryXAxis: const CategoryAxis(),
+          primaryXAxis: const CategoryAxis(
+             ),
           legend: const Legend(
             isVisible: false,
           ),
-          tooltipBehavior: TooltipBehavior(enable: true),
+          title: ChartTitle(
+              text: 'เวลาเพลย์ลิสต์ : ${music_pl.durationPlaylist} นาที'),
+          tooltipBehavior: TooltipBehavior(
+            enable: true, tooltipPosition: TooltipPosition.pointer,
+            format:
+                'เวลาเพลง point.x นาที : point.y BPM', // Default tooltip format
+            header: '',
+          ),
           series: <CartesianSeries<Musicdata, double>>[
             LineSeries<Musicdata, double>(
               dataSource: chartData,
               xValueMapper: (Musicdata m, _) => m.musictime,
               yValueMapper: (Musicdata m, _) => m.bpm,
               color: Colors.red,
-              dataLabelSettings: const DataLabelSettings(isVisible: false),
+              // dataLabelSettings: const DataLabelSettings(isVisible: true),
             ),
           ],
         ),
