@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:dio/dio.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:frontend_fitfit_app/model/request/user_login%20google_req.dart';
 import 'package:frontend_fitfit_app/model/request/user_register_post_req.dart';
@@ -537,31 +538,31 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   //firebase
-  File? _image;
-  void pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _image = File(image.path);
-      });
-      try {
-        FirebaseStorage storage = FirebaseStorage.instance;
-        Reference ref = storage.ref().child('uploadsImg/${image.name}');
-        UploadTask uploadTask = ref.putFile(_image!);
-        await uploadTask.whenComplete(() async {
-          String downloadURL = await ref.getDownloadURL();
-          log('File uploaded at $downloadURL');
-          setState(() {
-            imgPick = downloadURL;
-          });
-          log("url $imgPick");
-        });
-      } catch (e) {
-        log(e.toString());
-      }
-    }
-  }
+  // File? _image;
+  // void pickImage() async {
+  //   final ImagePicker picker = ImagePicker();
+  //   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+  //   if (image != null) {
+  //     setState(() {
+  //       _image = File(image.path);
+  //     });
+  //     try {
+  //       FirebaseStorage storage = FirebaseStorage.instance;
+  //       Reference ref = storage.ref().child('uploadsImg/${image.name}');
+  //       UploadTask uploadTask = ref.putFile(_image!);
+  //       await uploadTask.whenComplete(() async {
+  //         String downloadURL = await ref.getDownloadURL();
+  //         log('File uploaded at $downloadURL');
+  //         setState(() {
+  //           imgPick = downloadURL;
+  //         });
+  //         log("url $imgPick");
+  //       });
+  //     } catch (e) {
+  //       log(e.toString());
+  //     }
+  //   }
+  // }
 
   Future<void> calendar() async {
     DateTime? newDateTime = await showRoundedDatePicker(
@@ -636,29 +637,30 @@ class _SignUpPageState extends State<SignUpPage> {
       log('error');
     }
   }
-  // void pickImage() async {
-  //   final ImagePicker picker = ImagePicker();
-  //   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-  //   if (image != null) {
-  //     var filePath = image.path;
-  //     var fileName = image.name;
-  //     if (filePath.isNotEmpty && fileName.isNotEmpty) {
-  //       var formData = FormData.fromMap({
-  //         'file': await MultipartFile.fromFile(
-  //           filePath,
-  //           filename: fileName,
-  //         )
-  //       });
+  
+  void pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      var filePath = image.path;
+      var fileName = image.name;
+      if (filePath.isNotEmpty && fileName.isNotEmpty) {
+        var formData = FormData.fromMap({
+          'file': await MultipartFile.fromFile(
+            filePath,
+            filename: fileName,
+          )
+        });
 
-  //       var result = await Dio()
-  //           .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
-  //       if (result.statusCode == 201) {
-  //         log(result.data['fileUrl']);
-  //         setState(() {
-  //           imgPick = result.data['fileUrl'];
-  //         });
-  //       }
-  //     }
-  //   }
-  // }
+        var result = await Dio()
+            .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
+        if (result.statusCode == 201) {
+          log(result.data['fileUrl']);
+          setState(() {
+            imgPick = result.data['fileUrl'];
+          });
+        }
+      }
+    }
+  }
 }
