@@ -295,7 +295,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
       padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: InkWell(
         onTap: () {
-          Get.to(() => PreExercisePage(pl.wpid, pl.pid));
+           Get.to(() => MusicPlaylistPage(pl.pid));
         },
         child: Card(
           child: Container(
@@ -339,62 +339,70 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                           overflow: TextOverflow.clip,
                         ),
                       ),
-                      PopupMenuButton<Menu>(
-                        icon: const Icon(
-                          Icons.more_vert,
-                          color: Colors.white,
-                        ),
-                        onSelected: (Menu item) {
-                          switch (item) {
-                            case Menu.preview:
-                              log(pl.pid.toString());
-                              Get.to(() => MusicPlaylistPage(pl.pid));
-                              break;
-                            case Menu.share:
-                              Get.to(() => PostPage(pl.pid));
-                              break;
-                            case Menu.remove:
-                              delPlaylist(pl.pid);
-                              break;
-                            case Menu.edit:
-                              Get.to(() => EditPlaylistPage(pl.pid));
-                              break;
-                          }
-                        },
-                        itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<Menu>>[
-                          const PopupMenuItem<Menu>(
-                            value: Menu.preview,
-                            child: ListTile(
-                              leading: Icon(Icons.visibility_outlined),
-                              title: Text('ดูเพลงในเพลย์ลิสต์'),
+                      Row(
+                        children: [
+                          IconButton(onPressed: () {
+                             Get.to(() => PreExercisePage(pl.wpid, pl.pid));
+                          }, icon: const Icon(Icons.play_circle_fill_rounded,color: Colors.white,)),
+                          PopupMenuButton<Menu>(
+                            icon: const Icon(
+                              Icons.more_vert,
+                              color: Colors.white,
                             ),
-                          ),
-                          const PopupMenuItem<Menu>(
-                            value: Menu.share,
-                            child: ListTile(
-                              leading: Icon(Icons.share_outlined),
-                              title: Text('แชร์'),
-                            ),
-                          ),
+                            onSelected: (Menu item) {
+                              switch (item) {
+                                case Menu.preview:
+                                  log(pl.pid.toString());
+                                  Get.to(() => MusicPlaylistPage(pl.pid));
+                                  break;
+                                case Menu.share:
+                                  Get.to(() => PostPage(pl.pid));
+                                  break;
+                                case Menu.remove:
+                                  delPlaylist(pl.pid);
+                                  break;
+                                case Menu.edit:
+                                  Get.to(() => EditPlaylistPage(pl.pid));
+                                  break;
+                              }
+                            },
+                            itemBuilder: (BuildContext context) =>
+                                <PopupMenuEntry<Menu>>[
+                              const PopupMenuItem<Menu>(
+                                value: Menu.preview,
+                                child: ListTile(
+                                  leading: Icon(Icons.visibility_outlined),
+                                  title: Text('ดูเพลงในเพลย์ลิสต์'),
+                                ),
+                              ),
+                              const PopupMenuItem<Menu>(
+                                value: Menu.share,
+                                child: ListTile(
+                                  leading: Icon(Icons.share_outlined),
+                                  title: Text('แชร์'),
+                                ),
+                              ),
 
-                          // const PopupMenuDivider(),
-                          const PopupMenuItem<Menu>(
-                            value: Menu.remove,
-                            child: ListTile(
-                              leading: Icon(Icons.delete_outline),
-                              title: Text('ลบ'),
-                            ),
-                          ),
-                          const PopupMenuItem<Menu>(
-                            value: Menu.edit,
-                            child: ListTile(
-                              leading: Icon(Icons.edit_outlined),
-                              title: Text('แก้ไข'),
-                            ),
+                              // const PopupMenuDivider(),
+                              const PopupMenuItem<Menu>(
+                                value: Menu.remove,
+                                child: ListTile(
+                                  leading: Icon(Icons.delete_outline),
+                                  title: Text('ลบ'),
+                                ),
+                              ),
+                              const PopupMenuItem<Menu>(
+                                value: Menu.edit,
+                                child: ListTile(
+                                  leading: Icon(Icons.edit_outlined),
+                                  title: Text('แก้ไข'),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
+                      
                     ],
                   ),
                 ),

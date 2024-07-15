@@ -212,7 +212,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
               ),
             );
           }
-          return isCountdownFinished ? buildMusicPlayer() : buildCountdown();
+          return isCountdownFinished ? Center(child: buildMusicPlayer()) : buildCountdown();
         },
       ),
     );
@@ -231,40 +231,42 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   }
 
   Widget buildMusicPlayer() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: timerCounter(),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: circleImage(),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: detailMusic(),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 5),
-          child: timeBar(),
-        ),
-        volume(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: controller(),
-        ),
-        showVolumeSystem(),
-        Padding(
-          padding: const EdgeInsets.all(1),
-          child: stopButton(),
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: timerCounter(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: circleImage(),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: detailMusic(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: timeBar(),
+          ),
+          volume(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: controller(),
+          ),
+          // showVolumeSystem(),
+          Padding(
+            padding: const EdgeInsets.all(1),
+            child: stopButton(),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget volume() {
+ Widget volume() {
     return SizedBox(
       width: 250,
       child: Row(
@@ -280,44 +282,21 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
               ),
               SizedBox(
                 width: 100,
-                child: Flexible(
-                  child: Slider(
-                    min: 0,
-                    max: 1,
-                    activeColor: const Color(0xFFF8721D),
-                    onChanged: (double value) async {
-                      setState(() {});
-                    },
-                    value: setVolumeValue,
-                  ),
+                child: Slider(
+                  min: 0,
+                  max: 1,
+                  activeColor: const Color(0xFFF8721D),
+                  onChanged: (double value) {
+                    setState(() {
+                      setVolumeValue = value;
+                    });
+                  },
+                  value: setVolumeValue,
                 ),
               ),
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  SizedBox showVolumeSystem() {
-    return SizedBox(
-      width: 500,
-      child: SwitchListTile.adaptive(
-        title: const Text(
-          'Show volume system UI',
-          style: TextStyle(
-              color: Colors.white), // Set the color for the title text
-        ),
-        value: FlutterVolumeController.showSystemUI,
-        onChanged: (val) async {
-          // Change the state of volume controller
-          await FlutterVolumeController.updateShowSystemUI(val);
-          setState(() {});
-        },
-        activeColor:
-            const Color(0xFFF8721D), // Set the active color for the switch
-        inactiveThumbColor:
-            Colors.grey, // Set the inactive thumb color for the switch
       ),
     );
   }

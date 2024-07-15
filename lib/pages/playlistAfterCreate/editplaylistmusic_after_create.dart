@@ -41,6 +41,7 @@ class _EditPlaylistMusicAfterCreatePageState
   late PlaylistDetailService playlistDetailServ;
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
+    double totalTime = 0;
 
   @override
   void initState() {
@@ -53,6 +54,7 @@ class _EditPlaylistMusicAfterCreatePageState
     for (var m in widget.music) {
       log(m.name);
       chartData.add(Musicdata(m.duration, m.bpm));
+         totalTime += m.duration;
     }
 
     musiclist = widget.music
@@ -72,10 +74,10 @@ class _EditPlaylistMusicAfterCreatePageState
               Get.back();
             },
           ),
-          title: const Center(
+          title:  Center(
             child: Text(
-              "เวลา 40 นาที",
-              style: TextStyle(color: Colors.black),
+              "เวลา ${widget.timeEx} นาที",
+              style: const TextStyle(color: Colors.black),
             ),
           ),
           actions: [
@@ -302,22 +304,34 @@ class _EditPlaylistMusicAfterCreatePageState
   }
 
   Widget musicGraph() {
-    return SizedBox(
-      height: 250,
-      child: SfCartesianChart(
+    return Container(
+      color: Colors.white,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height * 0.3,
+        child: SfCartesianChart(
           primaryXAxis: const CategoryAxis(),
           legend: const Legend(
             isVisible: false,
           ),
-          tooltipBehavior: TooltipBehavior(enable: true),
+          title: ChartTitle(text: 'เวลาเพลย์ลิสต์ : $totalTime นาที'),
+          tooltipBehavior: TooltipBehavior(
+            enable: true, tooltipPosition: TooltipPosition.pointer,
+            format:
+                'เวลาเพลง point.x นาที : point.y BPM', // Default tooltip format
+            header: '',
+          ),
           series: <CartesianSeries<Musicdata, double>>[
             LineSeries<Musicdata, double>(
-                dataSource: chartData,
-                xValueMapper: (Musicdata m, _) => m.musictime,
-                yValueMapper: (Musicdata m, _) => m.bpm,
-                color: Colors.red,
-                dataLabelSettings: const DataLabelSettings(isVisible: false))
-          ]),
+              dataSource: chartData,
+              xValueMapper: (Musicdata m, _) => m.musictime,
+              yValueMapper: (Musicdata m, _) => m.bpm,
+              color: Colors.red,
+              // dataLabelSettings: const DataLabelSettings(isVisible: true),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
