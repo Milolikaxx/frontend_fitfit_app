@@ -140,7 +140,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "${music_pl.playlistName} (${music_pl.durationPlaylist} นาที)",
+                                          "${music_pl.playlistName} (${music_pl.totalDuration} นาที)",
                                           style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 16),
@@ -287,7 +287,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
             isVisible: false,
           ),
           title: ChartTitle(
-              text: 'เวลาเพลย์ลิสต์ : ${music_pl.durationPlaylist} นาที'),
+              text: 'เวลาเพลย์ลิสต์ : ${music_pl.totalDuration} นาที'),
           tooltipBehavior: TooltipBehavior(
             enable: true, tooltipPosition: TooltipPosition.pointer,
             format:

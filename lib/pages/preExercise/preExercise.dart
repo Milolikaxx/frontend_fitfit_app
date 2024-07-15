@@ -294,6 +294,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
             padding: const EdgeInsets.only(bottom: 20, right: 20, left: 20),
             child: ElevatedButton(
               onPressed: () {
+                
                 Get.to(() => PlayMusicPage(dePlaylist.pid, widget.wpid));
                 log("pid : ${dePlaylist.pid}");
                 log("wpid : ${widget.wpid}");

@@ -44,6 +44,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   double totalDuration = 0;
   late PlaylistDetailService playlistDetailServ;
   List<Music> musiclist = [];
+  double totalTime = 0;
   @override
   void initState() {
     super.initState();
@@ -63,13 +64,14 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
         for (var m in music_pl.playlistDetail) {
           chartData.add(Musicdata(m.music.duration, m.music.bpm));
         }
+        totalTime = music_pl.totalDuration;
         setState(() {});
       } else {
         music_pl = widget.musicPL!;
-
         chartData.clear();
         for (var m in music_pl.playlistDetail) {
           chartData.add(Musicdata(m.music.duration, m.music.bpm));
+          totalTime += m.music.duration;
         }
         setState(() {});
       }
@@ -336,8 +338,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.2,
         child: SfCartesianChart(
-          primaryXAxis: const CategoryAxis(
-             ),
+          primaryXAxis: const CategoryAxis(),
           legend: const Legend(
             isVisible: false,
           ),
@@ -345,7 +346,8 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
               text: 'เวลาเพลย์ลิสต์ : ${music_pl.durationPlaylist} นาที'),
           tooltipBehavior: TooltipBehavior(
             enable: true, tooltipPosition: TooltipPosition.pointer,
-            format: 'เวลาเพลง point.x นาที : point.y BPM', // Default tooltip format
+            format:
+                'เวลาเพลง point.x นาที : point.y BPM', // Default tooltip format
             header: '',
           ),
           series: <CartesianSeries<Musicdata, double>>[
