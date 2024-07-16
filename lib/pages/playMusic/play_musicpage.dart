@@ -56,6 +56,10 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   late Duration totalDuration; // Total duration of all songs
   Timer? countdownTimer;
   late DateTime endTime; // Persistent reference for the end time
+  late String currentDate;
+  late String startTime;
+  late String endDate;
+  late String finishTime;
 
   double setVolumeValue = 0;
   Stream<PositionData> get _positionDataStream =>
@@ -94,6 +98,13 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
 
   loadDataAsync() async {
     try {
+      DateTime now = DateTime.now();
+      String isoString = now.toIso8601String();
+      List<String> dateTimeParts = isoString.split('T');
+      setState(() {
+        currentDate = dateTimeParts[0];
+        startTime = dateTimeParts[1];
+      });
       music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
       log("play pid : ${widget.pid}");
       for (var m in music_pl.playlistDetail) {
@@ -112,6 +123,8 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
                 }))
             .toList(),
       );
+      log("CurrentDate => $currentDate");
+      log("StartTime => $startTime");
       await _audioPlayer.setLoopMode(LoopMode.off);
       await _audioPlayer.setAudioSource(playlist!);
       fullTime();
@@ -119,6 +132,16 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
     } catch (e) {
       log(e.toString());
     }
+  }
+
+  timeData() async {
+    DateTime endNow = DateTime.now();
+    String isoString2 = endNow.toIso8601String();
+    List<String> dateTimeParts2 = isoString2.split('T');
+    setState(() {
+      endDate = dateTimeParts2[0];
+      finishTime = dateTimeParts2[1];
+    });
   }
 
   void startCountdown() {
@@ -212,7 +235,9 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
               ),
             );
           }
-          return isCountdownFinished ? Center(child: buildMusicPlayer()) : buildCountdown();
+          return isCountdownFinished
+              ? Center(child: buildMusicPlayer())
+              : buildCountdown();
         },
       ),
     );
@@ -266,7 +291,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
     );
   }
 
- Widget volume() {
+  Widget volume() {
     return SizedBox(
       width: 250,
       child: Row(
@@ -483,6 +508,9 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
         TextButton(
           child: const Text('Confirm'),
           onPressed: () {
+            timeData();
+            log("endDate => $endDate");
+            log("finishTime => $finishTime");
             log('Confirm button pressed');
             _audioPlayer.stop();
             Get.to(() => AfterExercisePage(widget.pid, widget.wpid));

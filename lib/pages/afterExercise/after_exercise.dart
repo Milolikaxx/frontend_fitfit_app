@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -51,6 +52,7 @@ class _AfterExercisePageState extends State<AfterExercisePage> {
     log(widget.wpid.toString());
     log("Length : ${mtype.length}");
     log(profile.duration.toString() ?? 'No duration');
+    // log(widget.time.toString());
   }
 
   @override
