@@ -2,11 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
-import 'package:frontend_fitfit_app/pages/home/home.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-// import '../../model/response/musictype_get_res.dart';
 import '../../model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import '../../model/response/workoutProfile_get_res.dart' as pro;
 import '../../model/response/workout_profile_musictype_get_res.dart';
@@ -111,95 +109,93 @@ class _AfterExercisePageState extends State<AfterExercisePage> {
           color: Colors.orange,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 60.0),
-              child: Column(
-                children: [
-                  const Text(
-                    'ทำเวลาทั้งหมดไป',
-                    style: TextStyle(color: Colors.white, fontSize: 20.0),
-                  ),
-                  Text(
-                    "${profile.duration} นาที",
-                    style: const TextStyle(color: Colors.white, fontSize: 36.0),
-                  ),
-                  const Text(
-                    'ระยะเวลา',
-                    style: TextStyle(color: Colors.white, fontSize: 14.0),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 60),
-              child: Center(
-                child: Text(
-                  profile.exerciseType,
-                  style: const TextStyle(color: Colors.white, fontSize: 32.0),
-                  textAlign: TextAlign.center,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 40.0),
+                child: Column(
+                  children: [
+                    const Text(
+                      'ทำเวลาทั้งหมดไป',
+                      style: TextStyle(color: Colors.white, fontSize: 20.0),
+                    ),
+                    Text(
+                      "${profile.duration} นาที",
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 36.0),
+                    ),
+                    const Text(
+                      'ระยะเวลา',
+                      style: TextStyle(color: Colors.white, fontSize: 14.0),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 60.0),
-              child: Column(
-                children: [
-                  Text(
-                    'Lv. ${profile.levelExercise}',
+              Padding(
+                padding: const EdgeInsets.only(top: 40),
+                child: Center(
+                  child: Text(
+                    profile.exerciseType,
                     style: const TextStyle(color: Colors.white, fontSize: 32.0),
+                    textAlign: TextAlign.center,
                   ),
-                  const Text(
-                    'ระดับการออกกำลังกาย',
-                    style: TextStyle(color: Colors.white, fontSize: 16.0),
-                  ),
-                ],
+                ),
               ),
-            ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 60),
-                  child: Column(
-                    children: [
-                      const Text(
+              Padding(
+                padding: const EdgeInsets.only(top: 40.0),
+                child: Column(
+                  children: [
+                    Text(
+                      'Lv. ${profile.levelExercise}',
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 32.0),
+                    ),
+                    const Text(
+                      'ระดับการออกกำลังกาย',
+                      style: TextStyle(color: Colors.white, fontSize: 16.0),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 40),
+                child: Column(
+                  children: [
+                    const Text(
                       'แนวเพลง',
                       style: TextStyle(color: Colors.white, fontSize: 32.0),
-                                  ),
-                                  getTextMusicName()
-                    ],
-                  ),
+                    ),
+                    getTextMusicName()
+                  ],
                 ),
               ),
-           
-          ], 
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget getTextMusicName() {
-    return Expanded(
-      child: ListView.builder(
-                          itemCount: profile.workoutMusictype.length,
-                          itemBuilder: (context, index) => musicType(profile.workoutMusictype[index]),
-                        ),
+    return Column(
+      children: profile.workoutMusictype
+          .map((musicType) => musicTypeWidget(musicType))
+          .toList(),
     );
   }
 
-  Widget musicType(pro.WorkoutMusictype musicTypes){
-    return Column(
-      children: [
-          Text(musicTypes.musicType.name,
-          style: const TextStyle(color: Colors.white, fontSize: 18),
-        )
-      ],
+  Widget musicTypeWidget(pro.WorkoutMusictype musicType) {
+    return Text(
+      musicType.musicType.name,
+      style: const TextStyle(color: Colors.white, fontSize: 18),
     );
   }
+
   Widget homeButton() {
     return TextButton(
       onPressed: () {
-        Get.to(() => const Barbottom(initialIndex: 0,));
+        Get.to(() => const Barbottom(initialIndex: 0));
       },
       child: const Text(
         "กลับหน้าหลัก",
