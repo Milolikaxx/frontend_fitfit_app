@@ -109,15 +109,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
         appBar: AppBar(
             backgroundColor: Colors.black,
             automaticallyImplyLeading: false,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.exit_to_app_rounded,
-                    color: Color.fromARGB(255, 255, 255, 255)),
-                onPressed: () {
-                  Get.to(() => const AccountPage());
-                },
-              ),
-            ]),
+             leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              onPressed: () {
+                Get.back();
+              },
+            ),
+            ),
         body: Column(
           children: [
             Padding(

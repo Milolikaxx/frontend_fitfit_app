@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend_fitfit_app/model/request/rand_music1_post_req.dart'
+    as modelRand;
 import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
-import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
+import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart' as modelGetPlaylist;
 import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
@@ -15,7 +17,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 // ignore: must_be_immutable
 class EditPlaylistMusicPage extends StatefulWidget {
-  late PlaylsitMusicGetResponse? musicPL;
+  late modelGetPlaylist.PlaylsitMusicGetResponse? musicPL;
   int wpid = 0;
   int pid = 0;
   // int timeEx = 0;
@@ -35,7 +37,7 @@ class Musicdata {
 class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   List<Musicdata> chartData = [];
   // ignore: non_constant_identifier_names
-  late PlaylsitMusicGetResponse music_pl;
+  late modelGetPlaylist.PlaylsitMusicGetResponse music_pl;
   late PlaylistService playlistService;
   // ignore: prefer_typing_uninitialized_variables
   late var loadData;
@@ -43,7 +45,8 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   late UserLoginPostResponse user;
   double totalDuration = 0;
   late PlaylistDetailService playlistDetailServ;
-  List<Music> musiclist = [];
+  List<modelGetPlaylist.Music> musiclist = [];
+  List<modelRand.Music> musicListofPlaylist = [];
   double totalTime = 0;
   @override
   void initState() {
@@ -213,7 +216,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
     );
   }
 
-  Widget musicInfo(PlaylistDetail playlistDetail) {
+  Widget musicInfo(modelGetPlaylist.PlaylistDetail playlistDetail) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Row(
@@ -343,7 +346,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
             isVisible: false,
           ),
           title: ChartTitle(
-              text: 'เวลาเพลย์ลิสต์ : ${music_pl.durationPlaylist} นาที'),
+              text: 'เวลาเพลย์ลิสต์ : ${totalTime} นาที'),
           tooltipBehavior: TooltipBehavior(
             enable: true, tooltipPosition: TooltipPosition.pointer,
             format:
@@ -395,23 +398,30 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
       log(e.toString());
     }
   }
-  // Future<void> randMusic1Song(int idx) async {
-  //   log("1");
-  //   RandMusic1PostRequest randMusic = RandMusic1PostRequest(
-  //       musicList: musiclist, index: idx, wpid: widget.idx);
-  //   musicList = await playlistDetailServ.randomMusic(randMusic);
-  //   log(musicList.length.toString());
-  //   setState(() {
-  //     chartData.clear();
-  //     widget.music = musicList;
-  //   });
 
-  //   log(widget.music.length.toString());
+  Future<void> randMusic1Song(int idx) async {
+    // log("1");
 
-  //   // ignore: use_build_context_synchronously
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(builder: (BuildContext context) => widget),
-  //   );
-  // }
+    // for (int i = 0; i < music_pl.playlistDetail.length; i++) {
+    //     musicListofPlaylist.add(
+    //       modelRand.Music.fromJson(
+    //       music_pl.playlistDetail[i].music as Map<String, dynamic>));
+    // }
+    // modelRand.RandMusic1PostRequest randMusic =
+    //     modelRand.RandMusic1PostRequest(
+    //         musicList: musicListofPlaylist, index: idx, wpid: widget.wpid);
+    // // musicList = await playlistDetailServ.randomMusic(randMusic);
+    // // log(musicList.length.toString());
+    // // setState(() {
+    // //   chartData.clear();
+    // //   widget.music = musicList;
+    // // });
+    // // log(widget.music.length.toString());
+
+    // // ignore: use_build_context_synchronously
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(builder: (BuildContext context) => widget),
+    // );
+  }
 }
