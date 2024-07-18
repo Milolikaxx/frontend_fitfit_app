@@ -3,7 +3,8 @@
 //     final PlaylsitMusicGetResponse = socialAllPostResonseFromJson(jsonString);
 
 import 'dart:convert';
-
+import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart'
+    as getMusic;
 PlaylsitMusicGetResponse socialAllPostResonseFromJson(String str) =>
     PlaylsitMusicGetResponse.fromJson(json.decode(str));
 
@@ -63,6 +64,8 @@ class PlaylsitMusicGetResponse {
             List<dynamic>.from(playlistDetail.map((x) => x.toJson())),
         "TotalDuration": totalDuration,
       };
+
+
 }
 
 class PlaylistDetail {
@@ -91,6 +94,8 @@ class PlaylistDetail {
         "Mid": mid,
         "Music": music.toJson(),
       };
+
+ 
 }
 
 class Music {
@@ -139,6 +144,21 @@ class Music {
         "Duration": duration,
         "Bpm": bpm,
       };
+
+       // เพิ่มเมธอด toMusic
+  getMusic.Music toMusicDes() {
+    return getMusic.Music(
+      mid: mid,
+      mtid: mtid,
+      musicType: getMusic.MusicType(mtid: mtid, name: name),
+      mLink: mLink,
+      name: name,
+      musicImage: musicImage,
+      artist: artist,
+      duration: duration,
+      bpm: bpm,
+    );
+  }
 }
 
 class MusicType {
