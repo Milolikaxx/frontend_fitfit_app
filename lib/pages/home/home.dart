@@ -22,11 +22,9 @@ class HomePage extends StatefulWidget {
 enum Menu { remove }
 
 class _HomePageState extends State<HomePage> {
-  // GoogleSignInAccount? user;
   List<WorkoutProfileGetResponse> profiles = [];
-  // List<List<WorkoutProfileMusicTypeGetResponse>> profileInfos = [];
   late UserLoginPostResponse user;
-  late var loadData;
+  late Future<void> loadData;
   late WorkoutProfileService wpService;
 
   @override
@@ -38,8 +36,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   loadDataAsync() async {
-    profiles = await wpService.getListWorkoutProfileByUid(user.uid!);
-    log(profiles.length.toString());
+    try {
+      profiles = await wpService.getListWorkoutProfileByUid(user.uid!);
+      log(profiles.length.toString());
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   @override
@@ -51,7 +53,7 @@ class _HomePageState extends State<HomePage> {
           automaticallyImplyLeading: false,
           leading: Padding(
               padding: const EdgeInsets.symmetric(
-                  vertical: 8.0), // Adjust the vertical padding as needed
+                  vertical: 8.0), 
               child: CircleAvatar(
                 radius: 50,
                 backgroundImage: NetworkImage('${user.imageProfile}'),
@@ -316,7 +318,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> delProfile(wpid) async {
-      // ignore: use_build_context_synchronously
+    // ignore: use_build_context_synchronously
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -354,6 +356,7 @@ class _HomePageState extends State<HomePage> {
                       log(responseCode.toString());
                       if (responseCode == 1) {
                         log("Profile deleted successfully. Response code: $responseCode");
+                           Get.back();
                         setState(() {
                           loadData = loadDataAsync();
                         });
@@ -381,6 +384,5 @@ class _HomePageState extends State<HomePage> {
               ],
               content: const Text("กรุณายืนยันการลบ"),
             ));
-   
   }
 }

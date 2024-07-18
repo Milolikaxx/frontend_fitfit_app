@@ -36,8 +36,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   List<Musicdata> chartData = [];
   List<MusicGetResponse> music = [];
   late PlaylistDetailService playlistDetailServ;
-  // ignore: prefer_typing_uninitialized_variables
-  late var loadData;
+  late Future<void> loadData;
   late WorkoutProfileService wpService;
   double totalTime = 0;
   @override
@@ -48,14 +47,19 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   }
 
   loadDataAsync() async {
-    music = await playlistDetailServ.getMusicDetailGen(widget.idx);
-    log(music.length.toString());
-  
-  for (var m in music) {
-      log(m.name);
-      chartData.add(Musicdata(m.duration, m.bpm));
+    try {
+      music = await playlistDetailServ.getMusicDetailGen(widget.idx);
+      log(music.length.toString());
+
+      for (var m in music) {
+        log(m.name);
+        chartData.add(Musicdata(m.duration, m.bpm));
         totalTime += m.duration;
-    }  }
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +70,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () {
-                Get.back();
+              Get.back();
             },
           ),
           title: Center(
@@ -88,8 +92,8 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
             color: Colors.white,
           ),
           onPressed: () {
-            Get.to(() =>
-                EditPlaylistMusicAfterCreatePage(music, widget.idx, widget.timeEx));
+            Get.to(() => EditPlaylistMusicAfterCreatePage(
+                music, widget.idx, widget.timeEx));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -125,8 +129,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Title"),
-                          Icon(Icons.access_time_rounded,
-                              color: Colors.black),
+                          Icon(Icons.access_time_rounded, color: Colors.black),
                         ],
                       ),
                     ),
@@ -214,7 +217,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
   String formatMusicName(String name) {
     // Remove .mp extension
     if (name.endsWith('.mp')) {
-      name = name.substring(0,name.length - 3);
+      name = name.substring(0, name.length - 3);
     }
     // Truncate to 10 characters and add ellipsis if necessary
     if (name.length > 25) {
@@ -223,20 +226,19 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
     return name;
   }
 
-   Widget musicGraph() {
+  Widget musicGraph() {
     return Container(
       color: Colors.white,
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.3,
         child: SfCartesianChart(
-          primaryXAxis: const CategoryAxis(
-             ),
+          primaryXAxis: const CategoryAxis(),
           legend: const Legend(
             isVisible: false,
           ),
           title: ChartTitle(
-              text: 'เวลาเพลย์ลิสต์ : $totalTime นาที'),
+              text: 'เวลาเพลย์ลิสต์ : ${totalTime.toStringAsFixed(2)} นาที'),
           tooltipBehavior: TooltipBehavior(
             enable: true, tooltipPosition: TooltipPosition.pointer,
             format:

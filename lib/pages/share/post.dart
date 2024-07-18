@@ -24,7 +24,7 @@ class _PostPageState extends State<PostPage> {
   late UserLoginPostResponse user;
   var nameController = TextEditingController();
   var desController = TextEditingController();
-  late var loadData;
+  late Future<void> loadData;
   late PlaylistService playlsitService;
   late PostService postService;
   late PlaylistWithWorkoutGetResponse dePlaylist;

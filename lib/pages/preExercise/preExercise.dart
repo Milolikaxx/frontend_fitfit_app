@@ -22,7 +22,7 @@ class PreExercisePage extends StatefulWidget {
 }
 
 class _PreExercisePageState extends State<PreExercisePage> {
-  late var loadData;
+  late Future<void> loadData;
   late PlaylistService playlsitService;
   late PlaylistWithWorkoutGetResponse dePlaylist;
 

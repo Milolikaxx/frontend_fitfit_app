@@ -1,7 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/service/model/response/social_all_post_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
@@ -23,9 +20,7 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   late UserLoginPostResponse user;
   List<SocialAllPostResonse> postAll = [];
-  // List<List<WorkoutProfileMusicTypeGetResponse>> profileInfos = [];
-  // ignore: prefer_typing_uninitialized_variables
-  late var loadData;
+  late Future<void> loadData;
   late PostService postService;
   @override
   void initState() {

@@ -43,9 +43,9 @@ class Musicdata {
 }
 
 class _PlayMusicPageState extends State<PlayMusicPage> {
-  late var loadData;
+  late Future<void> loadData;
   late PlaylistService playlistService;
-  late PlaylsitMusicGetResponse music_pl;
+  late PlaylsitMusicGetResponse musicPL;
   late AudioPlayer _audioPlayer;
   bool isPlaying = false;
   bool isCountdownFinished = false;
@@ -105,9 +105,9 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
         currentDate = dateTimeParts[0];
         startTime = dateTimeParts[1];
       });
-      music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
+      musicPL = await playlistService.getPlaylistMusicByPid(widget.pid);
       log("play pid : ${widget.pid}");
-      for (var m in music_pl.playlistDetail) {
+      for (var m in musicPL.playlistDetail) {
         final music = Musicdata(m.music.mLink, m.music.name, m.music.musicImage,
             m.music.artist, m.music.duration, m.music.bpm);
         musicList.add(music);
@@ -163,8 +163,8 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
 
   void fullTime() {
     totalDuration = Duration(
-      minutes: (music_pl.totalDuration).toInt(),
-      seconds: ((music_pl.totalDuration % 1) * 60).toInt(),
+      minutes: (musicPL.totalDuration).toInt(),
+      seconds: ((musicPL.totalDuration % 1) * 60).toInt(),
     );
   }
 

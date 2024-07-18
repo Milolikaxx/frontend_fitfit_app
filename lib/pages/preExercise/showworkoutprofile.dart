@@ -34,9 +34,8 @@ class ShowWorkoutProfilePage extends StatefulWidget {
 enum Menu { preview, share, remove, edit }
 
 class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
-  // GoogleSignInAccount? user;
   late GetWP.WorkoutProfileGetResponse profile;
-  late var loadData;
+  late Future<void> loadData;
   late WorkoutProfileService wpService;
   late PlaylistService playlsitService;
   List<PlaylistWithWorkoutGetResponse> playlistWp = [];

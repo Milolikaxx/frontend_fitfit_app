@@ -46,14 +46,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
   }
 
   loadDataAsync() async {
-    // String url = 'http://202.28.34.197/tripbooking/trip/${widget.idx}';
-    // var value = await http.get(Uri.parse(url));
-    // trip = tripGetResponseFromJson(value.body);
-    // log(value.body);
-    tagMusictype = await musictypeService.getMusictype();
-    // setState(() {
-    //   trip = tripGetResponseFromJson(value.body);
-    // });
+    try {
+      tagMusictype = await musictypeService.getMusictype();
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   @override
@@ -68,14 +65,14 @@ class _AddProfilePageState extends State<AddProfilePage> {
             future: loadData,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
-               return Center(
-                   child: LoadingAnimationWidget.beat(
+                return Center(
+                  child: LoadingAnimationWidget.beat(
                     color: Colors.white,
                     size: 50,
                   ),
                 );
               }
-             
+
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10, top: 50),
@@ -269,9 +266,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                                 onConfirm: (values) {
                                   selectedTags = values;
                                   log(values.toString());
-                                  setState(() {
-                                    
-                                  });
+                                  setState(() {});
                                 },
                                 selectedItemsTextStyle:
                                     const TextStyle(color: Colors.black),
@@ -295,11 +290,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
                               ),
                             ],
                           ),
-                        
                         ),
-                      
                       ),
-                    //  (selectedTags.isEmpty) ? const Text("***กรุณาเลือกแนวเพลง",style: TextStyle(fontSize: 16, color: Colors.white)) : Container(),
+                      //  (selectedTags.isEmpty) ? const Text("***กรุณาเลือกแนวเพลง",style: TextStyle(fontSize: 16, color: Colors.white)) : Container(),
                       const SizedBox(
                         height: 50,
                       ),
@@ -341,16 +334,14 @@ class _AddProfilePageState extends State<AddProfilePage> {
     }
 
     if (selectedTags.isEmpty) {
-     Get.snackbar(
+      Get.snackbar(
         'กรุณาเลือกแนวเพลง', // Title
         'กรุณาเลือกแนวเพลงที่คุณชอบ', // Message
         backgroundColor: Colors.white, // Background color
         colorText: Colors
             .black, // Text color to ensure it's visible on white background
       );
-     setState(() {
-       
-     });
+      setState(() {});
     } else {
       WorkoutProfilePostRequest wpObj = WorkoutProfilePostRequest(
           uid: user.uid!,
@@ -376,10 +367,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
           }
           log('เพิ่มโปรไฟล์ออกกำลังกายสำเร็จ');
           var profile = await wpService.getProfileByWpid(res);
-          if (profile.uid > 0 ){
-            Get.to(() => PlaylistAfterCreatePage(res,profile.duration));
+          if (profile.uid > 0) {
+            Get.to(() => PlaylistAfterCreatePage(res, profile.duration));
           }
-          
         }
       } catch (e) {
         log(e.toString());

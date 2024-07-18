@@ -17,7 +17,7 @@ class EditPasswordPage extends StatefulWidget {
 }
 
 class _EditPasswordPageState extends State<EditPasswordPage> {
-  late var loadData;
+  late Future<void> loadData;
   late UserLoginPostResponse user;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final oldpasswordController = TextEditingController();

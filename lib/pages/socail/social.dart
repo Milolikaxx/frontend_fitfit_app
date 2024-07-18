@@ -26,7 +26,7 @@ class _SocailPageState extends State<SocailPage> {
   List<SocialAllPostResonse> postAll = [];
    late UserLoginPostResponse user;
   // List<List<WorkoutProfileMusicTypeGetResponse>> profileInfos = [];
-  late var loadData;
+  late Future<void> loadData;
   late PostService postService;
   @override
   void initState() {

@@ -42,12 +42,10 @@ class Musicdata {
 
 class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
   List<Musicdata> chartData = [];
-  late PlaylsitMusicGetResponse music_pl;
-
+  late PlaylsitMusicGetResponse musicPL;
   late PlaylistService playlistService;
-  // ignore: prefer_typing_uninitialized_variables
   late WorkoutProfileGetResponse profile;
-  late var loadData;
+  late   Future<void>  loadData;
   late WorkoutProfileService wpService;
   late UserLoginPostResponse user;
   // double totalDuration = 0;
@@ -63,11 +61,11 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
 
   loadDataAsync() async {
     try {
-      music_pl = await playlistService.getPlaylistMusicByPid(widget.idx);
-      profile = await wpService.getProfileByWpid(music_pl.wpid);
+      musicPL = await playlistService.getPlaylistMusicByPid(widget.idx);
+      profile = await wpService.getProfileByWpid(musicPL.wpid);
       log(profile.exerciseType);
       chartData.clear();
-      for (var m in  music_pl.playlistDetail) {
+      for (var m in  musicPL.playlistDetail) {
         chartData.add(Musicdata(m.music.duration, m.music.bpm));
       }
     } catch (e) {
@@ -113,7 +111,7 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
                   size: 30, color: Color.fromARGB(255, 255, 255, 255)),
               onPressed: () async {
                 log(profile.duration.toString());
-                Get.to(() => SaveProfilePage(profile, music_pl.playlistDetail));
+                Get.to(() => SaveProfilePage(profile, musicPL.playlistDetail));
               },
             ),
           ],
@@ -147,7 +145,7 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
                           child: Column(
                             children: [
                               Image.network(
-                                music_pl.imagePlaylist,
+                                musicPL.imagePlaylist,
                                 width: 200,
                                 height: 200,
                               ),
@@ -171,7 +169,7 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "${widget.playlistname} (${music_pl.totalDuration} นาที)",
+                                          "${widget.playlistname} (${musicPL.totalDuration.toStringAsFixed(2)} นาที)",
                                           style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 16),
@@ -229,9 +227,9 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
       padding: const EdgeInsets.only(bottom: 60),
       shrinkWrap: true,
       itemCount:
-          music_pl.playlistDetail.isEmpty ? 0 : music_pl.playlistDetail.length,
+          musicPL.playlistDetail.isEmpty ? 0 : musicPL.playlistDetail.length,
       itemBuilder: (context, index) =>
-          musicInfo(music_pl.playlistDetail[index]),
+          musicInfo(musicPL.playlistDetail[index]),
     );
   }
 
@@ -320,7 +318,7 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
             isVisible: false,
           ),
           title: ChartTitle(
-              text: 'เวลาเพลย์ลิสต์ : ${music_pl.durationPlaylist} นาที'),
+              text: 'เวลาเพลย์ลิสต์ : ${musicPL.durationPlaylist.toStringAsFixed(2)} นาที'),
           tooltipBehavior: TooltipBehavior(
             enable: true, tooltipPosition: TooltipPosition.pointer,
             format:
