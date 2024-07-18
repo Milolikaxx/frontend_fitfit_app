@@ -25,8 +25,7 @@ class SaveProfilePage extends StatefulWidget {
 
 class _SaveProfilePageState extends State<SaveProfilePage> {
   late MusicTypeService musictypeService;
-  // ignore: prefer_typing_uninitialized_variables
-  late var loadData;
+  late Future<void> loadData;
   late UserLoginPostResponse user;
   late WorkoutProfileService wpService;
   late WorkoutMusicTypeService wpMusictypeService;

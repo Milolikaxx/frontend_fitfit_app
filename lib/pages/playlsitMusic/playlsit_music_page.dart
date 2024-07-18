@@ -31,10 +31,9 @@ class Musicdata {
 
 class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   List<Musicdata> chartData = [];
-  late PlaylsitMusicGetResponse music_pl;
+  late PlaylsitMusicGetResponse musicPL;
   late PlaylistService playlistService;
-  // ignore: prefer_typing_uninitialized_variables
-  late var loadData;
+  late Future<void> loadData;
   late UserLoginPostResponse user;
   // double totalDuration = 0;
 
@@ -47,10 +46,10 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   }
 
   loadDataAsync() async {
-    music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
-    log(music_pl.playlistName);
+    musicPL = await playlistService.getPlaylistMusicByPid(widget.pid);
+    log(musicPL.playlistName);
     chartData.clear();
-    for (var m in music_pl.playlistDetail) {
+    for (var m in musicPL.playlistDetail) {
       chartData.add(Musicdata(m.music.duration, m.music.bpm));
     }
     setState(() {});
@@ -74,7 +73,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Get.to(() =>
-                EditPlaylistMusicPage(music_pl.wpid, music_pl.pid));
+                EditPlaylistMusicPage(musicPL.wpid, musicPL.pid));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -116,7 +115,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                           child: Column(
                             children: [
                               Image.network(
-                               music_pl.imagePlaylist,
+                               musicPL.imagePlaylist,
                                 width: 200,
                                 height: 200,
                               ),
@@ -140,7 +139,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "${music_pl.playlistName} (${music_pl.totalDuration} นาที)",
+                                          "${musicPL.playlistName} (${musicPL.totalDuration.toStringAsFixed(2)} นาที)",
                                           style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 16),
@@ -197,8 +196,8 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.only(bottom: 60),
       shrinkWrap: true,
-      itemCount: music_pl.playlistDetail.isEmpty ? 0 : music_pl.playlistDetail.length,
-      itemBuilder: (context, index) => musicInfo(music_pl.playlistDetail[index]),
+      itemCount: musicPL.playlistDetail.isEmpty ? 0 : musicPL.playlistDetail.length,
+      itemBuilder: (context, index) => musicInfo(musicPL.playlistDetail[index]),
     );
   }
 
@@ -287,7 +286,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
             isVisible: false,
           ),
           title: ChartTitle(
-              text: 'เวลาเพลย์ลิสต์ : ${music_pl.totalDuration} นาที'),
+              text: 'เวลาเพลย์ลิสต์ : ${musicPL.totalDuration.toStringAsFixed(2)} นาที'),
           tooltipBehavior: TooltipBehavior(
             enable: true, tooltipPosition: TooltipPosition.pointer,
             format:

@@ -29,3 +29,7 @@ abstract class UserService {
   @POST("/user/register")
   Future<int> register(@Body() UserRegisterPostRequest userRegister);
 }
+
+
+
+

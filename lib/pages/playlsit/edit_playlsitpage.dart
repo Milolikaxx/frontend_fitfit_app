@@ -27,8 +27,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late PlaylistService playlsitService;
   late PlaylistWithWorkoutGetResponse dePlaylist;
-  // ignore: prefer_typing_uninitialized_variables
-  late var loadData;
+  late Future<void> loadData;
   @override
   void initState() {
     super.initState();
@@ -37,7 +36,12 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
   }
 
   loadDataAsync() async {
-    dePlaylist = await playlsitService.getPlaylistWithOutMusicByPid(widget.pid);
+    try {
+      dePlaylist =
+          await playlsitService.getPlaylistWithOutMusicByPid(widget.pid);
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   @override
@@ -78,12 +82,13 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
   Widget uiEditPlaylist(PlaylistWithWorkoutGetResponse dePlaylist) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40, ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 40,
+        ),
         child: Column(
           children: [
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
-       
               children: [
                 Text(
                   "โปรดใส่ชื่อเพลย์ลิสต์ของคุณ",
@@ -319,7 +324,6 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                             Get.until((route) => Get.isOverlaysClosed);
                             Get.back();
                             Get.back();
-                          
                           } else {
                             log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
                           }
@@ -391,7 +395,6 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                             Get.until((route) => Get.isOverlaysClosed);
                             Get.back();
                             Get.back();
-                        
                           } else {
                             log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
                           }

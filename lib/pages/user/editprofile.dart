@@ -24,7 +24,7 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  late var loadData;
+  late Future<void> loadData;
   var imgPick = "";
   late UserLoginPostResponse user;
   final nameController = TextEditingController();
@@ -41,7 +41,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     DateTime birthdayDateTime = DateTime.parse(bStr);
     if (nameController.text == "" &&
         emailController.text == "" &&
-        dateController.text == "") {
+        dateController.text == "" && imgPick == "") {
      Get.snackbar(
         'ไม่มีการแก้ไขของข้อมูล', 'หากต้องการแก้ไขกรอกข้อมูล',
         backgroundColor: Colors.white, // Background color
@@ -70,7 +70,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 initialIndex: 4,
               ));
           log("Pass");
-        } else if (res == 0) {
+        } else if (res.uid == 0) {
           log("Not Pass");
         } else {
           log("Other");
@@ -93,7 +93,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   loadDataAsync() async {
- 
     var formatter = DateFormat.yMMMd();
     var dateInBuddhistCalendarFormat =
         formatter.formatInBuddhistCalendarThai(user.birthday!);

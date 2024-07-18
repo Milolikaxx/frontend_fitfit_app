@@ -21,8 +21,7 @@ class CreatePlaylsitPage extends StatefulWidget {
   CreatePlaylsitPage(this.idx, this.timeEx, {super.key});
 
   @override
-  State<CreatePlaylsitPage> createState() =>
-      _CreatePlaylsitPageState();
+  State<CreatePlaylsitPage> createState() => _CreatePlaylsitPageState();
 }
 
 class Musicdata {
@@ -36,8 +35,7 @@ class _CreatePlaylsitPageState extends State<CreatePlaylsitPage> {
   List<Musicdata> chartData = [];
   List<MusicGetResponse> music = [];
   late PlaylistDetailService playlistDetailServ;
-  // ignore: prefer_typing_uninitialized_variables
-  late var loadData;
+  late Future<void> loadData;
   late WorkoutProfileService wpService;
   double totalTime = 0;
   @override
@@ -50,17 +48,16 @@ class _CreatePlaylsitPageState extends State<CreatePlaylsitPage> {
   loadDataAsync() async {
     try {
       music = await playlistDetailServ.getMusicDetailGen(widget.idx);
-    log(music.length.toString());
+      log(music.length.toString());
 
-    for (var m in music) {
-      log(m.name);
-      chartData.add(Musicdata(m.duration, m.bpm));
-      totalTime += m.duration;
-    }
+      for (var m in music) {
+        log(m.name);
+        chartData.add(Musicdata(m.duration, m.bpm));
+        totalTime += m.duration;
+      }
     } catch (e) {
       log(e.toString());
     }
-    
   }
 
   @override
@@ -235,13 +232,11 @@ class _CreatePlaylsitPageState extends State<CreatePlaylsitPage> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.2,
         child: SfCartesianChart(
-          primaryXAxis: const CategoryAxis(
-             ),
+          primaryXAxis: const CategoryAxis(),
           legend: const Legend(
             isVisible: false,
           ),
-          title: ChartTitle(
-              text: 'เวลาเพลย์ลิสต์ : $totalTime นาที'),
+          title: ChartTitle(text: 'เวลาเพลย์ลิสต์ : $totalTime นาที'),
           tooltipBehavior: TooltipBehavior(
             enable: true, tooltipPosition: TooltipPosition.pointer,
             format:

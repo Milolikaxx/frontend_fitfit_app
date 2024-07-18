@@ -81,6 +81,37 @@ class _PlaylistDetailService implements PlaylistDetailService {
   }
 
   @override
+  Future<List<PlaylistDetail>> random1song(
+      getRand.RandOneSongOfPlaylistRequest randMusicOfPlaylist) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(randMusicOfPlaylist.toJson());
+    final _result = await _dio
+        .fetch<List<dynamic>>(_setStreamType<List<PlaylistDetail>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/playlist_detail/rand1song',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    var value = _result.data!
+        .map((dynamic i) => PlaylistDetail.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
   Future<int> addMusicToPlaylist(PlaylsitDetailPostRequest addMusic) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -95,6 +126,33 @@ class _PlaylistDetailService implements PlaylistDetailService {
         .compose(
           _dio.options,
           '/playlist_detail/addmusic',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+    final value = _result.data!;
+    return value;
+  }
+
+  @override
+  Future<int> update(PlaylsitDetailPostUpdateRequest upMusic) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(upMusic.toJson());
+    final _result = await _dio.fetch<int>(_setStreamType<int>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/playlist_detail/update',
           queryParameters: queryParameters,
           data: _data,
         )

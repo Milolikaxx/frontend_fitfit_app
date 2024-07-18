@@ -30,7 +30,6 @@ class SavePlaylistOtherPage extends StatefulWidget {
 
 class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
   var imgPick = "";
-  // bool _isClicked = false;
   final namePlController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late PlaylistService playlsitService;

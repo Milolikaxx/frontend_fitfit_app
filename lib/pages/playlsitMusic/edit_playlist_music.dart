@@ -2,13 +2,17 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:frontend_fitfit_app/model/request/rand_music1_post_req.dart'
-    as modelRand;
-import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
-import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart' as modelGetPlaylist;
-import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
+import 'package:frontend_fitfit_app/service/model/request/playlsit_detail_postUp_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/rand_one_song_of_playlist_req.dart';
+import 'package:frontend_fitfit_app/service/model/response/muisc_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/playlsit_music_get_res.dart'
+    as modelGetPlaylist;
+import 'package:frontend_fitfit_app/service/model/response/playlsit_music_get_res.dart'
+    as modelRand;
+import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -36,17 +40,15 @@ class Musicdata {
 
 class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   List<Musicdata> chartData = [];
-  // ignore: non_constant_identifier_names
-  late modelGetPlaylist.PlaylsitMusicGetResponse music_pl;
+  late modelGetPlaylist.PlaylsitMusicGetResponse musicPL;
   late PlaylistService playlistService;
-  // ignore: prefer_typing_uninitialized_variables
-  late var loadData;
+  late Future<void> loadData;
   List<MusicGetResponse> newMusicList = [];
   late UserLoginPostResponse user;
   double totalDuration = 0;
   late PlaylistDetailService playlistDetailServ;
   List<modelGetPlaylist.Music> musiclist = [];
-  List<modelRand.Music> musicListofPlaylist = [];
+  List<modelGetPlaylist.PlaylistDetail> musicListofPlaylist = [];
   double totalTime = 0;
   @override
   void initState() {
@@ -61,18 +63,18 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   loadDataAsync() async {
     try {
       if (widget.musicPL == null) {
-        music_pl = await playlistService.getPlaylistMusicByPid(widget.pid);
-        log(music_pl.playlistName);
+        musicPL = await playlistService.getPlaylistMusicByPid(widget.pid);
+        log(musicPL.playlistName);
         chartData.clear();
-        for (var m in music_pl.playlistDetail) {
+        for (var m in musicPL.playlistDetail) {
           chartData.add(Musicdata(m.music.duration, m.music.bpm));
         }
-        totalTime = music_pl.totalDuration;
+        totalTime = musicPL.totalDuration;
         setState(() {});
       } else {
-        music_pl = widget.musicPL!;
+        musicPL = widget.musicPL!;
         chartData.clear();
-        for (var m in music_pl.playlistDetail) {
+        for (var m in musicPL.playlistDetail) {
           chartData.add(Musicdata(m.music.duration, m.music.bpm));
           totalTime += m.music.duration;
         }
@@ -104,7 +106,9 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
           actions: [
             IconButton(
               icon: const Icon(Icons.save_rounded, color: Colors.black),
-              onPressed: () {},
+              onPressed: () {
+                upPlaylistDe();
+              },
             ),
           ],
         ),
@@ -210,13 +214,13 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
       padding: const EdgeInsets.only(bottom: 70),
       shrinkWrap: true,
       itemCount:
-          music_pl.playlistDetail.isEmpty ? 0 : music_pl.playlistDetail.length,
+          musicPL.playlistDetail.isEmpty ? 0 : musicPL.playlistDetail.length,
       itemBuilder: (context, index) =>
-          musicInfo(music_pl.playlistDetail[index]),
+          musicInfo(musicPL.playlistDetail[index], index),
     );
   }
 
-  Widget musicInfo(modelGetPlaylist.PlaylistDetail playlistDetail) {
+  Widget musicInfo(modelGetPlaylist.PlaylistDetail playlistDetail, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Row(
@@ -281,8 +285,8 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
-                        // log(index.toString());
-                        // randMusic1Song(index);
+                        log(index.toString());
+                        randMusic1Song(index);
                       },
                       iconSize: 16,
                       icon: const FaIcon(
@@ -346,7 +350,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
             isVisible: false,
           ),
           title: ChartTitle(
-              text: 'เวลาเพลย์ลิสต์ : ${totalTime} นาที'),
+              text: 'เวลาเพลย์ลิสต์ : ${totalTime.toStringAsFixed(2)} นาที'),
           tooltipBehavior: TooltipBehavior(
             enable: true, tooltipPosition: TooltipPosition.pointer,
             format:
@@ -372,16 +376,16 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
       log("start");
       newMusicList = await playlistDetailServ.getMusicDetailGen(widget.wpid);
       log(newMusicList.length.toString());
-      //เปลี่ยน MusicGetResponse ===> music ของ playlist_get  ใช้ แทนที่ใน  music_pl.playlistDetail.music
+      //เปลี่ยน MusicGetResponse ===> music ของ playlist_get  ใช้ แทนที่ใน  musicPL.playlistDetail.music
       musiclist = newMusicList
           .map((musicGetResponse) => musicGetResponse.toMusicPl())
           .toList();
 
       setState(() {
         chartData.clear();
-        for (int i = 0; i < music_pl.playlistDetail.length; i++) {
+        for (int i = 0; i < musicPL.playlistDetail.length; i++) {
           if (i < newMusicList.length) {
-            music_pl.playlistDetail[i].music = musiclist[i];
+            musicPL.playlistDetail[i].music = musiclist[i];
           }
         }
       });
@@ -392,7 +396,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
         MaterialPageRoute(
             builder: (BuildContext context) => EditPlaylistMusicPage(
                 widget.wpid, widget.pid,
-                musicPL: music_pl)),
+                musicPL: musicPL)),
       );
     } catch (e) {
       log(e.toString());
@@ -400,28 +404,85 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   }
 
   Future<void> randMusic1Song(int idx) async {
-    // log("1");
+    log("1");
 
-    // for (int i = 0; i < music_pl.playlistDetail.length; i++) {
-    //     musicListofPlaylist.add(
-    //       modelRand.Music.fromJson(
-    //       music_pl.playlistDetail[i].music as Map<String, dynamic>));
-    // }
-    // modelRand.RandMusic1PostRequest randMusic =
-    //     modelRand.RandMusic1PostRequest(
-    //         musicList: musicListofPlaylist, index: idx, wpid: widget.wpid);
-    // // musicList = await playlistDetailServ.randomMusic(randMusic);
-    // // log(musicList.length.toString());
-    // // setState(() {
-    // //   chartData.clear();
-    // //   widget.music = musicList;
-    // // });
-    // // log(widget.music.length.toString());
+    RandOneSongOfPlaylistRequest randMusic = RandOneSongOfPlaylistRequest(
+        playlistDetail: musicPL.playlistDetail, index: idx, wpid: widget.wpid);
+    musicListofPlaylist = await playlistDetailServ.random1song(randMusic);
 
-    // // ignore: use_build_context_synchronously
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (BuildContext context) => widget),
-    // );
+    setState(() {
+      chartData.clear();
+      for (int i = 0; i < musicPL.playlistDetail.length; i++) {
+        musicPL.playlistDetail[i] = musicListofPlaylist[i];
+        widget.musicPL = musicPL;
+      }
+    });
+    // log(widget.music.length.toString());
+
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (BuildContext context) =>
+              EditPlaylistMusicPage(widget.wpid, widget.pid, musicPL: musicPL)),
+    );
+  }
+
+  Future<void> upPlaylistDe() async {
+    try {
+      for (var m in musicPL.playlistDetail) {
+        log(m.music.name);
+        log(m.mid.toString());
+        PlaylsitDetailPostUpdateRequest addMusic =
+            PlaylsitDetailPostUpdateRequest(id: m.id, pid: m.pid, mid: m.mid);
+        try {
+          int resAddmusic = await playlistDetailServ.update(addMusic);
+          if (resAddmusic != 0) {
+            log('สำเร็จ');
+          } else {
+            log('ไม่สำเร็จ');
+          }
+        } catch (e) {
+          log(e.toString());
+        }
+      }
+    } catch (e) {
+      log(e.toString());
+    } finally {
+          // ignore: use_build_context_synchronously
+      showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: const Text("สำเร็จ!"),
+                titleTextStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 20),
+                actionsOverflowButtonSpacing: 20,
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.to(() => const Barbottom());
+                    },
+                    style: ButtonStyle(
+                      // minimumSize: MaterialStateProperty.all<Size>(
+                      //     const Size(330, 50)),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xFFF8721D)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "ตกลง",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ],
+                content: const Text("แก้ไขเพลงในเพลย์ลิสต์สำเร็จ"),
+              ));
+    }
   }
 }

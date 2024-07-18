@@ -39,9 +39,8 @@ class _EditPlaylistMusicAfterCreatePageState
   List<MusicGetResponse> musicList = [];
   List<Music> musiclist = [];
   late PlaylistDetailService playlistDetailServ;
-  // ignore: prefer_typing_uninitialized_variables
-  late var loadData;
-    double totalTime = 0;
+  late Future<void> loadData;
+  double totalTime = 0;
 
   @override
   void initState() {
@@ -51,15 +50,19 @@ class _EditPlaylistMusicAfterCreatePageState
   }
 
   loadDataAsync() async {
-    for (var m in widget.music) {
-      log(m.name);
-      chartData.add(Musicdata(m.duration, m.bpm));
-         totalTime += m.duration;
-    }
+    try {
+      for (var m in widget.music) {
+        log(m.name);
+        chartData.add(Musicdata(m.duration, m.bpm));
+        totalTime += m.duration;
+      }
 
-    musiclist = widget.music
-        .map((musicGetResponse) => musicGetResponse.toMusic())
-        .toList();
+      musiclist = widget.music
+          .map((musicGetResponse) => musicGetResponse.toMusic())
+          .toList();
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   @override
@@ -74,7 +77,7 @@ class _EditPlaylistMusicAfterCreatePageState
               Get.back();
             },
           ),
-          title:  Center(
+          title: Center(
             child: Text(
               "เวลา ${widget.timeEx} นาที",
               style: const TextStyle(color: Colors.black),
@@ -314,7 +317,8 @@ class _EditPlaylistMusicAfterCreatePageState
           legend: const Legend(
             isVisible: false,
           ),
-          title: ChartTitle(text: 'เวลาเพลย์ลิสต์ : $totalTime นาที'),
+          title: ChartTitle(
+              text: 'เวลาเพลย์ลิสต์ : ${totalTime.toStringAsFixed(2)} นาที'),
           tooltipBehavior: TooltipBehavior(
             enable: true, tooltipPosition: TooltipPosition.pointer,
             format:
