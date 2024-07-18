@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:frontend_fitfit_app/model/request/workoutProfile_post_req.dart';
-import 'package:frontend_fitfit_app/model/response/workoutProfile_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/request/workoutProfile_post_req.dart';
+import 'package:frontend_fitfit_app/service/model/response/workoutProfile_get_res.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'generated/workout_profile.g.dart';

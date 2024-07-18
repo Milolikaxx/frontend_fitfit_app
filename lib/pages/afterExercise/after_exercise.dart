@@ -6,9 +6,9 @@ import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/response/playlsit_with_wp_workoutprofile_get_res.dart';
-import '../../model/response/workoutProfile_get_res.dart' as pro;
-import '../../model/response/workout_profile_musictype_get_res.dart';
+import '../../service/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
+import '../../service/model/response/workoutProfile_get_res.dart' as pro;
+import '../../service/model/response/workout_profile_musictype_get_res.dart';
 import '../../service/api/playlist.dart';
 import '../../service/api/workout_musictype.dart';
 import '../../service/api/workout_profile.dart';

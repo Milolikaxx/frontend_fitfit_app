@@ -1,8 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:frontend_fitfit_app/model/request/playlist_put_req.dart';
-import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/request/playlist_put_req.dart';
+import 'package:frontend_fitfit_app/service/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';

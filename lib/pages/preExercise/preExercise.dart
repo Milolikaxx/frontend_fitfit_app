@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/pages/playMusic/play_musicpage.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:get/get.dart';

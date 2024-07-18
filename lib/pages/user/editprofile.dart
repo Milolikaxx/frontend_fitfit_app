@@ -8,11 +8,11 @@ import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 import 'dart:developer';
-import 'package:frontend_fitfit_app/model/request/user_edit_put_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/user_edit_put_req.dart';
 import 'package:frontend_fitfit_app/service/api/user.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

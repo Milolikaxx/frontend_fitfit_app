@@ -1,12 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/api/history_exercise.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 // import 'package:get_storage/get_storage.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:frontend_fitfit_app/model/response/historyexercise_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/historyexercise_get_res.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 

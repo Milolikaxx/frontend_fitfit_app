@@ -1,9 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:frontend_fitfit_app/model/request/playlsit_detail_post_req.dart';
-import 'package:frontend_fitfit_app/model/request/playlsit_post_req.dart';
-import 'package:frontend_fitfit_app/model/response/muisc_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/request/playlsit_detail_post_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/playlsit_post_req.dart';
+import 'package:frontend_fitfit_app/service/model/response/muisc_get_res.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';

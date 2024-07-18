@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:frontend_fitfit_app/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
-import 'package:frontend_fitfit_app/model/response/social_all_post_res.dart';
-import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/social_all_post_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/pages/playlsitMusic/playlist_other_page.dart';
 import 'package:frontend_fitfit_app/pages/playlsitMusic/playlsit_music_page.dart';
 import 'package:frontend_fitfit_app/pages/preExercise/showworkoutprofile.dart';

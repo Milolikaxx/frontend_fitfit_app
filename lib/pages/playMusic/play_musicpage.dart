@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
-import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/playlsit_music_get_res.dart';
 import 'package:frontend_fitfit_app/pages/afterExercise/after_exercise.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
