@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:frontend_fitfit_app/model/request/share_playlsit_post_req.dart';
-import 'package:frontend_fitfit_app/model/response/social_all_post_res.dart';
+import 'package:frontend_fitfit_app/service/model/request/share_playlsit_post_req.dart';
+import 'package:frontend_fitfit_app/service/model/response/social_all_post_res.dart';
 import 'package:retrofit/retrofit.dart';
 
 

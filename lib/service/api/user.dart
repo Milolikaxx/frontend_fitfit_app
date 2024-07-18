@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:frontend_fitfit_app/model/request/user_login%20google_req.dart';
-import 'package:frontend_fitfit_app/model/request/user_register_post_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/user_login%20google_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/user_register_post_req.dart';
 import 'package:retrofit/retrofit.dart';
-import 'package:frontend_fitfit_app/model/request/user_login_post_req.dart';
-import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
-import 'package:frontend_fitfit_app/model/request/user_edit_put_req.dart';
-import 'package:frontend_fitfit_app/model/request/user_editpassword_post_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/user_login_post_req.dart';
+import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/service/model/request/user_edit_put_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/user_editpassword_post_req.dart';
 
 part 'generated/user.g.dart';
 

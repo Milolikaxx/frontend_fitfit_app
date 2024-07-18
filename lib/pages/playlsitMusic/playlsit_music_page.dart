@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:frontend_fitfit_app/model/response/playlsit_music_get_res.dart';
-import 'package:frontend_fitfit_app/model/response/user_login_post_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/playlsit_music_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 
 import 'package:frontend_fitfit_app/pages/playlsitMusic/edit_playlist_music.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';

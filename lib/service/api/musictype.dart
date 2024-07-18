@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:frontend_fitfit_app/model/response/musictype_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/musictype_get_res.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'generated/musictype.g.dart';

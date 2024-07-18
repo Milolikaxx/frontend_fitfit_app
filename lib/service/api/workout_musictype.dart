@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:frontend_fitfit_app/model/request/workoutMusicType_post_req.dart';
-import 'package:frontend_fitfit_app/model/response/workout_profile_musictype_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/request/workoutMusicType_post_req.dart';
+import 'package:frontend_fitfit_app/service/model/response/workout_profile_musictype_get_res.dart';
 
 import 'package:retrofit/retrofit.dart';
 
