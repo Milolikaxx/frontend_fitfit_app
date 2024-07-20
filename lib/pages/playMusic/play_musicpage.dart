@@ -90,8 +90,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
         .then((volume) => setVolumeValue = volume ?? 0.0);
     // Add a listener to update setVolumeValue when the volume changes
     FlutterVolumeController.addListener((volume) {
-      setState(() =>
-          setVolumeValue = volume);
+      setState(() => setVolumeValue = volume);
     });
     loadData = loadDataAsync();
   }
@@ -416,7 +415,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           ),
         ),
         IconButton(
-          onPressed: _audioPlayer.seekToNext,
+          onPressed: seekToNext,
           icon: const Icon(
             Icons.skip_next,
             color: Colors.white,
@@ -425,6 +424,30 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
         ),
       ],
     );
+  }
+
+  bool isFirstPressPrevious = true;
+  int currentSongIndexPrevious = 0;
+  void seekToPrevious() {
+   _audioPlayer.seekToPrevious;
+  }
+
+  bool isFirstPressNext = true;
+  int currentSongIndexNext = 0;
+  void seekToNext() {
+      currentSongIndexNext = currentIndex;
+      log("Current Index of the song pressed: $currentSongIndexNext");
+        // Update the currentIndex
+       setState(() {
+        // Increment currentIndex, but wrap around if it exceeds the number of songs
+        currentIndex = (currentIndex) % musicList.length;
+      });
+      // setState(() {
+      //   currentIndex = currentSongIndexNext;
+      // });
+      log("currentIndex $currentIndex");
+    // Move to the next song
+    _audioPlayer.seekToNext();
   }
 
   Widget timeBar() {
