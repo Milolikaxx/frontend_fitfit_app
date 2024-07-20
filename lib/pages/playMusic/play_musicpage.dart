@@ -85,12 +85,12 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
       });
       adjustVolumeBasedOnBPM(currentIndex);
     });
+    // Get the current volume and set it to setVolumeValue
     FlutterVolumeController.getVolume()
         .then((volume) => setVolumeValue = volume ?? 0.0);
-    // Listen to system volume change
+    // Add a listener to update setVolumeValue when the volume changes
     FlutterVolumeController.addListener((volume) {
       setState(() =>
-          // set is value in listener value
           setVolumeValue = volume);
     });
     loadData = loadDataAsync();
@@ -187,7 +187,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
         volume = 1.0;
       }
       log("Adjusted volume for BPM  เพลง ${musicList[index].name} $bpm: $volume");
-      await _audioPlayer.setVolume(volume);
+      // await _audioPlayer.setVolume(volume);
       setVolumeValue = volume;
       FlutterVolumeController.setVolume(setVolumeValue);
     } else {
