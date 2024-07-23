@@ -429,23 +429,23 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   bool isFirstPressPrevious = true;
   int currentSongIndexPrevious = 0;
   void seekToPrevious() {
-   _audioPlayer.seekToPrevious;
+    _audioPlayer.seekToPrevious;
   }
 
   bool isFirstPressNext = true;
   int currentSongIndexNext = 0;
   void seekToNext() {
-      currentSongIndexNext = currentIndex;
-      log("Current Index of the song pressed: $currentSongIndexNext");
-        // Update the currentIndex
-       setState(() {
-        // Increment currentIndex, but wrap around if it exceeds the number of songs
-        currentIndex = (currentIndex) % musicList.length;
-      });
-      // setState(() {
-      //   currentIndex = currentSongIndexNext;
-      // });
-      log("currentIndex $currentIndex");
+    currentSongIndexNext = currentIndex;
+    log("Current Index of the song pressed: $currentSongIndexNext");
+    // Update the currentIndex
+    setState(() {
+      // Increment currentIndex, but wrap around if it exceeds the number of songs
+      currentIndex = (currentIndex) % musicList.length;
+    });
+    // setState(() {
+    //   currentIndex = currentSongIndexNext;
+    // });
+    log("currentIndex $currentIndex");
     // Move to the next song
     _audioPlayer.seekToNext();
   }
@@ -534,6 +534,14 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
             timeData();
             log("endDate => $endDate");
             log("finishTime => $finishTime");
+            log("totalDuration : $totalDuration");
+
+            // Calculate the remaining countdown time
+            Duration remainingTime = endTime.difference(DateTime.now());
+            String remainingTimeString =
+                remainingTime.toString().split('.').first.padLeft(8, "0");
+            log("Remaining countdown time: $remainingTimeString");
+
             log('Confirm button pressed');
             _audioPlayer.stop();
             Get.to(() => AfterExercisePage(widget.pid, widget.wpid));
