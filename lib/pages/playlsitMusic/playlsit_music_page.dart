@@ -46,13 +46,16 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   }
 
   loadDataAsync() async {
-    musicPL = await playlistService.getPlaylistMusicByPid(widget.pid);
-    log(musicPL.playlistName);
-    chartData.clear();
-    for (var m in musicPL.playlistDetail) {
-      chartData.add(Musicdata(m.music.duration, m.music.bpm));
+    try {
+      musicPL = await playlistService.getPlaylistMusicByPid(widget.pid);
+      log(musicPL.playlistName);
+      chartData.clear();
+      for (var m in musicPL.playlistDetail) {
+        chartData.add(Musicdata(m.music.duration, m.music.bpm));
+      }
+    } catch (e) {
+      log(e.toString());
     }
-    setState(() {});
   }
 
   @override
@@ -72,8 +75,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Get.to(() =>
-                EditPlaylistMusicPage(musicPL.wpid, musicPL.pid));
+            Get.to(() => EditPlaylistMusicPage(musicPL.wpid, musicPL.pid));
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -115,7 +117,7 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
                           child: Column(
                             children: [
                               Image.network(
-                               musicPL.imagePlaylist,
+                                musicPL.imagePlaylist,
                                 width: 200,
                                 height: 200,
                               ),
@@ -196,7 +198,8 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.only(bottom: 60),
       shrinkWrap: true,
-      itemCount: musicPL.playlistDetail.isEmpty ? 0 : musicPL.playlistDetail.length,
+      itemCount:
+          musicPL.playlistDetail.isEmpty ? 0 : musicPL.playlistDetail.length,
       itemBuilder: (context, index) => musicInfo(musicPL.playlistDetail[index]),
     );
   }
@@ -262,31 +265,26 @@ class _MusicPlaylistPageState extends State<MusicPlaylistPage> {
   }
 
   String formatMusicName(String name) {
-    // Remove .mp extension
-    if (name.endsWith('.mp')) {
-      name = name.substring(0, name.length - 3);
-    }
-
-    if (name.length > 25) {
-      return '${name.substring(0, 25)}..';
+    if (name.length > 20) {
+      return '${name.substring(0, 20)}..';
     }
     return name;
   }
 
-    Widget musicGraph() {
+  Widget musicGraph() {
     return Container(
       color: Colors.white,
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.2,
         child: SfCartesianChart(
-          primaryXAxis: const CategoryAxis(
-             ),
+          primaryXAxis: const CategoryAxis(),
           legend: const Legend(
             isVisible: false,
           ),
           title: ChartTitle(
-              text: 'เวลาเพลย์ลิสต์ : ${musicPL.totalDuration.toStringAsFixed(2)} นาที'),
+              text:
+                  'เวลาเพลย์ลิสต์ : ${musicPL.totalDuration.toStringAsFixed(2)} นาที'),
           tooltipBehavior: TooltipBehavior(
             enable: true, tooltipPosition: TooltipPosition.pointer,
             format:
