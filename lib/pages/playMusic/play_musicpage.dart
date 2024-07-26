@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
+import 'package:frontend_fitfit_app/service/api/history_exercise.dart';
+import 'package:frontend_fitfit_app/service/model/request/exercise_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/playlsit_music_get_res.dart';
 import 'package:frontend_fitfit_app/pages/afterExercise/after_exercise.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
@@ -18,7 +20,8 @@ import 'package:rxdart/rxdart.dart' as rx;
 class PlayMusicPage extends StatefulWidget {
   int pid = 0;
   int wpid = 0;
-  PlayMusicPage(this.pid, this.wpid, {super.key});
+  int eid = 0;
+  PlayMusicPage(this.pid, this.wpid, this.eid, {super.key});
 
   @override
   State<PlayMusicPage> createState() => _PlayMusicPageState();
@@ -45,6 +48,7 @@ class Musicdata {
 class _PlayMusicPageState extends State<PlayMusicPage> {
   late Future<void> loadData;
   late PlaylistService playlistService;
+  late HistoryExerciseService exerciseService;
   late PlaylsitMusicGetResponse musicPL;
   late AudioPlayer _audioPlayer;
   bool isPlaying = false;
@@ -78,6 +82,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   void initState() {
     super.initState();
     playlistService = context.read<AppData>().playlistService;
+    exerciseService = context.read<AppData>().historyExerciseService;
     _audioPlayer = AudioPlayer();
     _audioPlayer.currentIndexStream.listen((index) {
       setState(() {
@@ -124,6 +129,7 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
       );
       log("CurrentDate => $currentDate");
       log("StartTime => $startTime");
+      log("Eid => ${widget.eid}");
       await _audioPlayer.setLoopMode(LoopMode.off);
       await _audioPlayer.setAudioSource(playlist!);
       fullTime();
@@ -329,10 +335,21 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
     return TimerCountdown(
       format: CountDownTimerFormat.hoursMinutesSeconds,
       endTime: endTime, // Use the persistent end time
-      onEnd: () {
+      onEnd: () async {
         log("Timer finished");
         _audioPlayer.stop();
-        Get.to(() => AfterExercisePage(widget.pid, widget.wpid));
+        ExercisePostRequest editExerciseObj = ExercisePostRequest(
+          duration: int.parse(
+            totalDuration.toString(),
+          ),
+        );
+        try {
+          await exerciseService.editExerciseHistory(
+              widget.eid, editExerciseObj);
+          Get.to(() => AfterExercisePage(widget.pid, widget.wpid));
+        } catch (e) {
+          log("[Error] ===> $e");
+        }
       },
       timeTextStyle: const TextStyle(
         color: Colors.white,
@@ -530,12 +547,11 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
         ),
         TextButton(
           child: const Text('Confirm'),
-          onPressed: () {
+          onPressed: () async {
             timeData();
             log("endDate => $endDate");
             log("finishTime => $finishTime");
             log("totalDuration : $totalDuration");
-
             // Calculate the remaining countdown time
             Duration remainingTime = endTime.difference(DateTime.now());
             String remainingTimeString =
@@ -543,12 +559,45 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
             log("Remaining countdown time: $remainingTimeString");
 
             log('Confirm button pressed');
+            await editExerciseHistory();
             _audioPlayer.stop();
             Get.to(() => AfterExercisePage(widget.pid, widget.wpid));
           },
         ),
       ],
     );
+  }
+
+  Future<void> editExerciseHistory() async {
+    String estop = "0000-01-01T${finishTime}Z";
+    Duration remainingTime = endTime.difference(DateTime.now());
+    String remainingTimeString =
+        remainingTime.toString().split('.').first.padLeft(8, "0");
+    log("Remaining countdown time: $remainingTimeString");
+    // int duration = int.parse(totalDuration.toString());
+    log("Duration : $remainingTimeString");
+
+    // Calculate minutes and seconds from the total duration
+    int totalSeconds = remainingTime.inSeconds;
+    int minutes = totalSeconds ~/ 60; // Integer division
+    int seconds = totalSeconds % 60; // Remainder
+
+    // Combine minutes and seconds into the desired format (e.g., 11.42)
+    double durationInMinutes = minutes + (seconds / 60.0);
+    log("Duration: $durationInMinutes");
+
+    ExercisePostRequest editExerciseObj = ExercisePostRequest(
+      estop: estop,
+      // duration: durationInMinutes,
+    );
+
+    try {
+      List<int> result = await exerciseService.editExerciseHistory(
+          widget.eid, editExerciseObj);
+      log("Edit exercise history result: $result");
+    } catch (e) {
+      log("Error ===> $e");
+    }
   }
 }
 

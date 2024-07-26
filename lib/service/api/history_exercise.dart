@@ -18,4 +18,8 @@ abstract class HistoryExerciseService {
 
   @POST("/exercise/addexercise")
   Future<int> addExerciseHistory(@Body() ExercisePostRequest addExercise);
+
+  @PUT("/exercise/edithistory/{id}")
+  Future<List<int>> editExerciseHistory(
+      @Path() int id, @Body() ExercisePostRequest updateExercise);
 }
