@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/service/api/music.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/api/history_exercise.dart';
 import 'package:frontend_fitfit_app/service/api/musictype.dart';
@@ -33,4 +34,6 @@ class AppData with ChangeNotifier {
   PostService get postService => PostService(Dio(), baseUrl: baseUrl);
   HistoryExerciseService get historyExerciseService =>
       HistoryExerciseService(Dio(), baseUrl: baseUrl);
+  MusicService get musicService =>
+      MusicService(Dio(), baseUrl: baseUrl);
 }

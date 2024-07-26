@@ -62,20 +62,7 @@ class MusicGetResponse {
         "Duration": duration,
         "Bpm": bpm,
       };
- // เพิ่มเมธอด toMusic
-  Music toMusic() {
-    return Music(
-      mid: mid,
-      mtid: mtid,
-      musicType: MusicGenre(mtid: mtid, name: name),
-      mLink: mLink,
-      name: name,
-      musicImage: musicImage,
-      artist: artist,
-      duration: duration,
-      bpm: bpm,
-    );
-  }
+
   
   getPlaylist.Music toMusicPl() {
       return getPlaylist.Music(

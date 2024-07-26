@@ -45,7 +45,7 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
   late PlaylsitMusicGetResponse musicPL;
   late PlaylistService playlistService;
   late WorkoutProfileGetResponse profile;
-  late   Future<void>  loadData;
+  late  Future<void>  loadData;
   late WorkoutProfileService wpService;
   late UserLoginPostResponse user;
   // double totalDuration = 0;
@@ -294,13 +294,8 @@ class _PlaylistUserOtherPageState extends State<PlaylistUserOtherPage> {
   }
 
   String formatMusicName(String name) {
-    // Remove .mp extension
-    if (name.endsWith('.mp')) {
-      name = name.substring(0, name.length - 3);
-    }
-    // Truncate to 10 characters and add ellipsis if necessary
-    if (name.length > 25) {
-      return '${name.substring(0, 25)}..';
+    if (name.length > 20) {
+      return '${name.substring(0, 20)}..';
     }
     return name;
   }

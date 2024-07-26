@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
+import 'package:frontend_fitfit_app/pages/playlsitMusic/search_music.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_detail_postUp_req.dart';
@@ -10,8 +11,6 @@ import 'package:frontend_fitfit_app/service/model/request/rand_one_song_of_playl
 import 'package:frontend_fitfit_app/service/model/response/muisc_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/playlsit_music_get_res.dart'
     as modelGetPlaylist;
-import 'package:frontend_fitfit_app/service/model/response/playlsit_music_get_res.dart'
-    as modelRand;
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
@@ -97,12 +96,6 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
               Get.back();
             },
           ),
-          // title: const Center(
-          //   child: Text(
-          //     "เวลา 40 นาที",
-          //     style: TextStyle(color: Colors.black),
-          //   ),
-          // ),
           actions: [
             IconButton(
               icon: const Icon(Icons.save_rounded, color: Colors.black),
@@ -148,7 +141,9 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 5),
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.to(() => SearchMusicPage(musicPL.wpid));
+                          },
                           style: ButtonStyle(
                             minimumSize: MaterialStateProperty.all<Size>(
                                 const Size(330, 50)),
@@ -327,12 +322,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   }
 
   String formatMusicName(String name) {
-    // Remove .mp extension
-    if (name.endsWith('.mp')) {
-      name = name.substring(0, name.length - 3);
-    }
-    // Truncate to 10 characters and add ellipsis if necessary
-    if (name.length > 25) {
+    if (name.length > 20) {
       return '${name.substring(0, 20)}..';
     }
     return name;
@@ -417,8 +407,6 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
         widget.musicPL = musicPL;
       }
     });
-    // log(widget.music.length.toString());
-
     // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
       context,

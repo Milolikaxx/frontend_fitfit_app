@@ -37,7 +37,6 @@ class _EditPlaylistMusicAfterCreatePageState
   List<Musicdata> chartData = [];
   List<MusicGetResponse> musicRandNew = [];
   List<MusicGetResponse> musicList = [];
-  List<Music> musiclist = [];
   late PlaylistDetailService playlistDetailServ;
   late Future<void> loadData;
   double totalTime = 0;
@@ -56,10 +55,6 @@ class _EditPlaylistMusicAfterCreatePageState
         chartData.add(Musicdata(m.duration, m.bpm));
         totalTime += m.duration;
       }
-
-      musiclist = widget.music
-          .map((musicGetResponse) => musicGetResponse.toMusic())
-          .toList();
     } catch (e) {
       log(e.toString());
     }
@@ -359,7 +354,7 @@ class _EditPlaylistMusicAfterCreatePageState
   Future<void> randMusic1Song(int idx) async {
     log("1");
     RandMusic1PostRequest randMusic = RandMusic1PostRequest(
-        musicList: musiclist, index: idx, wpid: widget.wpid);
+        musicList:  widget.music, index: idx, wpid: widget.wpid);
     musicList = await playlistDetailServ.randomMusic(randMusic);
     log(musicList.length.toString());
     setState(() {

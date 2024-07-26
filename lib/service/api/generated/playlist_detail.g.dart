@@ -82,7 +82,7 @@ class _PlaylistDetailService implements PlaylistDetailService {
 
   @override
   Future<List<PlaylistDetail>> random1song(
-      getRand.RandOneSongOfPlaylistRequest randMusicOfPlaylist) async {
+      RandOneSongOfPlaylistRequest randMusicOfPlaylist) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};

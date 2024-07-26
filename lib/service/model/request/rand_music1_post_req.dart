@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:frontend_fitfit_app/service/model/response/muisc_get_res.dart';
+
 RandMusic1PostRequest randMusic1PostRequestFromJson(String str) =>
     RandMusic1PostRequest.fromJson(json.decode(str));
 
@@ -11,7 +13,7 @@ String randMusic1PostRequestToJson(RandMusic1PostRequest data) =>
     json.encode(data.toJson());
 
 class RandMusic1PostRequest {
-  List<Music> musicList;
+  List<MusicGetResponse> musicList;
   int index;
   int wpid;
 
@@ -23,8 +25,8 @@ class RandMusic1PostRequest {
 
   factory RandMusic1PostRequest.fromJson(Map<String, dynamic> json) =>
       RandMusic1PostRequest(
-        musicList: List<Music>.from(
-            json["MusicList"].map((x) => Music.fromJson(x))),
+        musicList: List<MusicGetResponse>.from(
+            json["MusicList"].map((x) => MusicGetResponse.fromJson(x))),
         index: json["Index"],
         wpid: json["Wpid"],
       );
@@ -36,70 +38,3 @@ class RandMusic1PostRequest {
       };
 }
 
-class Music {
-  int mid;
-  int mtid;
-  MusicGenre musicType;
-  String mLink;
-  String name;
-  String musicImage;
-  String artist;
-  double duration;
-  int bpm;
-
-  Music({
-    required this.mid,
-    required this.mtid,
-    required this.musicType,
-    required this.mLink,
-    required this.name,
-    required this.musicImage,
-    required this.artist,
-    required this.duration,
-    required this.bpm,
-  });
-
-  factory Music.fromJson(Map<String, dynamic> json) => Music(
-        mid: json["Mid"],
-        mtid: json["Mtid"],
-        musicType: MusicGenre.fromJson(json["MusicType"]),
-        mLink: json["MLink"],
-        name: json["Name"],
-        musicImage: json["MusicImage"],
-        artist: json["Artist"],
-        duration: json["Duration"]?.toDouble(),
-        bpm: json["Bpm"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "Mid": mid,
-        "Mtid": mtid,
-        "MusicType": musicType.toJson(),
-        "MLink": mLink,
-        "Name": name,
-        "MusicImage": musicImage,
-        "Artist": artist,
-        "Duration": duration,
-        "Bpm": bpm,
-      };
-}
-
-class MusicGenre {
-  int mtid;
-  String name;
-
-  MusicGenre({
-    required this.mtid,
-    required this.name,
-  });
-
-  factory MusicGenre.fromJson(Map<String, dynamic> json) => MusicGenre(
-        mtid: json["Mtid"],
-        name: json["Name"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "Mtid": mtid,
-        "Name": name,
-      };
-}
