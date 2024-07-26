@@ -23,7 +23,7 @@ abstract class PlaylistDetailService {
   Future<List<MusicGetResponse>> randomMusic(
       @Body() RandMusic1PostRequest randMusic);
 
-      @GET("/playlist_detail/rand1song")
+  @GET("/playlist_detail/rand1song")
   Future<List<PlaylistDetail>> random1song(
       @Body() RandOneSongOfPlaylistRequest randMusicOfPlaylist);
   @POST("/playlist_detail/addmusic")

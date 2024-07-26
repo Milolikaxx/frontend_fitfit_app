@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:frontend_fitfit_app/service/model/request/exercise_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/historyexercise_get_res.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -14,4 +15,7 @@ abstract class HistoryExerciseService {
 
   @GET("/exercise/{id}")
   Future<List<HistoryExerciseGetResponse>> getHisExByUid(@Path() int id);
+
+  @POST("/exercise/addexercise")
+  Future<int> addExerciseHistory(@Body() ExercisePostRequest addExercise);
 }

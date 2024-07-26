@@ -2,11 +2,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend_fitfit_app/service/api/history_exercise.dart';
+import 'package:frontend_fitfit_app/service/model/request/exercise_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/pages/playMusic/play_musicpage.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:get/get.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
+import 'package:intl/intl.dart';
 
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
@@ -24,17 +27,28 @@ class PreExercisePage extends StatefulWidget {
 class _PreExercisePageState extends State<PreExercisePage> {
   late Future<void> loadData;
   late PlaylistService playlsitService;
+  late HistoryExerciseService exerciseService;
   late PlaylistWithWorkoutGetResponse dePlaylist;
+  late String currentDate;
+  late String startTime;
 
   @override
   void initState() {
     super.initState();
     playlsitService = context.read<AppData>().playlistService;
+    exerciseService = context.read<AppData>().historyExerciseService;
     loadData = loadDataAsync();
   }
 
   loadDataAsync() async {
     try {
+      DateTime now = DateTime.now();
+      String isoString = now.toIso8601String();
+      List<String> dateTimeParts = isoString.split('T');
+      setState(() {
+        currentDate = dateTimeParts[0];
+        startTime = dateTimeParts[1];
+      });
       dePlaylist =
           await playlsitService.getPlaylistWithOutMusicByPid(widget.pid);
     } catch (e) {
@@ -294,7 +308,8 @@ class _PreExercisePageState extends State<PreExercisePage> {
             padding: const EdgeInsets.only(bottom: 20, right: 20, left: 20),
             child: ElevatedButton(
               onPressed: () {
-                
+                addExerciseHistory();
+                loadDataAsync();
                 Get.to(() => PlayMusicPage(dePlaylist.pid, widget.wpid));
                 log("pid : ${dePlaylist.pid}");
                 log("wpid : ${widget.wpid}");
@@ -319,5 +334,37 @@ class _PreExercisePageState extends State<PreExercisePage> {
         ],
       ),
     );
+  }
+
+// addExerciseHistory
+  Future<void> addExerciseHistory() async {
+    String edate = "${currentDate}T00:00:00Z";
+    String estart = "0000-01-01T${startTime}Z";
+    ExercisePostRequest exerciseHistoryObj = ExercisePostRequest(
+        uid: dePlaylist.workoutProfile.uid,
+        edate: edate,
+        estart: estart,
+        playlistName: dePlaylist.playlistName,
+        imagePlaylist: dePlaylist.imagePlaylist,
+        levelExercise: dePlaylist.workoutProfile.levelExercise,
+        exerciseType: dePlaylist.workoutProfile.exerciseType);
+    try {
+      int res = await exerciseService.addExerciseHistory(exerciseHistoryObj);
+      if (res > 0) {
+        log('Success');
+      } else {
+        log('Un Success');
+      }
+      log("Uid: ${exerciseHistoryObj.uid}");
+      log("Edate: ${exerciseHistoryObj.edate}");
+      log("Estart: ${exerciseHistoryObj.estart}");
+      log("PlaylistName: ${exerciseHistoryObj.playlistName}");
+      log("ImagePlaylist: ${exerciseHistoryObj.imagePlaylist}");
+      log("LevelExercise: ${exerciseHistoryObj.levelExercise}");
+      log("ExerciseType: ${exerciseHistoryObj.exerciseType}");
+      log("ID Exercise: $res");
+    } catch (e) {
+      log("[Error AddExercise] : $e");
+    }
   }
 }
