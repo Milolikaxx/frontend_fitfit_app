@@ -31,6 +31,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
   late PlaylistWithWorkoutGetResponse dePlaylist;
   late String currentDate;
   late String startTime;
+  late int eid;
 
   @override
   void initState() {
@@ -307,10 +308,10 @@ class _PreExercisePageState extends State<PreExercisePage> {
           Padding(
             padding: const EdgeInsets.only(bottom: 20, right: 20, left: 20),
             child: ElevatedButton(
-              onPressed: () {
-                addExerciseHistory();
+              onPressed: () async {
+                await addExerciseHistory();
                 loadDataAsync();
-                Get.to(() => PlayMusicPage(dePlaylist.pid, widget.wpid));
+                Get.to(() => PlayMusicPage(dePlaylist.pid, widget.wpid, eid));
                 log("pid : ${dePlaylist.pid}");
                 log("wpid : ${widget.wpid}");
               },
@@ -350,6 +351,7 @@ class _PreExercisePageState extends State<PreExercisePage> {
         exerciseType: dePlaylist.workoutProfile.exerciseType);
     try {
       int res = await exerciseService.addExerciseHistory(exerciseHistoryObj);
+      eid = res;
       if (res > 0) {
         log('Success');
       } else {
