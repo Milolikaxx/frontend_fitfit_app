@@ -52,7 +52,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Form(
             key: _formKey,
             child: Column(
@@ -81,7 +81,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                       if (value == null || value.isEmpty) {
                         return 'กรุณากรอกชื่อเพลย์ลิสต์';
                       }
-
+      
                       return null;
                     },
                     decoration: const InputDecoration(

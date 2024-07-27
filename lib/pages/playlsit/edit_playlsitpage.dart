@@ -80,83 +80,85 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
   }
 
   Widget uiEditPlaylist(PlaylistWithWorkoutGetResponse dePlaylist) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 40,
-        ),
-        child: Column(
-          children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "โปรดใส่ชื่อเพลย์ลิสต์ของคุณ",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Form(
-                key: _formKey,
-                child: TextFormField(
-                  maxLength: 50,
-                  controller: namePlController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                      hintText: dePlaylist.playlistName,
-                      hintStyle: const TextStyle(color: Colors.white),
-                      prefixIcon: const Image(
-                          image: AssetImage("assets/images/playlist.png")),
-                      enabledBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                      ),
-                      focusedBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                      ),
-                      counterStyle: const TextStyle(
-                        color: Colors.white,
-                      ) // สีของ maxLength counter
-                      ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 40, bottom: 50),
-              child: (imgPick != "") ? playlistImg() : noImg(),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Row(
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 40,
+          ),
+          child: Column(
+            children: [
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: edit,
-                    style: ButtonStyle(
-                      minimumSize:
-                          MaterialStateProperty.all<Size>(const Size(300, 50)),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color(0xFFF8721D)),
-                      // textStyle: MaterialStateProperty.all(TextStyle(fontSize: 18, color: Colors.white)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    child: const Text(
-                      'บันทึกการแก้ไขเพลย์ลิสต์',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
+                  Text(
+                    "โปรดใส่ชื่อเพลย์ลิสต์ของคุณ",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    maxLength: 50,
+                    controller: namePlController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                        hintText: dePlaylist.playlistName,
+                        hintStyle: const TextStyle(color: Colors.white),
+                        prefixIcon: const Image(
+                            image: AssetImage("assets/images/playlist.png")),
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white, width: 2),
+                        ),
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white, width: 2),
+                        ),
+                        counterStyle: const TextStyle(
+                          color: Colors.white,
+                        ) // สีของ maxLength counter
+                        ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 40, bottom: 50),
+                child: (imgPick != "") ? playlistImg() : noImg(),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: edit,
+                      style: ButtonStyle(
+                        minimumSize:
+                            MaterialStateProperty.all<Size>(const Size(300, 50)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFFF8721D)),
+                        // textStyle: MaterialStateProperty.all(TextStyle(fontSize: 18, color: Colors.white)),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'บันทึกการแก้ไขเพลย์ลิสต์',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

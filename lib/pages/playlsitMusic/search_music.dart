@@ -1,31 +1,29 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:frontend_fitfit_app/service/api/music.dart';
 import 'package:frontend_fitfit_app/service/model/request/search_music_get_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/muisc_get_res.dart';
-import 'package:frontend_fitfit_app/service/model/response/playlsit_music_get_res.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class SearchMusicPage extends StatefulWidget {
-  late List<MusicGetResponse>? musicList = [];
   int wpid = 0;
-  SearchMusicPage(this.wpid, {this.musicList, super.key});
+  SearchMusicPage(this.wpid, {super.key});
 
   @override
   State<SearchMusicPage> createState() => _SearchMusicPageState();
 }
 
-List<MusicGetResponse> music = [];
-late MusicService musicService;
-
 class _SearchMusicPageState extends State<SearchMusicPage> {
   late Future<void> loadData;
-
+  List<MusicGetResponse> music = [];
+  List<MusicGetResponse> musicList = [];
+  late MusicService musicService;
   // double totalDuration = 0;
+  String textCheck = "";
 
   @override
   void initState() {
@@ -36,12 +34,9 @@ class _SearchMusicPageState extends State<SearchMusicPage> {
 
   loadDataAsync() async {
     try {
-      if (widget.musicList != null) {
-        music = widget.musicList!;
-      } else {
-        music = await musicService.getMusicByWorkoutProfile(widget.wpid);
-        log(music.length.toString());
-      }
+      music = await musicService.getMusicByWorkoutProfile(widget.wpid);
+      log(music.length.toString());
+      musicList = music;
     } catch (e) {
       log(e.toString());
     }
@@ -108,13 +103,15 @@ class _SearchMusicPageState extends State<SearchMusicPage> {
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: music.length,
-                          itemBuilder: (context, index) =>
-                              musicInfo(music[index]),
-                        ),
-                      ),
+                      music.length > 0
+                          ? Expanded(
+                              child: ListView.builder(
+                                itemCount: music.length,
+                                itemBuilder: (context, index) =>
+                                    musicInfo(music[index]),
+                              ),
+                            )
+                          : Text(textCheck)
                     ],
                   ));
             }));
@@ -182,17 +179,31 @@ class _SearchMusicPageState extends State<SearchMusicPage> {
     );
   }
 
-  List<MusicGetResponse> songs = [];
+ void searchMusic(String query) async {
+    log(query);
 
-  void searchMusic(String query) async {
+    if (musicList == null || musicService == null) {
+      log('musicList or musicService is null');
+      return;
+    }
+
     try {
-      SearchMusicGetRequest key =
-          SearchMusicGetRequest(music: music, key: query);
-      songs = await musicService.getSearchMusic(key);
-      log(songs.length.toString());
+      SearchMusicGetRequest key = SearchMusicGetRequest(
+          music: musicList,
+          key:
+              query); // Assuming musicList can be null, use null-aware operator
+      List<MusicGetResponse> results = await musicService.getSearchMusic(key);
+
+      log(results.length.toString());
       log(query);
+
       setState(() {
-        widget.musicList = songs;
+        if (results.isNotEmpty) {
+          music = results;
+        } else {
+          music = [];
+          textCheck = "ไม่พบเพลง";
+        }
       });
     } catch (error) {
       log(error.toString());

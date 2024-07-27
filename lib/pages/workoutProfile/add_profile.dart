@@ -73,252 +73,253 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 );
               }
 
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10, top: 50),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "เป้าหมายการออกกำลังกาย",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.remove_circle,
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              size: 42,
-                            ),
-                            onPressed: decreaseDuration,
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "$duration นาที",
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.add_circle,
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              size: 42,
-                            ),
-                            onPressed: addDuration,
-                          ),
-                        ],
-                      ),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "ระยะเวลา",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.directions_run_rounded,
-                            color: Color.fromARGB(255, 255, 255, 255),
-                            size: 35,
-                          ),
-                          // const SizedBox(
-                          //   width: 15,
-                          // ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 2, right: 2),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: dropdownValue,
-                                alignment: Alignment.center,
-                                dropdownColor:
-                                    const Color.fromARGB(255, 0, 0, 0),
-                                icon: const Icon(
-                                  Icons.keyboard_arrow_down_rounded,
+              return Center(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "เป้าหมายการออกกำลังกาย",
+                              style: TextStyle(
                                   color: Colors.white,
-                                  size: 32,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.remove_circle,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                size: 42,
+                              ),
+                              onPressed: decreaseDuration,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "$duration นาที",
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.add_circle,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                size: 42,
+                              ),
+                              onPressed: addDuration,
+                            ),
+                          ],
+                        ),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "ระยะเวลา",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.directions_run_rounded,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              size: 35,
+                            ),
+                            // const SizedBox(
+                            //   width: 15,
+                            // ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 2, right: 2),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: dropdownValue,
+                                  alignment: Alignment.center,
+                                  dropdownColor:
+                                      const Color.fromARGB(255, 0, 0, 0),
+                                  icon: const Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: Colors.white,
+                                    size: 32,
+                                  ),
+                                  items: <String>[
+                                    'การเดิน',
+                                    'การวิ่งแบบเหยาะๆ',
+                                    'การวิ่งปกติ',
+                                    'การวิ่งบนลู่วิ่ง',
+                                    'ปั่นจักรยาน'
+                                  ].map<DropdownMenuItem<String>>((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value,
+                                        style: const TextStyle(
+                                            fontSize: 25,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      dropdownValue = newValue!;
+                                    });
+                                  },
                                 ),
-                                items: <String>[
-                                  'การเดิน',
-                                  'การวิ่งแบบเหยาะๆ',
-                                  'การวิ่งปกติ',
-                                  'การวิ่งบนลู่วิ่ง',
-                                  'ปั่นจักรยาน'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: const TextStyle(
-                                          fontSize: 25,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    dropdownValue = newValue!;
-                                  });
-                                },
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.remove_circle,
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              size: 42,
-                            ),
-                            onPressed: decreaseLv,
-                          ),
-                          const SizedBox(
-                            width: 18,
-                          ),
-                          Text(
-                            "LV. $lv $lvText",
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(
-                            width: 18,
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.add_circle,
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              size: 42,
-                            ),
-                            onPressed: addLv,
-                          ),
-                        ],
-                      ),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "ระดับการออกกำลังกาย",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Center(
-                          child: Row(
-                            children: [
-                              const Icon(Icons.music_note_rounded,
-                                  color: Colors.white, size: 35),
-                              MultiSelectDialogField(
-                                title: const Text('เลือกแนวเพลงที่คุณชอบ'),
-                                dialogHeight: 350,
-                                items: tagMusictype
-                                    .map((e) =>
-                                        MultiSelectItem<MusictypeGetResponse>(
-                                            e, e.name))
-                                    .toList(),
-                                // initialValue: selectedTags,
-                                onConfirm: (values) {
-                                  selectedTags = values;
-                                  log(values.toString());
-                                  setState(() {});
-                                },
-                                selectedItemsTextStyle:
-                                    const TextStyle(color: Colors.black),
-                                buttonIcon: const Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                  color: Colors.white,
-                                  size: 32,
-                                ),
-                                buttonText: const Text(
-                                  "เลือกแนวเพลงที่คุณชอบ",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600),
-                                ),
-
-                                checkColor: Colors
-                                    .white, // เปลี่ยนสีของ checkbox เมื่อถูกเลือก
-                                selectedColor: const Color(
-                                    0xFFF8721D), // เปลี่ยนสีของรายการที่ถูกเลือก
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.remove_circle,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                size: 42,
                               ),
-                            ],
+                              onPressed: decreaseLv,
+                            ),
+                            const SizedBox(
+                              width: 18,
+                            ),
+                            Text(
+                              "LV. $lv $lvText",
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(
+                              width: 18,
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.add_circle,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                size: 42,
+                              ),
+                              onPressed: addLv,
+                            ),
+                          ],
+                        ),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "ระดับการออกกำลังกาย",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Center(
+                            child: Row(
+                              children: [
+                                const Icon(Icons.music_note_rounded,
+                                    color: Colors.white, size: 35),
+                                MultiSelectDialogField(
+                                  title: const Text('เลือกแนวเพลงที่คุณชอบ'),
+                                  dialogHeight: 350,
+                                  items: tagMusictype
+                                      .map((e) =>
+                                          MultiSelectItem<MusictypeGetResponse>(
+                                              e, e.name))
+                                      .toList(),
+                                  // initialValue: selectedTags,
+                                  onConfirm: (values) {
+                                    selectedTags = values;
+                                    log(values.toString());
+                                    setState(() {});
+                                  },
+                                  selectedItemsTextStyle:
+                                      const TextStyle(color: Colors.black),
+                                  buttonIcon: const Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: Colors.white,
+                                    size: 32,
+                                  ),
+                                  buttonText: const Text(
+                                    "เลือกแนวเพลงที่คุณชอบ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                    
+                                  checkColor: Colors
+                                      .white, // เปลี่ยนสีของ checkbox เมื่อถูกเลือก
+                                  selectedColor: const Color(
+                                      0xFFF8721D), // เปลี่ยนสีของรายการที่ถูกเลือก
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      //  (selectedTags.isEmpty) ? const Text("***กรุณาเลือกแนวเพลง",style: TextStyle(fontSize: 16, color: Colors.white)) : Container(),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 50),
-                        child: ElevatedButton(
-                          onPressed: addProfile,
-                          style: ButtonStyle(
-                            minimumSize: MaterialStateProperty.all<Size>(
-                                const Size(200, 50)),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                const Color(0xFFF8721D)),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                        //  (selectedTags.isEmpty) ? const Text("***กรุณาเลือกแนวเพลง",style: TextStyle(fontSize: 16, color: Colors.white)) : Container(),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 50),
+                          child: ElevatedButton(
+                            onPressed: addProfile,
+                            style: ButtonStyle(
+                              minimumSize: MaterialStateProperty.all<Size>(
+                                  const Size(200, 50)),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color(0xFFF8721D)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
-                          ),
-                          child: const Text(
-                            'สร้างโปรไฟล์ออกกำลังกาย',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
+                            child: const Text(
+                              'สร้างโปรไฟล์ออกกำลังกาย',
+                              style: TextStyle(fontSize: 18, color: Colors.white),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
