@@ -19,7 +19,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await GetStorage.init();
+await GetStorage.init();
     // Handle SSL Cert
   HttpOverrides.global = MyHttpOverrides();
   runApp(MultiProvider(providers: [

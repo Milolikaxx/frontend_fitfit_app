@@ -231,7 +231,7 @@ class _PlaylistAfterCreatePageState extends State<PlaylistAfterCreatePage> {
       color: Colors.white,
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.3,
+        height: MediaQuery.of(context).size.height * 0.2,
         child: SfCartesianChart(
           primaryXAxis: const CategoryAxis(),
           legend: const Legend(

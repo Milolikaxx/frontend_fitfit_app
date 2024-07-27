@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend_fitfit_app/pages/playlsitMusic/search_music.dart';
 import 'package:frontend_fitfit_app/service/model/request/rand_music1_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/muisc_get_res.dart';
 import 'package:frontend_fitfit_app/pages/playlsit/save_playlist.dart';
@@ -124,7 +125,9 @@ class _EditPlaylistMusicAfterCreatePageState
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 5),
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.to(() => SearchMusicPage(widget.wpid));
+                          },
                           style: ButtonStyle(
                             minimumSize: MaterialStateProperty.all<Size>(
                                 const Size(330, 50)),
@@ -306,7 +309,7 @@ class _EditPlaylistMusicAfterCreatePageState
       color: Colors.white,
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.3,
+        height: MediaQuery.of(context).size.height * 0.2,
         child: SfCartesianChart(
           primaryXAxis: const CategoryAxis(),
           legend: const Legend(
@@ -354,7 +357,7 @@ class _EditPlaylistMusicAfterCreatePageState
   Future<void> randMusic1Song(int idx) async {
     log("1");
     RandMusic1PostRequest randMusic = RandMusic1PostRequest(
-        musicList:  widget.music, index: idx, wpid: widget.wpid);
+        musicList: widget.music, index: idx, wpid: widget.wpid);
     musicList = await playlistDetailServ.randomMusic(randMusic);
     log(musicList.length.toString());
     setState(() {
