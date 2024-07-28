@@ -53,13 +53,13 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   late AudioPlayer _audioPlayer;
   bool isPlaying = false;
   bool isCountdownFinished = false;
-  int countdown = 3; // Countdown timer initial value
+  int countdown = 3;
   List<Musicdata> musicList = [];
   ConcatenatingAudioSource? playlist;
   int currentIndex = 0;
-  late Duration totalDuration; // Total duration of all songs
+  late Duration totalDuration;
   Timer? countdownTimer;
-  late DateTime endTime; // Persistent reference for the end time
+  late DateTime endTime;
   late String currentDate;
   late String startTime;
   late String endDate;
@@ -139,6 +139,22 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
     }
   }
 
+  void fullTime() {
+    double totalDurationInMinutes = musicPL.totalDuration;
+    int minutes = totalDurationInMinutes.floor(); // หาจำนวนนาที
+    int seconds = ((totalDurationInMinutes - minutes) * 100)
+        .round(); // แปลงทศนิยมเป็นวินาที
+
+    // แก้ไขให้แน่ใจว่าค่าวินาทีไม่เกิน 59
+    if (seconds >= 60) {
+      minutes += seconds ~/ 60;
+      seconds = seconds % 60;
+    }
+
+    totalDuration = Duration(minutes: minutes, seconds: seconds);
+    log("totalDuration ===================================> [ $totalDuration ]");
+  }
+
   timeData() async {
     DateTime endNow = DateTime.now();
     String isoString2 = endNow.toIso8601String();
@@ -164,13 +180,6 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
         endTime = DateTime.now().add(totalDuration); // Set end time once
       }
     });
-  }
-
-  void fullTime() {
-    totalDuration = Duration(
-      minutes: (musicPL.totalDuration).toInt(),
-      seconds: ((musicPL.totalDuration % 1) * 60).toInt(),
-    );
   }
 
   Future<void> adjustVolumeBasedOnBPM(int index) async {
@@ -337,19 +346,9 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
       endTime: endTime, // Use the persistent end time
       onEnd: () async {
         log("Timer finished");
+        await editExerciseHistory();
         _audioPlayer.stop();
-        ExercisePostRequest editExerciseObj = ExercisePostRequest(
-          duration: int.parse(
-            totalDuration.toString(),
-          ),
-        );
-        try {
-          await exerciseService.editExerciseHistory(
-              widget.eid, editExerciseObj);
-          Get.to(() => AfterExercisePage(widget.pid, widget.wpid));
-        } catch (e) {
-          log("[Error] ===> $e");
-        }
+        Get.to(() => AfterExercisePage(widget.pid, widget.wpid));
       },
       timeTextStyle: const TextStyle(
         color: Colors.white,
@@ -549,14 +548,14 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
           child: const Text('Confirm'),
           onPressed: () async {
             timeData();
-            log("endDate => $endDate");
-            log("finishTime => $finishTime");
-            log("totalDuration : $totalDuration");
+            // log("endDate => $endDate");
+            // log("finishTime => $finishTime");
+            // log("totalDuration : $totalDuration");
             // Calculate the remaining countdown time
-            Duration remainingTime = endTime.difference(DateTime.now());
-            String remainingTimeString =
-                remainingTime.toString().split('.').first.padLeft(8, "0");
-            log("Remaining countdown time: $remainingTimeString");
+            // Duration remainingTime = endTime.difference(DateTime.now());
+            // String remainingTimeString =
+            //     remainingTime.toString().split('.').first.padLeft(8, "0");
+            // log("Remaining countdown time: $remainingTimeString");
 
             log('Confirm button pressed');
             await editExerciseHistory();
@@ -571,24 +570,31 @@ class _PlayMusicPageState extends State<PlayMusicPage> {
   Future<void> editExerciseHistory() async {
     String estop = "0000-01-01T${finishTime}Z";
     Duration remainingTime = endTime.difference(DateTime.now());
+
+    // นำ totalDuration ลบกับ remainingTime
+    Duration usedDuration = totalDuration - remainingTime;
+
     String remainingTimeString =
         remainingTime.toString().split('.').first.padLeft(8, "0");
     log("Remaining countdown time: $remainingTimeString");
-    // int duration = int.parse(totalDuration.toString());
-    log("Duration : $remainingTimeString");
 
-    // Calculate minutes and seconds from the total duration
-    int totalSeconds = remainingTime.inSeconds;
-    int minutes = totalSeconds ~/ 60; // Integer division
-    int seconds = totalSeconds % 60; // Remainder
+    String usedDurationString =
+        usedDuration.toString().split('.').first.padLeft(8, "0");
+    log("Used duration time: $usedDurationString");
 
-    // Combine minutes and seconds into the desired format (e.g., 11.42)
-    double durationInMinutes = minutes + (seconds / 60.0);
-    log("Duration: $durationInMinutes");
+    // คำนวณเวลาจาก usedDuration
+    int usedTotalSeconds = usedDuration.inSeconds;
+    int usedMinutes = usedTotalSeconds ~/ 60; // Integer division
+    int usedSeconds = usedTotalSeconds % 60; // Remainder
+
+    // แปลงเป็นนาทีทศนิยม
+    double usedDurationInMinutes = usedMinutes + (usedSeconds / 60.0);
+
+    log("usedDurationInMinutes: $usedDurationInMinutes");
 
     ExercisePostRequest editExerciseObj = ExercisePostRequest(
       estop: estop,
-      // duration: durationInMinutes,
+      durationEx: usedDurationInMinutes,
     );
 
     try {
@@ -611,3 +617,37 @@ class PositionData {
   final Duration bufferedPosition;
   final Duration duration;
 }
+
+  // Future<void> editExerciseHistory() async {
+  //   String estop = "0000-01-01T${finishTime}Z";
+  //   Duration remainingTime = endTime.difference(DateTime.now());
+  //   String remainingTimeString =
+  //       remainingTime.toString().split('.').first.padLeft(8, "0");
+  //   log("Remaining countdown time: $remainingTimeString");
+  //   // int duration = int.parse(totalDuration.toString());
+  //   log("Duration : $remainingTimeString");
+  //   log("totalDuration : $totalDuration");
+
+  //   // Calculate minutes and seconds from the total duration
+
+  //   int totalSeconds = remainingTime.inSeconds;
+  //   int minutes = totalSeconds ~/ 60; // Integer division
+  //   int seconds = totalSeconds % 60; // Remainder
+
+  //   // Combine minutes and seconds into the desired format (e.g., 11.42)
+  //   double durationInMinutes = minutes + (seconds / 60.0);
+  //   log("durationInMinutes: $durationInMinutes");
+
+  //   ExercisePostRequest editExerciseObj = ExercisePostRequest(
+  //     estop: estop,
+  //     durationEx: durationInMinutes,
+  //   );
+
+  //   try {
+  //     List<int> result = await exerciseService.editExerciseHistory(
+  //         widget.eid, editExerciseObj);
+  //     log("Edit exercise history result: $result");
+  //   } catch (e) {
+  //     log("Error ===> $e");
+  //   }
+  // }

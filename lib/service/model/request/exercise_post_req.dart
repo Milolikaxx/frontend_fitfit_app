@@ -19,7 +19,7 @@ class ExercisePostRequest {
   String? exerciseType;
   int? levelExercise;
   String? imagePlaylist;
-  int? duration;
+  double? durationEx;
 
   ExercisePostRequest({
     this.uid,
@@ -30,7 +30,7 @@ class ExercisePostRequest {
     this.exerciseType,
     this.levelExercise,
     this.imagePlaylist,
-    this.duration,
+    this.durationEx,
   });
 
   factory ExercisePostRequest.fromJson(Map<String, dynamic> json) =>
@@ -43,7 +43,7 @@ class ExercisePostRequest {
         exerciseType: json["ExerciseType"],
         levelExercise: json["LevelExercise"],
         imagePlaylist: json["ImagePlaylist"],
-        duration: json["Duration"],
+        durationEx: json["DurationEx"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -55,6 +55,6 @@ class ExercisePostRequest {
         "ExerciseType": exerciseType,
         "LevelExercise": levelExercise,
         "ImagePlaylist": imagePlaylist,
-        "Duration": duration,
+        "DurationEx": durationEx,
       };
 }
