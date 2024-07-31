@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:frontend_fitfit_app/service/model/request/exercise_post_req.dart';
+import 'package:frontend_fitfit_app/service/model/response/exercise_showbyday_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/historyexercise_get_res.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -22,4 +23,7 @@ abstract class HistoryExerciseService {
   @PUT("/exercise/edithistory/{id}")
   Future<List<int>> editExerciseHistory(
       @Path() int id, @Body() ExercisePostRequest updateExercise);
+
+  @GET("/exercise/last7day")
+  Future<List<ExerciseShowbydayGetResponse>> getLast7Day();
 }

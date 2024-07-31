@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/service/model/response/exercise_showbyday_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/api/history_exercise.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
@@ -32,10 +33,15 @@ class WeekData {
 }
 
 class _ExercisePageState extends State<ExercisePage> {
+  // ignore: prefer_typing_uninitialized_variables
   late var loadData;
   late HistoryExerciseService hisExercise;
   late UserLoginPostResponse user;
   late List<HistoryExerciseGetResponse> historys = [];
+  late List<ExerciseShowbydayGetResponse> last7day = [];
+  late String day;
+  late int dayAmount;
+
   List<bool> isSelected = [true, false];
   List<MonthData> month = [
     MonthData('Jan', 30),
@@ -73,6 +79,7 @@ class _ExercisePageState extends State<ExercisePage> {
 
   Future<void> loadDataAsync() async {
     historys = await hisExercise.getHisExByUid(user.uid!);
+    last7day = await hisExercise.getLast7Day();
     setState(() {}); // Trigger a rebuild after data is loaded
   }
 
