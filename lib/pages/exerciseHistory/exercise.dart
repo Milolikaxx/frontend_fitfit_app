@@ -39,8 +39,8 @@ class _ExercisePageState extends State<ExercisePage> {
   late UserLoginPostResponse user;
   late List<HistoryExerciseGetResponse> historys = [];
   late List<ExerciseShowbydayGetResponse> last7day = [];
-  late String day;
-  late int dayAmount;
+  // late String day;
+  // late int dayAmount;
 
   List<bool> isSelected = [true, false];
   List<MonthData> month = [
@@ -57,15 +57,7 @@ class _ExercisePageState extends State<ExercisePage> {
     MonthData('Nov', 35),
     MonthData('Dec', 50),
   ];
-  List<WeekData> week = [
-    WeekData('Sun', 30),
-    WeekData('Mon', 20),
-    WeekData('Tues', 35),
-    WeekData('Wed', 50),
-    WeekData('Thurs', 20),
-    WeekData('Fri', 45),
-    WeekData('Sat', 55),
-  ];
+  List<WeekData> week = [];
 
   String selectedData = '';
 
@@ -75,12 +67,29 @@ class _ExercisePageState extends State<ExercisePage> {
     user = context.read<AppData>().user;
     hisExercise = context.read<AppData>().historyExerciseService;
     loadData = loadDataAsync();
+    for (var i in week) {
+      log("Week ================> ${i.day}");
+    }
   }
 
-  Future<void> loadDataAsync() async {
-    historys = await hisExercise.getHisExByUid(user.uid!);
-    last7day = await hisExercise.getLast7Day();
-    setState(() {}); // Trigger a rebuild after data is loaded
+  loadDataAsync() async {
+    try {
+      // historys = await hisExercise.getHisExByUid(user.uid!);
+      last7day = await hisExercise.getLast7Day();
+      log(last7day.length.toString());
+      for (var item in last7day) {
+        String day = item.date.toString();
+        int dayAmount = item.count;
+        log(day);
+        log(dayAmount.toString());
+
+        // เพิ่มข้อมูลใน List<WeekData> week
+        week.add(WeekData(day, dayAmount));
+      }
+      setState(() {});
+    } catch (e) {
+      log("[Error] ==========> [ $e ]");
+    }
   }
 
   @override
