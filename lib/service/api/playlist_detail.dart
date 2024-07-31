@@ -31,4 +31,12 @@ abstract class PlaylistDetailService {
 
   @POST("/playlist_detail/update")
   Future<int> update(@Body() PlaylsitDetailPostUpdateRequest upMusic);
+
+  @GET("/playlist_detail/del")
+  Future<List<MusicGetResponse>> delMusicList(
+      @Body() RandMusic1PostRequest dataSong);
+
+  @GET("/playlist_detail/delPlaylistDetail")
+  Future<List<PlaylistDetail>> delMusicPlaylistDetail(
+      @Body() RandOneSongOfPlaylistRequest dataSong);
 }

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlist_put_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/rand_music1_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
@@ -138,12 +139,13 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                     ElevatedButton(
                       onPressed: edit,
                       style: ButtonStyle(
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(const Size(300, 50)),
+                        minimumSize: MaterialStateProperty.all<Size>(
+                            const Size(300, 50)),
                         backgroundColor: MaterialStateProperty.all<Color>(
                             const Color(0xFFF8721D)),
                         // textStyle: MaterialStateProperty.all(TextStyle(fontSize: 18, color: Colors.white)),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -425,4 +427,6 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
       }
     }
   }
+
+ 
 }

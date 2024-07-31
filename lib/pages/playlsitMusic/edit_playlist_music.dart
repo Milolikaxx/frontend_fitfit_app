@@ -303,7 +303,8 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
-                        // Add your onPressed logic here
+                        log(index.toString());
+                        delSong(index);
                       },
                       iconSize: 16,
                       icon: const FaIcon(
@@ -318,6 +319,25 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> delSong(int idx) async {
+    RandOneSongOfPlaylistRequest delMusic = RandOneSongOfPlaylistRequest(
+        playlistDetail: musicPL.playlistDetail, index: idx);
+    musicListofPlaylist =
+        await playlistDetailServ.delMusicPlaylistDetail(delMusic);
+
+    setState(() {
+      chartData.clear();
+      musicPL.playlistDetail = musicListofPlaylist;
+    });
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (BuildContext context) =>
+              EditPlaylistMusicPage(widget.wpid, widget.pid, musicPL: musicPL)),
     );
   }
 
@@ -371,15 +391,20 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
           .map((musicGetResponse) => musicGetResponse.toMusicPl())
           .toList();
 
+      chartData.clear();
+      //re-data
+      var fetchedMusicPL =
+          await playlistService.getPlaylistMusicByPid(widget.pid);
+
       setState(() {
-        chartData.clear();
+        musicPL = fetchedMusicPL;
+        log(musicPL.playlistDetail.length.toString());
         for (int i = 0; i < musicPL.playlistDetail.length; i++) {
           if (i < newMusicList.length) {
             musicPL.playlistDetail[i].music = musiclist[i];
           }
         }
       });
-
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
         context,
@@ -392,6 +417,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
       log(e.toString());
     }
   }
+
 
   Future<void> randMusic1Song(int idx) async {
     log("1");

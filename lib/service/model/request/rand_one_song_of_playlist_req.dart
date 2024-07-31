@@ -14,12 +14,12 @@ String randOneSongOfPlaylistRequestToJson(RandOneSongOfPlaylistRequest data) =>
 class RandOneSongOfPlaylistRequest {
   List<PlaylistDetail> playlistDetail;
   int index;
-  int wpid;
+  int? wpid;
 
   RandOneSongOfPlaylistRequest({
     required this.playlistDetail,
     required this.index,
-    required this.wpid,
+    this.wpid,
   });
 
   factory RandOneSongOfPlaylistRequest.fromJson(Map<String, dynamic> json) =>

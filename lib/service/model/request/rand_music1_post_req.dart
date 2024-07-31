@@ -15,12 +15,12 @@ String randMusic1PostRequestToJson(RandMusic1PostRequest data) =>
 class RandMusic1PostRequest {
   List<MusicGetResponse> musicList;
   int index;
-  int wpid;
+  int? wpid;
 
   RandMusic1PostRequest({
     required this.musicList,
     required this.index,
-    required this.wpid,
+    this.wpid,
   });
 
   factory RandMusic1PostRequest.fromJson(Map<String, dynamic> json) =>
