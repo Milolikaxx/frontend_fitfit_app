@@ -274,7 +274,8 @@ class _EditPlaylistMusicAfterCreatePageState
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
-                        // Add your onPressed logic here
+                       log(index.toString());
+                        delSong(index);
                       },
                       iconSize: 16,
                       icon: const FaIcon(
@@ -293,10 +294,6 @@ class _EditPlaylistMusicAfterCreatePageState
   }
 
   String formatMusicName(String name) {
-    // Remove .mp extension
-    if (name.endsWith('.mp')) {
-      name = name.substring(0, name.length - 3);
-    }
     // Truncate to 10 characters and add ellipsis if necessary
     if (name.length > 25) {
       return '${name.substring(0, 25)}..';
@@ -359,6 +356,25 @@ class _EditPlaylistMusicAfterCreatePageState
     RandMusic1PostRequest randMusic = RandMusic1PostRequest(
         musicList: widget.music, index: idx, wpid: widget.wpid);
     musicList = await playlistDetailServ.randomMusic(randMusic);
+    log(musicList.length.toString());
+    setState(() {
+      chartData.clear();
+      widget.music = musicList;
+    });
+
+    log(widget.music.length.toString());
+
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => widget),
+    );
+  }
+
+  Future<void> delSong(int idx) async {
+    RandMusic1PostRequest delMusic = RandMusic1PostRequest(
+        musicList: widget.music, index: idx);
+    musicList = await playlistDetailServ.delMusicList(delMusic);
     log(musicList.length.toString());
     setState(() {
       chartData.clear();
