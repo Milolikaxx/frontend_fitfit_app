@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/service/model/request/exercise_searchbyday_get_req.dart';
+import 'package:frontend_fitfit_app/service/model/response/exercise_searchbydat_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/exercise_showbyday_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/api/history_exercise.dart';
@@ -39,6 +41,8 @@ class _ExercisePageState extends State<ExercisePage> {
   late UserLoginPostResponse user;
   late List<HistoryExerciseGetResponse> historys = [];
   late List<ExerciseShowbydayGetResponse> last7day = [];
+  late List<ExerciseSearchbydayGetResponse> searchDay = [];
+  late String day;
   // late String day;
   // late int dayAmount;
 
@@ -78,7 +82,11 @@ class _ExercisePageState extends State<ExercisePage> {
       last7day = await hisExercise.getLast7Day();
       log(last7day.length.toString());
       for (var item in last7day) {
-        String day = item.date.toString();
+        // Parse the date string to a DateTime object
+        DateTime parsedDate = DateTime.parse(item.date.toString());
+        // Format the date to the desired format
+        day =
+            "${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}";
         int dayAmount = item.count;
         log(day);
         log(dayAmount.toString());
@@ -177,28 +185,27 @@ class _ExercisePageState extends State<ExercisePage> {
         showDateMonth(),
         Expanded(
           child: RefreshIndicator(
-            color: const Color(0xFFF8721D), // เปลี่ยนสีของ RefreshIndicator
-            onRefresh: () async {
-              setState(() {
-                loadData = loadDataAsync();
-              });
-            },
-            child: historys.isNotEmpty
-                ? ListView.builder(
-                    itemCount: historys.length,
-                    itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 8),
-                      child: historyCard(historys[index]),
-                    ),
-                  )
-                : const Center(
-                    child: Text(
-                      'ยังไม่มีประวัติการออกกำลังกาย',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
-                  ),
-          ),
+              color: const Color(0xFFF8721D), // เปลี่ยนสีของ RefreshIndicator
+              onRefresh: () async {
+                setState(() {
+                  loadData = loadDataAsync();
+                });
+              },
+              child: searchDay.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: searchDay.length,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
+                        child: historyCard(searchDay[index]),
+                      ),
+                    )
+                  : const Center(
+                      child: Text(
+                        'ยังไม่มีประวัติการออกกำลังกาย',
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    )),
         )
       ],
     );
@@ -239,6 +246,8 @@ class _ExercisePageState extends State<ExercisePage> {
                     onPointTap: (ChartPointDetails details) {
                       setState(() {
                         selectedData = week[details.pointIndex!].day;
+                        // log("selectedData ===> $selectedData");
+                        searchByDay(selectedData);
                       });
                     },
                   ),
@@ -265,33 +274,48 @@ class _ExercisePageState extends State<ExercisePage> {
 
   Widget showDateMonth() {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(10.0),
       child: Text(
-        selectedData.isEmpty ? 'ยังไม่มีการเลือก' : 'Selected: $selectedData',
+        selectedData.isEmpty ? 'ยังไม่มีการเลือก' : 'วันที่ : $selectedData',
         style: const TextStyle(fontSize: 20, color: Colors.white),
       ),
     );
   }
 
-  Widget historyCard(HistoryExerciseGetResponse history) {
+  Widget historyCard(ExerciseSearchbydayGetResponse day) {
     return InkWell(
       onTap: () {
-        log(history.playlistName.toString());
+        log(day.playlistName.toString());
       },
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(5.0),
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.orange,
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(5.0),
             ),
             child: SizedBox(
               height: 100.0,
-              child: Center(
-                child: Text(
-                  'รายการเพลง : ${history.playlistName}', // You can replace this with history-specific data
-                  style: const TextStyle(color: Colors.white, fontSize: 20),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "ชื่อ : ${day.playlistName}", // แสดงชื่อ playlist
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Text(
+                      "ระยะเวลา : ${day.durationEx}", // แสดงชื่อ playlist
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Text(
+                      day.exerciseType, // แสดงชื่อ playlist
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -299,5 +323,22 @@ class _ExercisePageState extends State<ExercisePage> {
         ),
       ),
     );
+  }
+
+  searchByDay(String day) async {
+    try {
+      DateTime dateTime = DateTime.parse(day);
+      ExerciseSearchbydayGetRequest objDay = ExerciseSearchbydayGetRequest(
+        keyword: dateTime,
+      );
+
+      List<ExerciseSearchbydayGetResponse> results =
+          await hisExercise.searchByday(objDay);
+      setState(() {
+        searchDay = results;
+      });
+    } catch (e) {
+      log("Error ===> [ $e ]");
+    }
   }
 }
