@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/playlsitMusic/search_music.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
@@ -49,15 +48,21 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   List<modelGetPlaylist.Music> musiclist = [];
   List<modelGetPlaylist.PlaylistDetail> musicListofPlaylist = [];
   double totalTime = 0;
+  int delIndex = 0;
+  bool chDel = false;
+  bool chrandAll = false;
+
   @override
   void initState() {
     super.initState();
+   
     playlistService = context.read<AppData>().playlistService;
     playlistDetailServ = context.read<AppData>().playlistDetailService;
     user = context.read<AppData>().user;
     log("pid :${widget.pid}");
     loadData = loadDataAsync();
   }
+
 
   loadDataAsync() async {
     try {
@@ -323,22 +328,38 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   }
 
   Future<void> delSong(int idx) async {
-    RandOneSongOfPlaylistRequest delMusic = RandOneSongOfPlaylistRequest(
-        playlistDetail: musicPL.playlistDetail, index: idx);
-    musicListofPlaylist =
-        await playlistDetailServ.delMusicPlaylistDetail(delMusic);
+    log("chDell $chDel chrand $chrandAll");
+    if (chDel || !chrandAll) {
+      try {
+        RandOneSongOfPlaylistRequest delMusic = RandOneSongOfPlaylistRequest(
+            playlistDetail: musicPL.playlistDetail, index: idx);
+        musicListofPlaylist =
+            await playlistDetailServ.delMusicPlaylistDetail(delMusic);
 
-    setState(() {
-      chartData.clear();
-      musicPL.playlistDetail = musicListofPlaylist;
-    });
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-          builder: (BuildContext context) =>
-              EditPlaylistMusicPage(widget.wpid, widget.pid, musicPL: musicPL)),
-    );
+        setState(() {
+          chartData.clear();
+          musicPL.playlistDetail = musicListofPlaylist;  
+           chDel = true;
+        log("chDell $chDel ");
+        });
+      
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => EditPlaylistMusicPage(
+                  widget.wpid, widget.pid,
+                  musicPL: musicPL)),
+        );
+      } catch (e) {
+        log(e.toString());
+      }
+    } else {
+      // Show a message or perform another action indicating that a song can't be deleted yet
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content:
+              Text("You must add a song before you can delete another one.")));
+    }
   }
 
   String formatMusicName(String name) {
@@ -404,6 +425,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
             musicPL.playlistDetail[i].music = musiclist[i];
           }
         }
+        chrandAll = true;
       });
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
@@ -417,7 +439,6 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
       log(e.toString());
     }
   }
-
 
   Future<void> randMusic1Song(int idx) async {
     log("1");
