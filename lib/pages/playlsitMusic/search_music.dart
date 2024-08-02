@@ -103,7 +103,7 @@ class _SearchMusicPageState extends State<SearchMusicPage> {
                           ),
                         ),
                       ),
-                      music.length > 0
+                      music.isNotEmpty
                           ? Expanded(
                               child: ListView.builder(
                                 itemCount: music.length,
@@ -153,25 +153,35 @@ class _SearchMusicPageState extends State<SearchMusicPage> {
                       style:
                           const TextStyle(color: Color.fromARGB(161, 0, 0, 0)),
                     ),
+                  
+                    Text(
+                      "${musicInfo.bpm} bpm",
+                      style: const TextStyle(
+                          color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
+  
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                musicInfo.duration.toString(),
+                "${musicInfo.duration} นาที",
                 style: const TextStyle(
                     color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
               ),
-              Text(
-                "${musicInfo.bpm} bpm",
-                style: const TextStyle(
-                    color: Color.fromARGB(161, 0, 0, 0), fontSize: 12),
-              ),
+              IconButton(
+                  onPressed: () {
+                    // Get.to(() => PreExercisePage(pl.wpid, pl.pid));
+                  },
+                  icon: const Icon(
+                    Icons.play_circle_fill_rounded,
+                    color: Colors.black,
+                  )),
             ],
           ),
         ],
@@ -182,10 +192,10 @@ class _SearchMusicPageState extends State<SearchMusicPage> {
  void searchMusic(String query) async {
     log(query);
 
-    if (musicList == null || musicService == null) {
-      log('musicList or musicService is null');
-      return;
-    }
+    // if (musicList == null || musicService == null) {
+    //   log('musicList or musicService is null');
+    //   return;
+    // }
 
     try {
       SearchMusicGetRequest key = SearchMusicGetRequest(
