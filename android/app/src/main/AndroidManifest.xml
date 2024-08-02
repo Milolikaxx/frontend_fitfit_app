@@ -2,7 +2,7 @@
     package="com.example.flutter_justaudio">
     <uses-permission android:name="android.permission.INTERNET" />  
     <application
-        android:label="frontend_fitfit_app"
+        android:label="Rhythm FitFit App"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
