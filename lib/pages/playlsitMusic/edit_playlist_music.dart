@@ -55,14 +55,12 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   @override
   void initState() {
     super.initState();
-   
     playlistService = context.read<AppData>().playlistService;
     playlistDetailServ = context.read<AppData>().playlistDetailService;
     user = context.read<AppData>().user;
     log("pid :${widget.pid}");
     loadData = loadDataAsync();
   }
-
 
   loadDataAsync() async {
     try {
@@ -328,8 +326,8 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   }
 
   Future<void> delSong(int idx) async {
-    log("chDell $chDel chrand $chrandAll");
-    if (chDel || !chrandAll) {
+    if (!chDel || chrandAll) {
+      log("chDell $chDel chrand $chrandAll");
       try {
         RandOneSongOfPlaylistRequest delMusic = RandOneSongOfPlaylistRequest(
             playlistDetail: musicPL.playlistDetail, index: idx);
@@ -338,11 +336,12 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
 
         setState(() {
           chartData.clear();
-          musicPL.playlistDetail = musicListofPlaylist;  
-           chDel = true;
-        log("chDell $chDel ");
+          musicPL.playlistDetail = musicListofPlaylist;
+          chDel = true;
+          delIndex = idx;
+          log("chDell $chDel ");
         });
-      
+
         // ignore: use_build_context_synchronously
         Navigator.pushReplacement(
           context,
@@ -355,10 +354,12 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
         log(e.toString());
       }
     } else {
-      // Show a message or perform another action indicating that a song can't be deleted yet
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content:
-              Text("You must add a song before you can delete another one.")));
+      Get.snackbar(
+        'กรุณาเพิ่มเพลงก่อนจึงจะสามารถลบเพลงอื่นได้', // Title
+        'คุณต้องเพิ่มเพลงก่อนจึงจะสามารถลบเพลงอื่นได้', // Message
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+      );
     }
   }
 
@@ -383,9 +384,9 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
           title: ChartTitle(
               text: 'เวลาเพลย์ลิสต์ : ${totalTime.toStringAsFixed(2)} นาที'),
           tooltipBehavior: TooltipBehavior(
-            enable: true, tooltipPosition: TooltipPosition.pointer,
-            format:
-                'เวลาเพลง point.x นาที : point.y BPM', // Default tooltip format
+            enable: true,
+            tooltipPosition: TooltipPosition.pointer,
+            format: 'เวลาเพลง point.x นาที : point.y BPM',
             header: '',
           ),
           series: <CartesianSeries<Musicdata, double>>[
@@ -441,8 +442,6 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   }
 
   Future<void> randMusic1Song(int idx) async {
-    log("1");
-
     RandOneSongOfPlaylistRequest randMusic = RandOneSongOfPlaylistRequest(
         playlistDetail: musicPL.playlistDetail, index: idx, wpid: widget.wpid);
     musicListofPlaylist = await playlistDetailServ.random1song(randMusic);
@@ -471,7 +470,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
         backgroundColor: Colors.black,
         colorText: Colors.white,
       );
-      setState(() {});
+      // setState(() {});
     } else {
       try {
         for (var m in musicPL.playlistDetail) {
