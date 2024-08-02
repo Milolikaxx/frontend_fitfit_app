@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/service/model/request/exercise_searchbyday_get_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/exercise_searchbydat_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/exercise_showbyday_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/exercise_showbymonth_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/api/history_exercise.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
@@ -41,26 +42,15 @@ class _ExercisePageState extends State<ExercisePage> {
   late UserLoginPostResponse user;
   late List<HistoryExerciseGetResponse> historys = [];
   late List<ExerciseShowbydayGetResponse> last7day = [];
+  late List<ExerciseLast12MonthGetResponse> last12month = [];
   late List<ExerciseSearchbydayGetResponse> searchDay = [];
   late String day;
+  late String month12;
   // late String day;
   // late int dayAmount;
 
   List<bool> isSelected = [true, false];
-  List<MonthData> month = [
-    MonthData('Jan', 30),
-    MonthData('Feb', 20),
-    MonthData('Mar', 35),
-    MonthData('Apr', 50),
-    MonthData('May', 20),
-    MonthData('Jun', 45),
-    MonthData('Jul', 55),
-    MonthData('Aug', 60),
-    MonthData('Sep', 30),
-    MonthData('Oct', 40),
-    MonthData('Nov', 35),
-    MonthData('Dec', 50),
-  ];
+  List<MonthData> month = [];
   List<WeekData> week = [];
 
   String selectedData = '';
@@ -71,16 +61,14 @@ class _ExercisePageState extends State<ExercisePage> {
     user = context.read<AppData>().user;
     hisExercise = context.read<AppData>().historyExerciseService;
     loadData = loadDataAsync();
-    for (var i in week) {
-      log("Week ================> ${i.day}");
-    }
   }
 
   loadDataAsync() async {
     try {
       // historys = await hisExercise.getHisExByUid(user.uid!);
       last7day = await hisExercise.getLast7Day();
-      log(last7day.length.toString());
+      last12month = await hisExercise.getlast12month();
+      // log(last7day.length.toString());
       for (var item in last7day) {
         // Parse the date string to a DateTime object
         DateTime parsedDate = DateTime.parse(item.date.toString());
@@ -93,6 +81,13 @@ class _ExercisePageState extends State<ExercisePage> {
 
         // เพิ่มข้อมูลใน List<WeekData> week
         week.add(WeekData(day, dayAmount));
+      }
+      for (var item in last12month) {
+        month12 = item.monthName;
+        int monthAmount = item.exerciseCount;
+        log(month12);
+        log(monthAmount.toString());
+        month.add(MonthData(month12, monthAmount));
       }
       setState(() {});
     } catch (e) {
@@ -276,7 +271,7 @@ class _ExercisePageState extends State<ExercisePage> {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Text(
-        selectedData.isEmpty ? 'ยังไม่มีการเลือก' : 'วันที่ : $selectedData',
+        selectedData.isEmpty ? 'ยังไม่มีการเลือก' : selectedData,
         style: const TextStyle(fontSize: 20, color: Colors.white),
       ),
     );

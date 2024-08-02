@@ -3,6 +3,7 @@ import 'package:frontend_fitfit_app/service/model/request/exercise_post_req.dart
 import 'package:frontend_fitfit_app/service/model/request/exercise_searchbyday_get_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/exercise_searchbydat_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/exercise_showbyday_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/exercise_showbymonth_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/historyexercise_get_res.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -32,4 +33,7 @@ abstract class HistoryExerciseService {
   @GET("/exercise/searchbyday")
   Future<List<ExerciseSearchbydayGetResponse>> searchByday(
       @Body() ExerciseSearchbydayGetRequest searchByDay);
+
+  @GET("/exercise/getmonth")
+  Future<List<ExerciseLast12MonthGetResponse>> getlast12month();
 }
