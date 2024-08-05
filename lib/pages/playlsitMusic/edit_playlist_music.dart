@@ -3,13 +3,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/pages/playlsitMusic/search_music.dart';
+import 'package:frontend_fitfit_app/service/api/music.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_detail_postUp_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/rand_one_song_of_playlist_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/search_music_get_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/muisc_get_res.dart';
-import 'package:frontend_fitfit_app/service/model/response/playlsit_music_get_res.dart'
-    as modelGetPlaylist;
+import 'package:frontend_fitfit_app/service/model/response/playlsit_music_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
@@ -19,7 +20,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 // ignore: must_be_immutable
 class EditPlaylistMusicPage extends StatefulWidget {
-  late modelGetPlaylist.PlaylsitMusicGetResponse? musicPL;
+  late PlaylsitMusicGetResponse? musicPL;
   int wpid = 0;
   int pid = 0;
   // int timeEx = 0;
@@ -38,24 +39,27 @@ class Musicdata {
 
 class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   List<Musicdata> chartData = [];
-  late modelGetPlaylist.PlaylsitMusicGetResponse musicPL;
+  late PlaylsitMusicGetResponse musicPL;
   late PlaylistService playlistService;
   late Future<void> loadData;
   List<MusicGetResponse> newMusicList = [];
   late UserLoginPostResponse user;
   double totalDuration = 0;
   late PlaylistDetailService playlistDetailServ;
-  List<modelGetPlaylist.Music> musiclist = [];
-  List<modelGetPlaylist.PlaylistDetail> musicListofPlaylist = [];
+  List<Music> musiclist = [];
+  List<MusicGetResponse> musiclistForAddSong = [];
+  List<PlaylistDetail> musicListofPlaylist = [];
   double totalTime = 0;
   int delIndex = 0;
   bool chDel = false;
-  bool chrandAll = false;
+  List<PlaylistDetail> musicUseByPl = [];
+  late MusicService musicService;
 
   @override
   void initState() {
     super.initState();
     playlistService = context.read<AppData>().playlistService;
+    musicService = context.read<AppData>().musicService;
     playlistDetailServ = context.read<AppData>().playlistDetailService;
     user = context.read<AppData>().user;
     log("pid :${widget.pid}");
@@ -72,7 +76,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
           chartData.add(Musicdata(m.music.duration, m.music.bpm));
         }
         totalTime = musicPL.totalDuration;
-        setState(() {});
+        musicUseByPl = musicPL.playlistDetail;
       } else {
         musicPL = widget.musicPL!;
         chartData.clear();
@@ -80,17 +84,38 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
           chartData.add(Musicdata(m.music.duration, m.music.bpm));
           totalTime += m.music.duration;
         }
-        setState(() {});
+        musicUseByPl = musicPL.playlistDetail;
       }
     } catch (e) {
       log(e.toString());
     }
   }
+  // void searchMusic(String query) async {
+  //   log(query);
+  //   try {
+  //     SearchMusicGetRequest key = SearchMusicGetRequest(
+  //         music: musicList,
+  //         key:
+  //             query); // Assuming musicList can be null, use null-aware operator
+  //     List<MusicGetResponse> results = await musicService.getSearchMusic(key);
 
+  //     log(results.length.toString());
+  //     log(query);
+
+  //     setState(() {
+  //       if (results.isNotEmpty) {
+  //         music = results;
+  //       } else {
+  //         music = [];
+  //         textCheck = "ไม่พบเพลง";
+  //       }
+  //     });
+  //   } catch (error) {
+  //     log(error.toString());
+  //   }
+  // }
   @override
   Widget build(BuildContext context) {
-    // double width = MediaQuery.of(context).size.width;
-    // double height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -100,6 +125,9 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
             },
           ),
           actions: [
+            IconButton(
+                icon: const Icon(Icons.add_box_rounded, color: Colors.black),
+                onPressed: addSong),
             IconButton(
               icon: const Icon(Icons.save_rounded, color: Colors.black),
               onPressed: () {
@@ -206,6 +234,8 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
             }));
   }
 
+
+
   Widget listMusic() {
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
@@ -218,7 +248,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
     );
   }
 
-  Widget musicInfo(modelGetPlaylist.PlaylistDetail playlistDetail, int index) {
+  Widget musicInfo(PlaylistDetail playlistDetail, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Row(
@@ -326,30 +356,34 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   }
 
   Future<void> delSong(int idx) async {
-    if (!chDel || chrandAll) {
-      log("chDell $chDel chrand $chrandAll");
+    if (!chDel) {
+      log("chDell $chDel");
       try {
         RandOneSongOfPlaylistRequest delMusic = RandOneSongOfPlaylistRequest(
             playlistDetail: musicPL.playlistDetail, index: idx);
         musicListofPlaylist =
             await playlistDetailServ.delMusicPlaylistDetail(delMusic);
-
         setState(() {
           chartData.clear();
+          totalTime = 0;
           musicPL.playlistDetail = musicListofPlaylist;
+          for (var m in musicPL.playlistDetail) {
+            chartData.add(Musicdata(m.music.duration, m.music.bpm));
+            totalTime += m.music.duration;
+          }
           chDel = true;
           delIndex = idx;
           log("chDell $chDel ");
         });
 
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => EditPlaylistMusicPage(
-                  widget.wpid, widget.pid,
-                  musicPL: musicPL)),
-        );
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //       builder: (BuildContext context) => EditPlaylistMusicPage(
+        //           widget.wpid, widget.pid,
+        //           musicPL: musicPL)),
+        // );
       } catch (e) {
         log(e.toString());
       }
@@ -426,7 +460,12 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
             musicPL.playlistDetail[i].music = musiclist[i];
           }
         }
-        chrandAll = true;
+        // totalTime = 0; //re
+        // for (var m in musicPL.playlistDetail) {
+        //   chartData.add(Musicdata(m.music.duration, m.music.bpm));
+        //   totalTime += m.music.duration;
+        // }
+        // chDel = false;
       });
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
@@ -450,16 +489,13 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
       chartData.clear();
       for (int i = 0; i < musicPL.playlistDetail.length; i++) {
         musicPL.playlistDetail[i] = musicListofPlaylist[i];
-        widget.musicPL = musicPL;
+      }
+      totalTime = 0; //re
+      for (var m in musicPL.playlistDetail) {
+        chartData.add(Musicdata(m.music.duration, m.music.bpm));
+        totalTime += m.music.duration;
       }
     });
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-          builder: (BuildContext context) =>
-              EditPlaylistMusicPage(widget.wpid, widget.pid, musicPL: musicPL)),
-    );
   }
 
   Future<void> upPlaylistDe() async {
@@ -530,5 +566,122 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
                 ));
       }
     }
+  } 
+  
+ 
+  void addSong() async {
+         log("Index $delIndex Wpid ${widget.wpid}");
+    try {
+      RandOneSongOfPlaylistRequest randOdj = RandOneSongOfPlaylistRequest(
+          playlistDetail: musicUseByPl, index: delIndex, wpid: widget.wpid);
+      musiclistForAddSong = await musicService.getMusicForAddSong(randOdj);
+      if (musiclistForAddSong.isNotEmpty) {
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Music'),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        onChanged: (value) async {
+                         
+                           
+
+                            try {
+                              SearchMusicGetRequest key = SearchMusicGetRequest(
+                                  music: musiclistForAddSong,
+                                  key:
+                                      value); // Assuming musicList can be null, use null-aware operator
+                              List<MusicGetResponse> results =
+                                  await musicService.getSearchMusic(key);
+
+                              log(results.length.toString());
+                              log(value);
+
+                              setState(() {
+                                if (results.isNotEmpty) {
+                                  musiclistForAddSong = results;
+                                } else {
+                                  musiclistForAddSong = [];
+                                }
+                              });
+                            } catch (error) {
+                              log(error.toString());
+                            }
+                          
+                        },
+                        style: const TextStyle(
+                          color: Colors.black,
+                        ), // Text color
+                        cursorColor: Colors.black,
+                        decoration: const InputDecoration(
+                          labelText: 'ค้นหา',
+                          labelStyle:
+                              TextStyle(color: Colors.black, fontSize: 16),
+                          hintText: 'ค้นหา',
+                          hintStyle: TextStyle(color: Colors.black),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    ),
+                    musiclistForAddSong.isNotEmpty ?
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: musiclistForAddSong.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: ListTile(
+                              title: Text(formatMusicName(
+                                  musiclistForAddSong[index].name)),
+                              leading: Image.network(
+                                  musiclistForAddSong[index].musicImage),
+                              subtitle:
+                                  Text("${musiclistForAddSong[index].bpm} bpm"),
+                              onTap: () {
+                                Get.back();
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                    : const Text("ไม่มีเพลง")
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Close'),
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        log("Null music for add song");
+      }
+    } catch (e) {
+      log(e.toString());
+    }       
   }
 }

@@ -270,7 +270,8 @@ class _LoginPageState extends State<LoginPage> {
       // startLoading(context);
       try {
         UserLoginPostResponse res = await userService.login(loginObj);
-        if (res.uid != 0) {
+        log(res.uid.toString());
+        if (res.uid! > 0) {
           if (context.mounted) {
             context.read<AppData>().user = res;
           }
@@ -279,8 +280,12 @@ class _LoginPageState extends State<LoginPage> {
 
           Get.to(() => const Barbottom());
         } else {
-          Get.snackbar('เข้าสู่ระบบไม่สำเร็จ', 'กรุณากรอกข้อมูลให้ถูกต้อง');
+          Get.snackbar('เข้าสู่ระบบไม่สำเร็จ', 'กรุณากรอกข้อมูลให้ถูกต้อง อีเมลหรือรหัสผ่านผิด');
         }
+
+        // if (res.){
+        //   Get.snackbar('เข้าสู่ระบบไม่สำเร็จ', 'กรุณากรอกข้อมูลให้ถูกต้อง');
+        // }
       } catch (e) {
         log(e.toString());
       }

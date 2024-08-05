@@ -94,9 +94,6 @@ class _EditPlaylistMusicAfterCreatePageState
           ),
           onPressed: () {
             randAll();
-            // setState(() {
-
-            // });
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -274,7 +271,7 @@ class _EditPlaylistMusicAfterCreatePageState
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
-                       log(index.toString());
+                        log(index.toString());
                         delSong(index);
                       },
                       iconSize: 16,
@@ -335,58 +332,64 @@ class _EditPlaylistMusicAfterCreatePageState
   }
 
   Future<void> randAll() async {
-    musicRandNew = await playlistDetailServ.getMusicDetailGen(widget.wpid);
+    try {
+      musicRandNew = await playlistDetailServ.getMusicDetailGen(widget.wpid);
 
-    setState(() {
-      chartData.clear();
-      widget.music = musicRandNew;
-    });
+      setState(() {
+        chartData.clear();
+        widget.music = musicRandNew;
+      });
 
-    log(widget.music.length.toString());
-
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => widget),
-    );
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => widget),
+      );
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> randMusic1Song(int idx) async {
     log("1");
-    RandMusic1PostRequest randMusic = RandMusic1PostRequest(
-        musicList: widget.music, index: idx, wpid: widget.wpid);
-    musicList = await playlistDetailServ.randomMusic(randMusic);
-    log(musicList.length.toString());
-    setState(() {
-      chartData.clear();
-      widget.music = musicList;
-    });
+    try {
+      RandMusic1PostRequest randMusic = RandMusic1PostRequest(
+          musicList: widget.music, index: idx, wpid: widget.wpid);
+      musicList = await playlistDetailServ.randomMusic(randMusic);
+      log(musicList.length.toString());
+      setState(() {
+        chartData.clear();
+        widget.music = musicList;
+        totalTime = 0;
+        for (var m in widget.music) {
+          log(m.name);
+          chartData.add(Musicdata(m.duration, m.bpm));
+          totalTime += m.duration;
+        }
+      });
 
-    log(widget.music.length.toString());
-
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => widget),
-    );
+      log(widget.music.length.toString());
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> delSong(int idx) async {
-    RandMusic1PostRequest delMusic = RandMusic1PostRequest(
-        musicList: widget.music, index: idx);
+    RandMusic1PostRequest delMusic =
+        RandMusic1PostRequest(musicList: widget.music, index: idx);
     musicList = await playlistDetailServ.delMusicList(delMusic);
     log(musicList.length.toString());
     setState(() {
       chartData.clear();
       widget.music = musicList;
+      totalTime = 0;
+      for (var m in widget.music) {
+        log(m.name);
+        chartData.add(Musicdata(m.duration, m.bpm));
+        totalTime += m.duration;
+      }
     });
 
     log(widget.music.length.toString());
-
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => widget),
-    );
   }
 }
