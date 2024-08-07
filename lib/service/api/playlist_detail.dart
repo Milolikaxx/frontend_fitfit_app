@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:frontend_fitfit_app/service/model/request/add_music_in_playlistde_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/add_musiclist_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_detail_postUp_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_detail_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/rand_music1_post_req.dart';
@@ -39,4 +41,11 @@ abstract class PlaylistDetailService {
   @GET("/playlist_detail/delPlaylistDetail")
   Future<List<PlaylistDetail>> delMusicPlaylistDetail(
       @Body() RandOneSongOfPlaylistRequest dataSong);
+
+   @GET("/playlist_detail/addmusic")
+  Future<List<PlaylistDetail>> addMusicPlaylistDetail(
+      @Body() AddMusicInPlaylistDetailRequest dataSong);
+       @GET("/playlist_detail/add")
+  Future<List<MusicGetResponse>> addMusic(
+      @Body() AddMusicRequest dataSong);
 }

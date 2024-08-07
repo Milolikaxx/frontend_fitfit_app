@@ -256,15 +256,12 @@ class _PostPageState extends State<PostPage> {
                         fontSize: 20),
                     actionsOverflowButtonSpacing: 20,
                     actions: [
-                      ElevatedButton(
+                      TextButton(
                         onPressed: () {
                           Get.to(() => const Barbottom(initialIndex: 1,));
                         },
                         style: ButtonStyle(
-                          // minimumSize: MaterialStateProperty.all<Size>(
-                          //     const Size(330, 50)),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              const Color(0xFFF8721D)),
+                    
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
@@ -274,7 +271,7 @@ class _PostPageState extends State<PostPage> {
                         ),
                         child: const Text(
                           "ตกลง",
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: TextStyle(fontSize: 16, color: Color(0xFFF8721D)),
                         ),
                       ),
                     ],

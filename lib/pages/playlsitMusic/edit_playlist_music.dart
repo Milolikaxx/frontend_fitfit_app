@@ -6,6 +6,7 @@ import 'package:frontend_fitfit_app/pages/playlsitMusic/search_music.dart';
 import 'package:frontend_fitfit_app/service/api/music.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
+import 'package:frontend_fitfit_app/service/model/request/add_music_in_playlistde_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_detail_postUp_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/rand_one_song_of_playlist_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/search_music_get_req.dart';
@@ -50,9 +51,10 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
   List<MusicGetResponse> musiclistForAddSong = [];
   List<PlaylistDetail> musicListofPlaylist = [];
   double totalTime = 0;
-  int delIndex = 0;
+  int delIndex = -1;
   bool chDel = false;
   List<PlaylistDetail> musicUseByPl = [];
+  List<PlaylistDetail> musicForAdd = [];
   late MusicService musicService;
 
   @override
@@ -127,7 +129,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
           actions: [
             IconButton(
                 icon: const Icon(Icons.add_box_rounded, color: Colors.black),
-                onPressed: addSong),
+                onPressed: showForAddSoong),
             IconButton(
               icon: const Icon(Icons.save_rounded, color: Colors.black),
               onPressed: () {
@@ -233,8 +235,6 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
                   ));
             }));
   }
-
-
 
   Widget listMusic() {
     return ListView.builder(
@@ -460,12 +460,6 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
             musicPL.playlistDetail[i].music = musiclist[i];
           }
         }
-        // totalTime = 0; //re
-        // for (var m in musicPL.playlistDetail) {
-        //   chartData.add(Musicdata(m.music.duration, m.music.bpm));
-        //   totalTime += m.music.duration;
-        // }
-        // chDel = false;
       });
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
@@ -490,12 +484,19 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
       for (int i = 0; i < musicPL.playlistDetail.length; i++) {
         musicPL.playlistDetail[i] = musicListofPlaylist[i];
       }
-      totalTime = 0; //re
-      for (var m in musicPL.playlistDetail) {
-        chartData.add(Musicdata(m.music.duration, m.music.bpm));
-        totalTime += m.music.duration;
-      }
+      // totalTime = 0; //re
+      // for (var m in musicPL.playlistDetail) {
+      //   chartData.add(Musicdata(m.music.duration, m.music.bpm));
+      //   totalTime += m.music.duration;
+      // }
     });
+     // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (BuildContext context) =>
+              EditPlaylistMusicPage(widget.wpid, widget.pid, musicPL: musicPL)),
+    );
   }
 
   Future<void> upPlaylistDe() async {
@@ -566,122 +567,106 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
                 ));
       }
     }
-  } 
-  
- 
-  void addSong() async {
-         log("Index $delIndex Wpid ${widget.wpid}");
-    try {
-      RandOneSongOfPlaylistRequest randOdj = RandOneSongOfPlaylistRequest(
-          playlistDetail: musicUseByPl, index: delIndex, wpid: widget.wpid);
-      musiclistForAddSong = await musicService.getMusicForAddSong(randOdj);
-      if (musiclistForAddSong.isNotEmpty) {
-        // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Music'),
-              content: SizedBox(
-                width: double.maxFinite,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        onChanged: (value) async {
-                         
-                           
+  }
 
-                            try {
-                              SearchMusicGetRequest key = SearchMusicGetRequest(
-                                  music: musiclistForAddSong,
-                                  key:
-                                      value); // Assuming musicList can be null, use null-aware operator
-                              List<MusicGetResponse> results =
-                                  await musicService.getSearchMusic(key);
+  void showForAddSoong() async {
+    if (delIndex >= 0) {
+      log("Index $delIndex Wpid ${widget.wpid}");
+      try {
+        RandOneSongOfPlaylistRequest randOdj = RandOneSongOfPlaylistRequest(
+            playlistDetail: musicUseByPl, index: delIndex, wpid: widget.wpid);
+        musiclistForAddSong = await musicService.getMusicForAddSong(randOdj);
+        if (musiclistForAddSong.isNotEmpty) {
+          // ignore: use_build_context_synchronously
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text(
+                  'เลือกเพลงที่ต้องการเพิ่ม 1 เพลง',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                content: SizedBox(
+                  width: double.maxFinite,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      musiclistForAddSong.isNotEmpty
+                          ? Expanded(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: musiclistForAddSong.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 2),
+                                    child: ListTile(
+                                      title: Text(formatMusicName(
+                                          musiclistForAddSong[index].name)),
+                                      leading: Image.network(
+                                          musiclistForAddSong[index]
+                                              .musicImage),
+                                      subtitle: Text(
+                                          "${musiclistForAddSong[index].duration} นาที  (${musiclistForAddSong[index].bpm} bpm)"),
+                                      onTap: () async {
+                                        AddMusicInPlaylistDetailRequest dataPl =
+                                            AddMusicInPlaylistDetailRequest(
+                                                playlistDetail: musicUseByPl,
+                                                music: musiclistForAddSong,
+                                                indexPl: delIndex,
+                                                indexMusic: index);
+                                        musicForAdd = await playlistDetailServ
+                                            .addMusicPlaylistDetail(dataPl);
 
-                              log(results.length.toString());
-                              log(value);
-
-                              setState(() {
-                                if (results.isNotEmpty) {
-                                  musiclistForAddSong = results;
-                                } else {
-                                  musiclistForAddSong = [];
-                                }
-                              });
-                            } catch (error) {
-                              log(error.toString());
-                            }
-                          
-                        },
-                        style: const TextStyle(
-                          color: Colors.black,
-                        ), // Text color
-                        cursorColor: Colors.black,
-                        decoration: const InputDecoration(
-                          labelText: 'ค้นหา',
-                          labelStyle:
-                              TextStyle(color: Colors.black, fontSize: 16),
-                          hintText: 'ค้นหา',
-                          hintStyle: TextStyle(color: Colors.black),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
+                                        setState(() {
+                                          musicPL.playlistDetail = musicForAdd;
+                                          chDel = false;
+                                        });
+                                        Get.back();
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          : const Text("ไม่มีเพลง")
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
                         ),
                       ),
                     ),
-                    musiclistForAddSong.isNotEmpty ?
-                    Expanded(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: musiclistForAddSong.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2),
-                            child: ListTile(
-                              title: Text(formatMusicName(
-                                  musiclistForAddSong[index].name)),
-                              leading: Image.network(
-                                  musiclistForAddSong[index].musicImage),
-                              subtitle:
-                                  Text("${musiclistForAddSong[index].bpm} bpm"),
-                              onTap: () {
-                                Get.back();
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                    : const Text("ไม่มีเพลง")
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Close'),
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        log("Null music for add song");
+                    child: const Text(
+                      "ปิด",
+                      style: TextStyle(fontSize: 16, color: Color(0xFFF8721D)),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          log("Null music for add song");
+        }
+      } catch (e) {
+        log(e.toString());
       }
-    } catch (e) {
-      log(e.toString());
-    }       
+    } else {
+      Get.snackbar(
+        'ไม่มีการลบเพลงในเพลย์ลิสต์',
+        'ลบเพลงในเพลงในเพลย์ลิสต์เพือเพิ่มเพลงใหม่',
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+      );
+    }
   }
 }
