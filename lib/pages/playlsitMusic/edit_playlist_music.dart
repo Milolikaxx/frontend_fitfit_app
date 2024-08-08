@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/pages/playlsitMusic/search_music.dart';
 import 'package:frontend_fitfit_app/service/api/music.dart';
@@ -489,13 +490,21 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
       //   totalTime += m.music.duration;
       // }
     });
-     // ignore: use_build_context_synchronously
+    // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
           builder: (BuildContext context) =>
               EditPlaylistMusicPage(widget.wpid, widget.pid, musicPL: musicPL)),
     );
+  }
+
+  void _showLoading() {
+    SmartDialog.showLoading(msg: "Logging in...");
+  }
+
+  void _hideLoading() {
+    SmartDialog.dismiss();
   }
 
   Future<void> upPlaylistDe() async {
@@ -508,6 +517,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
       );
       // setState(() {});
     } else {
+      _showLoading();
       try {
         for (var m in musicPL.playlistDetail) {
           log(m.music.name);
@@ -528,6 +538,7 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
       } catch (e) {
         log(e.toString());
       } finally {
+        _hideLoading();
         // ignore: use_build_context_synchronously
         showDialog<String>(
             context: context,
@@ -621,8 +632,8 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
                                           musicPL.playlistDetail = musicForAdd;
                                           chDel = false;
                                         });
-                                     
-                                        Get.back();    // ignore: use_build_context_synchronously
+
+                                        Get.back(); // ignore: use_build_context_synchronously
                                         // ignore: use_build_context_synchronously
                                         Navigator.pushReplacement(
                                           context,

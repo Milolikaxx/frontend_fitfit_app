@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_detail_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/muisc_get_res.dart';
@@ -175,6 +176,14 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
     );
   }
 
+  void _showLoading() {
+    SmartDialog.showLoading(msg: "Logging in...");
+  }
+
+  void _hideLoading() {
+    SmartDialog.dismiss();
+  }
+
   Future<void> save() async {
     await uploadImg();
     if (_formKey.currentState?.validate() ?? true) {
@@ -185,6 +194,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
             durationPlaylist: widget.time,
             imagePlaylist:
                 "http://202.28.34.197:8888/contents/fc032ca0-1f03-4b21-baf3-b97bd04e88b7.jpg");
+        _showLoading();
         try {
           int res = await playlsitService.addPlaylsit(plObj);
           if (res > 0) {
@@ -206,46 +216,49 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-            // ignore: use_build_context_synchronously
-            showDialog<String>(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                      title: const Text("สำเร็จ!"),
-                      titleTextStyle: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontSize: 20),
-                      actionsOverflowButtonSpacing: 20,
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Get.to(() => const Barbottom());
-                          },
-                          style: ButtonStyle(
-                            // minimumSize: MaterialStateProperty.all<Size>(
-                            //     const Size(330, 50)),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                const Color(0xFFF8721D)),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                            ),
-                          ),
-                          child: const Text(
-                            "ตกลง",
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                      ],
-                      content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
-                    ));
+           
           } else {
             log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
           }
         } catch (e) {
           log(e.toString());
+        } finally {
+          _hideLoading();
+           // ignore: use_build_context_synchronously
+          showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                    title: const Text("สำเร็จ!"),
+                    titleTextStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 20),
+                    actionsOverflowButtonSpacing: 20,
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Get.to(() => const Barbottom());
+                        },
+                        style: ButtonStyle(
+                          // minimumSize: MaterialStateProperty.all<Size>(
+                          //     const Size(330, 50)),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color(0xFFF8721D)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          "ตกลง",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                    content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
+                  ));
         }
       } else {
         PlaylsitPostRequest plObj = PlaylsitPostRequest(
@@ -253,6 +266,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
             playlistName: namePlController.text,
             durationPlaylist: widget.time,
             imagePlaylist: imgPick);
+        _showLoading();
         try {
           int res = await playlsitService.addPlaylsit(plObj);
           if (res > 0) {
@@ -274,7 +288,16 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-            // ignore: use_build_context_synchronously
+         
+          } else {
+            log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
+          } 
+        } catch (e) {
+          log(e.toString());
+        } finally 
+        {
+           _hideLoading();
+              // ignore: use_build_context_synchronously
             showDialog<String>(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
@@ -309,11 +332,6 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                       ],
                       content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
                     ));
-          } else {
-            log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
-          }
-        } catch (e) {
-          log(e.toString());
         }
       }
     }

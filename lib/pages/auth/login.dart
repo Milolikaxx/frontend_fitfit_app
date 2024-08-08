@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:frontend_fitfit_app/service/model/request/user_login%20google_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/user_login_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/user_register_post_req.dart';
@@ -262,12 +263,19 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+  void _showLoading() {
+    SmartDialog.showLoading(msg: "Logging in...");
+  }
 
+  void _hideLoading() {
+    SmartDialog.dismiss();
+  }
   void login() async {
+
     if (_formKey.currentState?.validate() ?? true) {
       UserLoginPostRequest loginObj = UserLoginPostRequest(
           email: emailController.text, password: passwordController.text);
-      // startLoading(context);
+       _showLoading();
       try {
         UserLoginPostResponse res = await userService.login(loginObj);
         log(res.uid.toString());
@@ -289,6 +297,8 @@ class _LoginPageState extends State<LoginPage> {
         // }
       } catch (e) {
         log(e.toString());
+      } finally {
+        _hideLoading();
       }
     } else {
       Get.snackbar('ข้อมูลไม่ครบหรือไม่ถูกต้อง',
