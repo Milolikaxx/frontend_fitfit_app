@@ -9,7 +9,6 @@ import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/model/request/add_music_in_playlistde_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_detail_postUp_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/rand_one_song_of_playlist_req.dart';
-import 'package:frontend_fitfit_app/service/model/request/search_music_get_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/muisc_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/playlsit_music_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
@@ -622,7 +621,17 @@ class _EditPlaylistMusicPageState extends State<EditPlaylistMusicPage> {
                                           musicPL.playlistDetail = musicForAdd;
                                           chDel = false;
                                         });
-                                        Get.back();
+                                     
+                                        Get.back();    // ignore: use_build_context_synchronously
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  EditPlaylistMusicPage(
+                                                      widget.wpid, widget.pid,
+                                                      musicPL: musicPL)),
+                                        );
                                       },
                                     ),
                                   );

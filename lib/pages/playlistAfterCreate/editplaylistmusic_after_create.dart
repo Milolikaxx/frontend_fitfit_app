@@ -6,7 +6,6 @@ import 'package:frontend_fitfit_app/pages/playlsitMusic/search_music.dart';
 import 'package:frontend_fitfit_app/service/api/music.dart';
 import 'package:frontend_fitfit_app/service/model/request/add_musiclist_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/rand_music1_post_req.dart';
-import 'package:frontend_fitfit_app/service/model/request/rand_one_song_of_playlist_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/muisc_get_res.dart';
 import 'package:frontend_fitfit_app/pages/playlsit/save_playlist.dart';
 import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';

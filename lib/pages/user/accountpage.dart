@@ -1,10 +1,12 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/service/model/response/social_all_post_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/pages/playlsitMusic/playlsit_music_page.dart';
 import 'package:frontend_fitfit_app/pages/user/editprofile.dart';
 import 'package:frontend_fitfit_app/service/api/post.dart';
+import 'package:frontend_fitfit_app/service/model/response/workoutProfile_get_res.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -253,6 +255,24 @@ class _AccountPageState extends State<AccountPage> {
                 Row(
                   children: [
                     IconButton(
+                icon: const Icon(Icons.info,
+                    size: 30, color: Colors.black),
+                onPressed: () async {
+                  showDialog<String>(
+                      context: context,
+                      builder: (BuildContext context) => Dialog(
+                            child: Container(
+                              constraints: BoxConstraints(
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height * 0.8),
+                              child: SingleChildScrollView(
+                                child: cardDetailsWp(postMe.playlist.workoutProfile),
+                              ),
+                            ),
+                          ));
+                },
+              ),
+                    IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
                         try {
@@ -347,7 +367,152 @@ class _AccountPageState extends State<AccountPage> {
             playlistPost(postMe),
           ];
   }
-
+  Widget cardDetailsWp(WorkoutProfile profile) {
+    String levelDescription;
+    switch (profile.levelExercise) {
+      case 5:
+        levelDescription = 'หนักมาก';
+        break;
+      case 4:
+        levelDescription = 'หนัก';
+        break;
+      case 3:
+        levelDescription = 'ปานกลาง';
+        break;
+      case 2:
+        levelDescription = 'เบา';
+        break;
+      case 1:
+        levelDescription = 'เบามาก';
+        break;
+      default:
+        levelDescription = '';
+    }
+    // Color cardColor = Colors.w
+    return Center(
+      child: Container(
+        width: 350,
+        padding: const EdgeInsets.only(top: 5),
+        decoration: ShapeDecoration(
+          // color: const Color(0x66CCCCCC),
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(30),
+          child: Column(children: [
+            const Text(
+              'ข้อมูลโปรไฟล์ออกกำลังกาย',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const FaIcon(
+                    FontAwesomeIcons.clock,
+                    color: Colors.black,
+                    size: 20,
+                  ),
+                  const SizedBox(
+                    width: 9,
+                  ),
+                  Text(
+                    "${profile.duration} นาที ",
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const FaIcon(
+                  FontAwesomeIcons.personRunning,
+                  color: Colors.black,
+                  size: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    profile.exerciseType,
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const FaIcon(
+                  FontAwesomeIcons.chartColumn,
+                  color: Colors.black,
+                  size: 20,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  profile.levelExercise > 0
+                      ? 'Lv.${profile.levelExercise} $levelDescription'
+                      : '',
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                ),
+              ],
+            ),
+            Row(
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const FaIcon(
+                  FontAwesomeIcons.music,
+                  color: Colors.black,
+                  size: 20,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                getTextMusicName(profile.workoutMusictype)
+              ],
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+Widget getTextMusicName(List<WorkoutMusictype> musicTypes) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Column(
+          // mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: musicTypes
+              .asMap()
+              .map((index, musicType) {
+                String text = musicType.musicType.name;
+                if (index != musicTypes.length - 1) {
+                  text;
+                }
+                return MapEntry(
+                  index,
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
+                );
+              })
+              .values
+              .toList()),
+    );
+  }
   Widget playlistPost(SocialAllPostResonse postMe) {
     return InkWell(
        onTap: () {
