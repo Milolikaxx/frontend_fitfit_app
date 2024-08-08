@@ -67,10 +67,10 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                   // crossAxisAlignment:CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "โปรดใส่ชื่อรายการเพลงของคุณ",
+                      "โปรดใส่ชื่อเพลย์ลิสต์ของคุณ",
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: 22,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold),
                     ),
                   ],
