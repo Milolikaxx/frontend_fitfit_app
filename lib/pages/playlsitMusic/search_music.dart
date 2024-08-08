@@ -191,12 +191,6 @@ class _SearchMusicPageState extends State<SearchMusicPage> {
 
  void searchMusic(String query) async {
     log(query);
-
-    // if (musicList == null || musicService == null) {
-    //   log('musicList or musicService is null');
-    //   return;
-    // }
-
     try {
       SearchMusicGetRequest key = SearchMusicGetRequest(
           music: musicList,

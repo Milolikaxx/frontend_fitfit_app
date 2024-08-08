@@ -228,6 +228,68 @@ class _PlaylistDetailService implements PlaylistDetailService {
     return value;
   }
 
+  @override
+  Future<List<PlaylistDetail>> addMusicPlaylistDetail(
+      AddMusicInPlaylistDetailRequest dataSong) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(dataSong.toJson());
+    final _result = await _dio
+        .fetch<List<dynamic>>(_setStreamType<List<PlaylistDetail>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/playlist_detail/addmusic',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    var value = _result.data!
+        .map((dynamic i) => PlaylistDetail.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<List<MusicGetResponse>> addMusic(AddMusicRequest dataSong) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(dataSong.toJson());
+    final _result = await _dio
+        .fetch<List<dynamic>>(_setStreamType<List<MusicGetResponse>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/playlist_detail/add',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    var value = _result.data!
+        .map(
+            (dynamic i) => MusicGetResponse.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

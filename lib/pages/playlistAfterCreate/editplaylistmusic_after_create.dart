@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/pages/playlsitMusic/search_music.dart';
+import 'package:frontend_fitfit_app/service/api/music.dart';
+import 'package:frontend_fitfit_app/service/model/request/add_musiclist_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/rand_music1_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/muisc_get_res.dart';
 import 'package:frontend_fitfit_app/pages/playlsit/save_playlist.dart';
@@ -41,11 +43,15 @@ class _EditPlaylistMusicAfterCreatePageState
   late PlaylistDetailService playlistDetailServ;
   late Future<void> loadData;
   double totalTime = 0;
-
+  int delIndex = -1;
+  bool chDel = false;
+  List<MusicGetResponse> musiclist = [];
+  late MusicService musicService;
   @override
   void initState() {
     super.initState();
     playlistDetailServ = context.read<AppData>().playlistDetailService;
+    musicService = context.read<AppData>().musicService;
     loadData = loadDataAsync();
   }
 
@@ -81,6 +87,9 @@ class _EditPlaylistMusicAfterCreatePageState
           ),
           actions: [
             IconButton(
+                icon: const Icon(Icons.add_box_rounded, color: Colors.black),
+                onPressed: showForAddSoong),
+            IconButton(
               icon: const Icon(Icons.save_rounded, color: Colors.black),
               onPressed: savePlaylist,
             ),
@@ -94,9 +103,6 @@ class _EditPlaylistMusicAfterCreatePageState
           ),
           onPressed: () {
             randAll();
-            // setState(() {
-
-            // });
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -274,7 +280,7 @@ class _EditPlaylistMusicAfterCreatePageState
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
-                       log(index.toString());
+                        log(index.toString());
                         delSong(index);
                       },
                       iconSize: 16,
@@ -335,58 +341,180 @@ class _EditPlaylistMusicAfterCreatePageState
   }
 
   Future<void> randAll() async {
-    musicRandNew = await playlistDetailServ.getMusicDetailGen(widget.wpid);
+    try {
+      musicRandNew = await playlistDetailServ.getMusicDetailGen(widget.wpid);
 
-    setState(() {
-      chartData.clear();
-      widget.music = musicRandNew;
-    });
+      setState(() {
+        chartData.clear();
+        widget.music = musicRandNew;
+      });
 
-    log(widget.music.length.toString());
-
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => widget),
-    );
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => widget),
+      );
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> randMusic1Song(int idx) async {
     log("1");
-    RandMusic1PostRequest randMusic = RandMusic1PostRequest(
-        musicList: widget.music, index: idx, wpid: widget.wpid);
-    musicList = await playlistDetailServ.randomMusic(randMusic);
-    log(musicList.length.toString());
-    setState(() {
-      chartData.clear();
-      widget.music = musicList;
-    });
+    try {
+      RandMusic1PostRequest randMusic = RandMusic1PostRequest(
+          musicList: widget.music, index: idx, wpid: widget.wpid);
+      musicList = await playlistDetailServ.randomMusic(randMusic);
+      log(musicList.length.toString());
+      setState(() {
+        chartData.clear();
+        widget.music = musicList;
+        totalTime = 0;
+        for (var m in widget.music) {
+          log(m.name);
+          chartData.add(Musicdata(m.duration, m.bpm));
+          totalTime += m.duration;
+        }
+      });
 
-    log(widget.music.length.toString());
-
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => widget),
-    );
+      log(widget.music.length.toString());
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> delSong(int idx) async {
-    RandMusic1PostRequest delMusic = RandMusic1PostRequest(
-        musicList: widget.music, index: idx);
-    musicList = await playlistDetailServ.delMusicList(delMusic);
-    log(musicList.length.toString());
-    setState(() {
-      chartData.clear();
-      widget.music = musicList;
-    });
+    if (!chDel) {
+      try {
+        musiclist = widget.music;
+        RandMusic1PostRequest delMusic =
+            RandMusic1PostRequest(musicList: widget.music, index: idx);
+        musicList = await playlistDetailServ.delMusicList(delMusic);
+        log(musicList.length.toString());
+        setState(() {
+          chartData.clear();
+          widget.music = musicList;
+          totalTime = 0;
+          for (var m in widget.music) {
+            log(m.name);
+            chartData.add(Musicdata(m.duration, m.bpm));
+            totalTime += m.duration;
+          }
+          chDel = true;
+          delIndex = idx;
+          log("chDell $chDel ");
+        });
 
-    log(widget.music.length.toString());
+        log(widget.music.length.toString());
+      } catch (e) {
+        log(e.toString());
+      }
+    } else {
+      Get.snackbar(
+        'กรุณาเพิ่มเพลงก่อนจึงจะสามารถลบเพลงอื่นได้', // Title
+        'คุณต้องเพิ่มเพลงก่อนจึงจะสามารถลบเพลงอื่นได้', // Message
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+      );
+    }
+  }
 
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => widget),
-    );
+  void showForAddSoong() async {
+    if (delIndex >= 0) {
+      log("Index $delIndex Wpid ${widget.wpid}");
+      try {
+        RandMusic1PostRequest dataPost = RandMusic1PostRequest(
+            musicList: musiclist, index: delIndex, wpid: widget.wpid);
+        musicList = await musicService.getMusicForAddMusic(dataPost);
+        if (musicList.isNotEmpty) {
+          // ignore: use_build_context_synchronously
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text(
+                  'เลือกเพลงที่ต้องการเพิ่ม 1 เพลง',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                content: SizedBox(
+                  width: double.maxFinite,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      musicList.isNotEmpty
+                          ? Expanded(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: musicList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 2),
+                                    child: ListTile(
+                                      title: Text(formatMusicName(
+                                          musicList[index].name)),
+                                      leading: Image.network(
+                                          musicList[index].musicImage),
+                                      subtitle: Text(
+                                          "${musicList[index].duration} นาที  (${musicList[index].bpm} bpm)"),
+                                      onTap: () async {
+                                        AddMusicRequest data = AddMusicRequest(
+                                            musicList: musiclist,
+                                            music: musicList,
+                                            indexMl: delIndex,
+                                            indexMusic: index);
+                                        musicList = await playlistDetailServ
+                                            .addMusic(data);
+
+                                        setState(() {
+                                          widget.music = musicList;
+                                          chDel = false;
+                                        });
+                                        Get.back();
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          : const Text("ไม่มีเพลง")
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "ปิด",
+                      style: TextStyle(fontSize: 16, color: Color(0xFFF8721D)),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          log("Null music for add song");
+        }
+      } catch (e) {
+        log(e.toString());
+      }
+    } else {
+      Get.snackbar(
+        'ไม่มีการลบเพลงในเพลย์ลิสต์',
+        'ลบเพลงในเพลงในเพลย์ลิสต์เพือเพิ่มเพลงใหม่',
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+      );
+    }
   }
 }

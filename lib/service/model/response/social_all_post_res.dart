@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:frontend_fitfit_app/service/model/response/workoutProfile_get_res.dart';
+
 SocialAllPostResonse socialAllPostResonseFromJson(String str) => SocialAllPostResonse.fromJson(json.decode(str));
 
 String socialAllPostResonseToJson(SocialAllPostResonse data) => json.encode(data.toJson());
@@ -152,53 +154,53 @@ class WorkoutProfile {
     };
 }
 
-class WorkoutMusictype {
-    int id;
-    int wpid;
-    int mtid;
-    MusicType musicType;
+// class WorkoutMusictype {
+//     int id;
+//     int wpid;
+//     int mtid;
+//     MusicType musicType;
 
-    WorkoutMusictype({
-        required this.id,
-        required this.wpid,
-        required this.mtid,
-        required this.musicType,
-    });
+//     WorkoutMusictype({
+//         required this.id,
+//         required this.wpid,
+//         required this.mtid,
+//         required this.musicType,
+//     });
 
-    factory WorkoutMusictype.fromJson(Map<String, dynamic> json) => WorkoutMusictype(
-        id: json["ID"],
-        wpid: json["Wpid"],
-        mtid: json["Mtid"],
-        musicType: MusicType.fromJson(json["MusicType"]),
-    );
+//     factory WorkoutMusictype.fromJson(Map<String, dynamic> json) => WorkoutMusictype(
+//         id: json["ID"],
+//         wpid: json["Wpid"],
+//         mtid: json["Mtid"],
+//         musicType: MusicType.fromJson(json["MusicType"]),
+//     );
 
-    Map<String, dynamic> toJson() => {
-        "ID": id,
-        "Wpid": wpid,
-        "Mtid": mtid,
-        "MusicType": musicType.toJson(),
-    };
-}
+//     Map<String, dynamic> toJson() => {
+//         "ID": id,
+//         "Wpid": wpid,
+//         "Mtid": mtid,
+//         "MusicType": musicType.toJson(),
+//     };
+// }
 
-class MusicType {
-    int mtid;
-    String name;
+// class MusicType {
+//     int mtid;
+//     String name;
 
-    MusicType({
-        required this.mtid,
-        required this.name,
-    });
+//     MusicType({
+//         required this.mtid,
+//         required this.name,
+//     });
 
-    factory MusicType.fromJson(Map<String, dynamic> json) => MusicType(
-        mtid: json["Mtid"],
-        name: json["Name"],
-    );
+//     factory MusicType.fromJson(Map<String, dynamic> json) => MusicType(
+//         mtid: json["Mtid"],
+//         name: json["Name"],
+//     );
 
-    Map<String, dynamic> toJson() => {
-        "Mtid": mtid,
-        "Name": name,
-    };
-}
+//     Map<String, dynamic> toJson() => {
+//         "Mtid": mtid,
+//         "Name": name,
+//     };
+// }
 
 class User {
     int uid;
