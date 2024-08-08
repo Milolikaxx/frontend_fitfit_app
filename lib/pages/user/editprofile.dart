@@ -1,12 +1,14 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
-import 'package:frontend_fitfit_app/pages/user/accountpage.dart';
 import 'package:frontend_fitfit_app/pages/user/editpasswordpage.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart';
-import 'package:dio/dio.dart';
 import 'dart:developer';
 import 'package:frontend_fitfit_app/service/model/request/user_edit_put_req.dart';
 import 'package:frontend_fitfit_app/service/api/user.dart';
@@ -15,6 +17,8 @@ import 'package:provider/provider.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image/image.dart' as img;
+import 'package:path/path.dart' as path;
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -33,22 +37,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
   var dateController = TextEditingController();
   DateTime selectedBirthDate = DateTime.now();
   String birthdayDateMe = "";
-
+  File? imageFile;
   void editUser() async {
+    await uploadImg();
     String birthdayStr = selectedBirthDate.toIso8601String();
     log(birthdayStr);
     String bStr = "${birthdayStr.split(".")[0]}z";
     DateTime birthdayDateTime = DateTime.parse(bStr);
     if (nameController.text == "" &&
         emailController.text == "" &&
-        dateController.text == "" && imgPick == "") {
-     Get.snackbar(
+        dateController.text == "" &&
+        imgPick == "") {
+      Get.snackbar(
         'ไม่มีการแก้ไขของข้อมูล', 'หากต้องการแก้ไขกรอกข้อมูล',
         backgroundColor: Colors.white, // Background color
         colorText: Colors.black,
-      ); 
+      );
     } else {
-       UserEditPutRequest editObj = UserEditPutRequest(
+      UserEditPutRequest editObj = UserEditPutRequest(
         name: nameController.text,
         birthday: birthdayDateTime,
         email: emailController.text,
@@ -88,15 +94,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
     user = context.read<AppData>().user;
     userService = context.read<AppData>().userService;
     loadData = loadDataAsync();
-     // "1990-12-23T00:00:00Z"
-   
+    // "1990-12-23T00:00:00Z"
   }
 
   loadDataAsync() async {
     var formatter = DateFormat.yMMMd();
     var dateInBuddhistCalendarFormat =
         formatter.formatInBuddhistCalendarThai(user.birthday!);
-   birthdayDateMe= dateInBuddhistCalendarFormat;
+    birthdayDateMe = dateInBuddhistCalendarFormat;
   }
 
   @override
@@ -106,20 +111,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
-            backgroundColor: Colors.black,
-            automaticallyImplyLeading: false,
-             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-              onPressed: () {
-                Get.back();
-              },
-            ),
-            ),
+          backgroundColor: Colors.black,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ),
         body: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 10),
-              child: (imgPick != "") ? profileImg() : profileNoImg(),
+              child: (imageFile != null) ? profileImg() : profileNoImg(),
             ),
             const SizedBox(height: 10),
             Text(
@@ -389,7 +394,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 padding: EdgeInsets.zero,
                 color: Colors.white,
                 onPressed: pickImage,
-                icon: const Icon(Icons.add),
+                icon: const Icon(Icons.edit),
               ),
             ))
       ],
@@ -412,7 +417,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ],
               shape: BoxShape.circle,
               image: DecorationImage(
-                  fit: BoxFit.cover, image: NetworkImage(imgPick))),
+                  fit: BoxFit.cover, image: FileImage(imageFile!))),
         ),
         Positioned(
             bottom: 0,
@@ -437,29 +442,60 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  // firebase
   void pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      var filePath = image.path;
-      var fileName = image.name;
-      if (filePath.isNotEmpty && fileName.isNotEmpty) {
-        var formData = FormData.fromMap({
-          'file': await MultipartFile.fromFile(
-            filePath,
-            filename: fileName,
-          )
-        });
 
-        var result = await Dio()
-            .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
-        if (result.statusCode == 201) {
-          log(result.data['fileUrl']);
-          setState(() {
-            imgPick = result.data['fileUrl'];
+    if (image != null) {
+      setState(() {
+        imageFile = File(image.path);
+      });
+    }
+  }
+
+//upload
+  Future<void> uploadImg() async {
+    if (imageFile != null) {
+      // Read the file as bytes
+      Uint8List imageBytes = await imageFile!.readAsBytes();
+
+      // Decode
+      img.Image? decodedImage = img.decodeImage(imageBytes);
+
+      if (decodedImage != null) {
+        // Encode
+        Uint8List base64ImgDecode =
+            Uint8List.fromList(img.encodeJpg(decodedImage));
+        // String base64Image = base64Encode(base64ImgDecode);
+        // log("$base64Image base64");
+
+        try {
+          FirebaseStorage storage = FirebaseStorage.instance;
+
+          String fileName = path.basename(imageFile!.path);
+          Reference ref = storage.ref().child('uploadsImg/$fileName');
+
+          // Upload the image bytes to Firebase
+          UploadTask uploadTask = ref.putData(base64ImgDecode);
+          await uploadTask.whenComplete(() async {
+            String downloadURL = await ref.getDownloadURL();
+            log('File uploaded at $downloadURL');
+            if (mounted) {
+              setState(() {
+                imgPick = downloadURL;
+              });
+              log("url $imgPick");
+            }
           });
+        } catch (e) {
+          log(e.toString());
         }
+      } else {
+        log('Failed to decode image');
       }
+    } else {
+      log('No image selected');
     }
   }
 }

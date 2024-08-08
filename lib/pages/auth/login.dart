@@ -276,11 +276,12 @@ class _LoginPageState extends State<LoginPage> {
             context.read<AppData>().user = res;
           }
           log('เข้าสู่ระบบ');
-        await GetStorage().write('user', res.toJson());
+          await GetStorage().write('user', res.toJson());
 
           Get.to(() => const Barbottom());
         } else {
-          Get.snackbar('เข้าสู่ระบบไม่สำเร็จ', 'กรุณากรอกข้อมูลให้ถูกต้อง อีเมลหรือรหัสผ่านผิด');
+          Get.snackbar('เข้าสู่ระบบไม่สำเร็จ',
+              'กรุณากรอกข้อมูลให้ถูกต้อง อีเมลหรือรหัสผ่านผิด');
         }
 
         // if (res.){

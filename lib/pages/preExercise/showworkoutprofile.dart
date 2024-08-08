@@ -7,8 +7,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/service/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/workoutProfile_get_res.dart'
     as GetWP;
-import 'package:frontend_fitfit_app/pages/barbottom.dart';
-import 'package:frontend_fitfit_app/pages/playlistAfterCreate/playlist_after_create.dart';
 import 'package:frontend_fitfit_app/pages/playlsit/edit_playlsitpage.dart';
 import 'package:frontend_fitfit_app/pages/playlsit/playlist_wp_page.dart';
 import 'package:frontend_fitfit_app/pages/playlsitMusic/playlsit_music_page.dart';
@@ -18,7 +16,6 @@ import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/api/workout_profile.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -254,29 +251,32 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
   }
 
   Widget getTextMusicName(List<GetWP.WorkoutMusictype> musicTypes) {
-    return Column(
-        // mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: musicTypes
-            .asMap()
-            .map((index, musicType) {
-              String text = musicType.musicType.name;
-              if (index != musicTypes.length - 1) {
-                text;
-              }
-              return MapEntry(
-                index,
-                Text(
-                  text,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical:10),
+      child: Column(
+          // mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: musicTypes
+              .asMap()
+              .map((index, musicType) {
+                String text = musicType.musicType.name;
+                if (index != musicTypes.length - 1) {
+                  text;
+                }
+                return MapEntry(
+                  index,
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-              );
-            })
-            .values
-            .toList());
+                );
+              })
+              .values
+              .toList()),
+    );
   }
 
   Widget list() {

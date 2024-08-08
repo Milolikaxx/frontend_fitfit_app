@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_detail_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_post_req.dart';
@@ -10,8 +11,10 @@ import 'package:frontend_fitfit_app/service/api/playlist_detail.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:path/path.dart' as path;
 
 // ignore: must_be_immutable
 class SavePlaylistPage extends StatefulWidget {
@@ -30,6 +33,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late PlaylistService playlsitService;
   late PlaylistDetailService playlsitDeService;
+  File? imageFile;
   @override
   void initState() {
     super.initState();
@@ -81,7 +85,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                       if (value == null || value.isEmpty) {
                         return 'กรุณากรอกชื่อเพลย์ลิสต์';
                       }
-      
+
                       return null;
                     },
                     decoration: const InputDecoration(
@@ -101,7 +105,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 40, bottom: 50),
-                  child: (imgPick != "") ? playlistImg() : noImg(),
+                  child: (imageFile != null) ? playlistImg() : noImg(),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
@@ -172,6 +176,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
   }
 
   Future<void> save() async {
+    await uploadImg();
     if (_formKey.currentState?.validate() ?? true) {
       if (imgPick == "") {
         PlaylsitPostRequest plObj = PlaylsitPostRequest(
@@ -201,10 +206,9 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-              // ignore: use_build_context_synchronously
+            // ignore: use_build_context_synchronously
             showDialog<String>(
                 context: context,
-               
                 builder: (BuildContext context) => AlertDialog(
                       title: const Text("สำเร็จ!"),
                       titleTextStyle: const TextStyle(
@@ -215,9 +219,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                       actions: [
                         ElevatedButton(
                           onPressed: () {
-                            Get.to(() => const Barbottom(
-                                  
-                                ));
+                            Get.to(() => const Barbottom());
                           },
                           style: ButtonStyle(
                             // minimumSize: MaterialStateProperty.all<Size>(
@@ -272,7 +274,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-               // ignore: use_build_context_synchronously
+            // ignore: use_build_context_synchronously
             showDialog<String>(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
@@ -366,7 +368,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
               borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               shape: BoxShape.rectangle,
               image: DecorationImage(
-                  fit: BoxFit.cover, image: NetworkImage(imgPick))),
+                  fit: BoxFit.cover, image: FileImage(imageFile!))),
         ),
         Positioned(
             bottom: 80, // Adjust this value to move the button up/down
@@ -391,37 +393,60 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
     );
   }
 
-  File? _image;
+  // firebase
   void pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
     if (image != null) {
       setState(() {
-        _image = File(image.path);
+        imageFile = File(image.path);
       });
-      try {
-        FirebaseStorage storage = FirebaseStorage.instance;
-        Reference ref = storage.ref().child('uploadsImg/${image.name}');
-        UploadTask uploadTask = ref.putFile(_image!);
-        await uploadTask.whenComplete(() async {
-          String downloadURL = await ref.getDownloadURL();
-          log('File uploaded at $downloadURL');
-          setState(() {
-            imgPick = downloadURL;
-          });
-        });
-      } catch (e) {
-        log(e.toString());
-      }
+    }
+  }
 
-      // var result = await Dio()
-      //     .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
-      // if (result.statusCode == 201) {
-      //   log(result.data['fileUrl']);
-      //   setState(() {
-      //     imgPick = result.data['fileUrl'];
-      //   });
-      // }
+//upload
+  Future<void> uploadImg() async {
+    if (imageFile != null) {
+      // Read the file as bytes
+      Uint8List imageBytes = await imageFile!.readAsBytes();
+
+      // Decode
+      img.Image? decodedImage = img.decodeImage(imageBytes);
+
+      if (decodedImage != null) {
+        // Encode
+        Uint8List base64ImgDecode =
+            Uint8List.fromList(img.encodeJpg(decodedImage));
+        // String base64Image = base64Encode(base64ImgDecode);
+        // log("$base64Image base64");
+
+        try {
+          FirebaseStorage storage = FirebaseStorage.instance;
+
+          String fileName = path.basename(imageFile!.path);
+          Reference ref = storage.ref().child('uploadsImg/$fileName');
+
+          // Upload the image bytes to Firebase
+          UploadTask uploadTask = ref.putData(base64ImgDecode);
+          await uploadTask.whenComplete(() async {
+            String downloadURL = await ref.getDownloadURL();
+            log('File uploaded at $downloadURL');
+            if (mounted) {
+              setState(() {
+                imgPick = downloadURL;
+              });
+              log("url $imgPick");
+            }
+          });
+        } catch (e) {
+          log(e.toString());
+        }
+      } else {
+        log('Failed to decode image');
+      }
+    } else {
+      log('No image selected');
     }
   }
 }
