@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlist_put_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
@@ -87,7 +88,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: 40,
+          horizontal: 50,
         ),
         child: Column(
           children: [
@@ -98,7 +99,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                   "โปรดใส่ชื่อเพลย์ลิสต์ของคุณ",
                   style: TextStyle(
                       color: Colors.white,
-                      fontSize: 22,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold),
                 ),
               ],
@@ -168,10 +169,11 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
 
   Widget noImg() {
     return Stack(
+      alignment: Alignment.center,
       children: [
         Container(
-          width: 300,
-          height: 200,
+          width: 250,
+          height: 250,
           decoration: BoxDecoration(
               // border: Border.all(width: 3, color: Colors.white),
               borderRadius: const BorderRadius.all(Radius.circular(8.0)),
@@ -182,8 +184,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                   image: NetworkImage(dePlaylist.imagePlaylist))),
         ),
         Positioned(
-            bottom: 80, // Adjust this value to move the button up/down
-            right: 130,
+         
             child: Container(
               height: 40,
               width: 40,
@@ -206,10 +207,11 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
 
   Widget playlistImg() {
     return Stack(
+       alignment: Alignment.center,
       children: [
         Container(
-          width: 300,
-          height: 200,
+           width: 250,
+          height: 250,
           decoration: BoxDecoration(
               // border: Border.all(width: 3, color: Colors.white),
               borderRadius: const BorderRadius.all(Radius.circular(8.0)),
@@ -218,8 +220,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                   fit: BoxFit.cover, image: FileImage(imageFile!))),
         ),
         Positioned(
-            bottom: 80, // Adjust this value to move the button up/down
-            right: 130,
+           
             child: Container(
               height: 40,
               width: 40,
@@ -240,16 +241,23 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
     );
   }
 
+  void showLoading() {
+    SmartDialog.showLoading(msg: "กำลังประมวลผล...");
+  }
+
+  void hideLoading() {
+    SmartDialog.dismiss();
+  }
+
   void edit() async {
-    await uploadImg();
-    if (imgPick == "" && namePlController.text == "") {
+    if (imageFile == null && namePlController.text == "") {
       Get.snackbar(
         'ไม่มีการแก้ไขของข้อมูล', 'หากต้องการแก้ไขกรอกข้อมูล',
         backgroundColor: Colors.white, // Background color
         colorText: Colors.black,
       );
     } else {
-      if (imgPick == "") {
+      if (imageFile == null) {
         // ignore: use_build_context_synchronously
         showDialog<String>(
             context: context,
@@ -282,6 +290,9 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
+                        showLoading();
+                        await uploadImg();
+                    
                         PlaylsitPutRequest editPl = PlaylsitPutRequest(
                             playlistName: namePlController.text == ""
                                 ? dePlaylist.playlistName
@@ -290,11 +301,11 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                         try {
                           int res = await playlsitService.editPlaylist(
                               widget.pid, editPl);
-                          if (res > 0) {
+                          if (res > 0) {   
+                             hideLoading();
                             log('แก้ไขเพลย์ลิสต์สำเร็จ');
                             Get.back();
-                            Get.back();
-                            loadDataAsync();
+                            Get.back(result: true);
                           } else {
                             log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
                           }
@@ -353,6 +364,9 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
+                          showLoading();
+                        await uploadImg();
+                    
                         PlaylsitPutRequest editPl = PlaylsitPutRequest(
                             playlistName: namePlController.text == ""
                                 ? dePlaylist.playlistName
@@ -363,9 +377,9 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                               dePlaylist.pid, editPl);
                           if (res > 0) {
                             log('แก้ไขเพลย์ลิสต์สำเร็จ');
-
+                            hideLoading();
                             Get.back();
-                            Get.back();
+                            Get.back(result: true);
                             loadDataAsync();
                           } else {
                             log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');

@@ -252,7 +252,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
 
   Widget getTextMusicName(List<GetWP.WorkoutMusictype> musicTypes) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical:10),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
           // mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -294,7 +294,7 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
       padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: InkWell(
         onTap: () {
-           Get.to(() => MusicPlaylistPage(pl.pid));
+          Get.to(() => MusicPlaylistPage(pl.pid));
         },
         child: Card(
           child: Container(
@@ -340,15 +340,20 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                       ),
                       Row(
                         children: [
-                          IconButton(onPressed: () {
-                             Get.to(() => PreExercisePage(pl.wpid, pl.pid));
-                          }, icon: const Icon(Icons.play_circle_fill_rounded,color: Colors.white,)),
+                          IconButton(
+                              onPressed: () {
+                                Get.to(() => PreExercisePage(pl.wpid, pl.pid));
+                              },
+                              icon: const Icon(
+                                Icons.play_circle_fill_rounded,
+                                color: Colors.white,
+                              )),
                           PopupMenuButton<Menu>(
                             icon: const Icon(
                               Icons.more_vert,
                               color: Colors.white,
                             ),
-                            onSelected: (Menu item) {
+                            onSelected: (Menu item) async {
                               switch (item) {
                                 case Menu.preview:
                                   log(pl.pid.toString());
@@ -361,7 +366,12 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                                   delPlaylist(pl.pid);
                                   break;
                                 case Menu.edit:
-                                  Get.to(() => EditPlaylistPage(pl.pid));
+                                  var res = await Get.to(
+                                      () => EditPlaylistPage(pl.pid));
+                                  if (res) {
+                                    await loadDataAsync();
+                                    setState(() {});
+                                  }
                                   break;
                               }
                             },
@@ -401,7 +411,6 @@ class _ShowWorkoutProfilePageState extends State<ShowWorkoutProfilePage> {
                           ),
                         ],
                       ),
-                      
                     ],
                   ),
                 ),

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/user/editpasswordpage.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
@@ -38,8 +39,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
   DateTime selectedBirthDate = DateTime.now();
   String birthdayDateMe = "";
   File? imageFile;
+  void showLoading() {
+    SmartDialog.showLoading(msg: "กำลังประมวลผล...");
+  }
+
+  void hideLoading() {
+    SmartDialog.dismiss();
+  }
+
   void editUser() async {
-    await uploadImg();
     String birthdayStr = selectedBirthDate.toIso8601String();
     log(birthdayStr);
     String bStr = "${birthdayStr.split(".")[0]}z";
@@ -47,43 +55,96 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (nameController.text == "" &&
         emailController.text == "" &&
         dateController.text == "" &&
-        imgPick == "") {
+        imageFile == null) {
       Get.snackbar(
         'ไม่มีการแก้ไขของข้อมูล', 'หากต้องการแก้ไขกรอกข้อมูล',
         backgroundColor: Colors.white, // Background color
         colorText: Colors.black,
       );
     } else {
-      UserEditPutRequest editObj = UserEditPutRequest(
-        name: nameController.text,
-        birthday: birthdayDateTime,
-        email: emailController.text,
-        imageProfile: imgPick,
-      );
-      try {
-        // ส่ง request ไปยังเซิร์ฟเวอร์และรอการตอบกลับ
-        UserLoginPostResponse res = await userService.edit(user.uid!, editObj);
+      // ignore: use_build_context_synchronously
+      showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: const Text("ยืนยันการแก้ไขเพลย์ลิสต์หรือไม่!"),
+                titleTextStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 20),
+                actionsOverflowButtonSpacing: 20,
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xFFF8721D)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "ยกเลิก",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      showLoading();
+                      await uploadImg();
 
-        // ตรวจสอบ response ที่ได้รับจากเซิร์ฟเวอร์
-        if (res.uid! > 0) {
-          log((_selectedDate).toString());
-          log(imgPick);
-          if (context.mounted) {
-            context.read<AppData>().user = res;
-          }
-          log('เข้าสู่ระบบ');
-          Get.to(() => const Barbottom(
-                initialIndex: 4,
+                      UserEditPutRequest editObj = UserEditPutRequest(
+                        name: nameController.text,
+                        birthday: birthdayDateTime,
+                        email: emailController.text,
+                        imageProfile: imgPick,
+                      );
+                      try {
+                        // ส่ง request ไปยังเซิร์ฟเวอร์และรอการตอบกลับ
+                        UserLoginPostResponse res =
+                            await userService.edit(user.uid!, editObj);
+                        // ตรวจสอบ response ที่ได้รับจากเซิร์ฟเวอร์
+                        if (res.uid! > 0) {
+                          log((_selectedDate).toString());
+                          log(imgPick);
+                          if (context.mounted) {
+                            context.read<AppData>().user = res;
+                          }
+                          log('เข้าสู่ระบบ');
+                          hideLoading();
+                          Get.to(() => const Barbottom(
+                                initialIndex: 4,
+                              ));
+                          log("Pass");
+                        } else if (res.uid == 0) {
+                          log("Not Pass");
+                        } else {
+                          log("Other");
+                        }
+                      } catch (e) {
+                        log("Error: $e");
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xFFF8721D)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "ยืนยัน",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ],
+                content: const Text("กรุณายืนยันการแก้ไข"),
               ));
-          log("Pass");
-        } else if (res.uid == 0) {
-          log("Not Pass");
-        } else {
-          log("Other");
-        }
-      } catch (e) {
-        log("Error: $e");
-      }
     }
   }
 
@@ -151,7 +212,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             color: Colors.white,
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -159,43 +220,59 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   editDataSet("อีเมล", "${user.email}", emailController),
                   Padding(
                     padding: const EdgeInsets.only(top: 10, bottom: 10),
-                    child: TextFormField(
-                      controller: dateController,
-                      style: const TextStyle(color: Colors.black),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'กรุณาเลือกวันเกิด';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(color: Colors.black, width: 2),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(color: Colors.black, width: 2),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-
-                          // label: const Text('วันเกิด'),
-                          hintText: 'วันเกิด $birthdayDateMe',
-                          hintStyle: const TextStyle(color: Colors.black),
-                          suffixIcon: const Padding(
-                            padding: EdgeInsets.all(15),
-                            child: FaIcon(
-                              FontAwesomeIcons.calendar,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            "วันเกิด",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                               color: Colors.black,
-                              size: 20,
                             ),
-                          )),
-                      readOnly:
-                          true, //set it true, so that user will not able to edit text
-                      onTap: () async {
-                        calendar();
-                      },
+                          ),
+                        ),
+                        TextFormField(
+                          controller: dateController,
+                          style: const TextStyle(color: Colors.black),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'กรุณาเลือกวันเกิด';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    color: Colors.black, width: 2),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    color: Colors.black, width: 2),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+
+                              // label: const Text('วันเกิด'),
+                              hintText: 'วันเกิด $birthdayDateMe',
+                              hintStyle: const TextStyle(color: Colors.black),
+                              suffixIcon: const Padding(
+                                padding: EdgeInsets.all(15),
+                                child: FaIcon(
+                                  FontAwesomeIcons.calendar,
+                                  color: Colors.black,
+                                  size: 20,
+                                ),
+                              )),
+                          readOnly:
+                              true, //set it true, so that user will not able to edit text
+                          onTap: () async {
+                            calendar();
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   Padding(
@@ -308,7 +385,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Text(
               title,
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),

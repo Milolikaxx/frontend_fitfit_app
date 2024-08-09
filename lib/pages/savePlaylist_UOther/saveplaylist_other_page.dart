@@ -196,7 +196,7 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
   }
 
   void _showLoading() {
-    SmartDialog.showLoading(msg: "Logging in...");
+    SmartDialog.showLoading(msg: "กำลังประมวลผล...");
   }
 
   void _hideLoading() {

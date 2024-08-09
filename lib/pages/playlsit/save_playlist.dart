@@ -57,7 +57,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 50),
           child: Form(
             key: _formKey,
             child: Column(
@@ -177,7 +177,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
   }
 
   void _showLoading() {
-    SmartDialog.showLoading(msg: "Logging in...");
+    SmartDialog.showLoading(msg: "กำลังประมวลผล...");
   }
 
   void _hideLoading() {
@@ -216,7 +216,6 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-           
           } else {
             log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
           }
@@ -224,7 +223,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
           log(e.toString());
         } finally {
           _hideLoading();
-           // ignore: use_build_context_synchronously
+          // ignore: use_build_context_synchronously
           showDialog<String>(
               context: context,
               builder: (BuildContext context) => AlertDialog(
@@ -288,50 +287,48 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                 log(e.toString());
               }
             }
-         
           } else {
             log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
-          } 
+          }
         } catch (e) {
           log(e.toString());
-        } finally 
-        {
-           _hideLoading();
-              // ignore: use_build_context_synchronously
-            showDialog<String>(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                      title: const Text("สำเร็จ!"),
-                      titleTextStyle: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontSize: 20),
-                      actionsOverflowButtonSpacing: 20,
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Get.to(() => const Barbottom());
-                          },
-                          style: ButtonStyle(
-                            // minimumSize: MaterialStateProperty.all<Size>(
-                            //     const Size(330, 50)),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                const Color(0xFFF8721D)),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
-                              ),
+        } finally {
+          _hideLoading();
+          // ignore: use_build_context_synchronously
+          showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                    title: const Text("สำเร็จ!"),
+                    titleTextStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 20),
+                    actionsOverflowButtonSpacing: 20,
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Get.to(() => const Barbottom());
+                        },
+                        style: ButtonStyle(
+                          // minimumSize: MaterialStateProperty.all<Size>(
+                          //     const Size(330, 50)),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color(0xFFF8721D)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
                             ),
                           ),
-                          child: const Text(
-                            "ตกลง",
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
                         ),
-                      ],
-                      content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
-                    ));
+                        child: const Text(
+                          "ตกลง",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                    content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
+                  ));
         }
       }
     }
@@ -339,10 +336,11 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
 
   Widget noImg() {
     return Stack(
+      alignment: Alignment.center,
       children: [
         Container(
-          width: 300,
-          height: 200,
+          width: 250,
+          height: 250,
           decoration: const BoxDecoration(
               // border: Border.all(width: 3, color: Colors.white),
               borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -353,8 +351,7 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
                   image: AssetImage('assets/images/1.jpg'))),
         ),
         Positioned(
-            bottom: 80, // Adjust this value to move the button up/down
-            right: 130,
+      
             child: Container(
               height: 40,
               width: 40,
@@ -377,10 +374,11 @@ class _SavePlaylistPageState extends State<SavePlaylistPage> {
 
   Widget playlistImg() {
     return Stack(
+      alignment: Alignment.center,
       children: [
         Container(
-          width: 300,
-          height: 200,
+          width: 250,
+          height: 250,
           decoration: BoxDecoration(
               // border: Border.all(width: 3, color: Colors.white),
               borderRadius: const BorderRadius.all(Radius.circular(8.0)),

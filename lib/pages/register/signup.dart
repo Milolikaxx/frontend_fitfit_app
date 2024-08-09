@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:frontend_fitfit_app/service/model/request/user_login%20google_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/user_register_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
@@ -22,6 +23,7 @@ import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image/image.dart' as img;
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 
 class SignUpPage extends StatefulWidget {
@@ -325,6 +327,14 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  void showLoading() {
+    SmartDialog.showLoading(msg: "กำลังประมวลผล...");
+  }
+
+  void hideLoading() {
+    SmartDialog.dismiss();
+  }
+
   void signUp() async {
     String birthdayStr = selectedBirthDate.toIso8601String();
     log(birthdayStr);
@@ -334,7 +344,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
     if (_formKey.currentState?.validate() ?? true) {
       if (passwordController.text == confirmPasswordController.text) {
-        // ignore: unrelated_type_equality_checks
+        showLoading();
         if (imageFile != null) {
           await uploadImg();
           log("img : $imgPick");
@@ -349,6 +359,7 @@ class _SignUpPageState extends State<SignUpPage> {
           try {
             int res = await userService.register(registerObj);
             if (res == 1) {
+              hideLoading();
               // ignore: use_build_context_synchronously
               showDialog<String>(
                   context: context,
@@ -408,6 +419,7 @@ class _SignUpPageState extends State<SignUpPage> {
           try {
             int res = await userService.register(registerObj);
             if (res == 1) {
+               hideLoading();
               // ignore: use_build_context_synchronously
               showDialog<String>(
                   context: context,

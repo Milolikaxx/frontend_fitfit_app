@@ -1,10 +1,10 @@
 import 'dart:developer';
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:frontend_fitfit_app/service/model/request/user_login%20google_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/user_login_post_req.dart';
-import 'package:frontend_fitfit_app/service/model/request/user_register_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
 import 'package:frontend_fitfit_app/pages/register/signup.dart';
@@ -300,10 +300,11 @@ class _LoginPageState extends State<LoginPage> {
       } finally {
         _hideLoading();
       }
-    } else {
-      Get.snackbar('ข้อมูลไม่ครบหรือไม่ถูกต้อง',
-          'กรุณากรอกข้อมูลให้ครบและกรอกข้อมูลให้ถูกต้อง');
-    }
+     } 
+     //else {
+    //   Get.snackbar('ข้อมูลไม่ครบหรือไม่ถูกต้อง',
+    //       'กรุณากรอกข้อมูลให้ครบและกรอกข้อมูลให้ถูกต้อง');
+    // }
   }
 
   void signIn() async {
