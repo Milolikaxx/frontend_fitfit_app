@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:frontend_fitfit_app/service/model/request/exercise_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/exercise_searchbyday_get_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/exercise_searchbymonth_get_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/exercise_searchbydat_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/exercise_searchbymonth_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/exercise_showbyday_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/exercise_showbymonth_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/historyexercise_get_res.dart';
@@ -36,4 +38,8 @@ abstract class HistoryExerciseService {
 
   @GET("/exercise/getmonth")
   Future<List<ExerciseLast12MonthGetResponse>> getlast12month();
+
+  @GET("/exercise/findbymonth")
+  Future<List<ExerciseSearchByMonthGetResponse>> searchByMonth(
+      @Body() ExerciseSearchByMonthGetRequest searchByMonth);
 }

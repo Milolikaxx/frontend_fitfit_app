@@ -2,7 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend_fitfit_app/service/model/request/exercise_searchbyday_get_req.dart';
+import 'package:frontend_fitfit_app/service/model/request/exercise_searchbymonth_get_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/exercise_searchbydat_get_res.dart';
+import 'package:frontend_fitfit_app/service/model/response/exercise_searchbymonth_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/exercise_showbyday_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/exercise_showbymonth_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
@@ -44,6 +46,7 @@ class _ExercisePageState extends State<ExercisePage> {
   late List<ExerciseShowbydayGetResponse> last7day = [];
   late List<ExerciseLast12MonthGetResponse> last12month = [];
   late List<ExerciseSearchbydayGetResponse> searchDay = [];
+  late List<ExerciseSearchByMonthGetResponse> searchMonth = [];
   late String day;
   late String month12;
   // late String day;
@@ -83,7 +86,7 @@ class _ExercisePageState extends State<ExercisePage> {
         week.add(WeekData(day, dayAmount));
       }
       for (var item in last12month) {
-        month12 = item.monthName;
+        month12 = item.monthNumber.toString();
         int monthAmount = item.exerciseCount;
         log(month12);
         log(monthAmount.toString());
@@ -178,31 +181,65 @@ class _ExercisePageState extends State<ExercisePage> {
           child: musicGraph(),
         ),
         showDateMonth(),
-        Expanded(
-          child: RefreshIndicator(
-              color: const Color(0xFFF8721D), // เปลี่ยนสีของ RefreshIndicator
-              onRefresh: () async {
-                setState(() {
-                  loadData = loadDataAsync();
-                });
-              },
-              child: searchDay.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: searchDay.length,
-                      itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 8),
-                        child: historyCard(searchDay[index]),
-                      ),
-                    )
-                  : const Center(
-                      child: Text(
-                        'ยังไม่มีประวัติการออกกำลังกาย',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    )),
-        )
+        // Conditionally display either bodyDay() or bodyMonth()
+        isSelected[0] ? bodyDay() : bodyMonth(),
       ],
+    );
+  }
+
+  Widget bodyDay() {
+    return Expanded(
+      child: RefreshIndicator(
+        color: const Color(0xFFF8721D), // เปลี่ยนสีของ RefreshIndicator
+        onRefresh: () async {
+          setState(() {
+            loadData = loadDataAsync();
+          });
+        },
+        child: searchDay.isNotEmpty
+            ? ListView.builder(
+                itemCount: searchDay.length,
+                itemBuilder: (context, index) => Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: historyCardDay(searchDay[index]),
+                ),
+              )
+            : const Center(
+                child: Text(
+                  'ยังไม่มีประวัติการออกกำลังกาย',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget bodyMonth() {
+    return Expanded(
+      child: RefreshIndicator(
+        color: const Color(0xFFF8721D), // เปลี่ยนสีของ RefreshIndicator
+        onRefresh: () async {
+          setState(() {
+            loadData = loadDataAsync();
+          });
+        },
+        child: searchMonth.isNotEmpty
+            ? ListView.builder(
+                itemCount: searchMonth.length,
+                itemBuilder: (context, index) => Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: historyCardMonth(searchMonth[index]),
+                ),
+              )
+            : const Center(
+                child: Text(
+                  'ยังไม่มีประวัติการออกกำลังกาย',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              ),
+      ),
     );
   }
 
@@ -258,6 +295,7 @@ class _ExercisePageState extends State<ExercisePage> {
                     onPointTap: (ChartPointDetails details) {
                       setState(() {
                         selectedData = month[details.pointIndex!].month;
+                        searchByMonth(selectedData);
                       });
                     },
                   ),
@@ -277,7 +315,7 @@ class _ExercisePageState extends State<ExercisePage> {
     );
   }
 
-  Widget historyCard(ExerciseSearchbydayGetResponse day) {
+  Widget historyCardDay(ExerciseSearchbydayGetResponse day) {
     return InkWell(
       onTap: () {
         log(day.playlistName.toString());
@@ -320,6 +358,49 @@ class _ExercisePageState extends State<ExercisePage> {
     );
   }
 
+  Widget historyCardMonth(ExerciseSearchByMonthGetResponse month) {
+    return InkWell(
+      onTap: () {
+        log(month.playlistName.toString());
+      },
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.orange,
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            child: SizedBox(
+              height: 100.0,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "ชื่อ : ${month.playlistName}", // แสดงชื่อ playlist
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Text(
+                      "ระยะเวลา : ${month.durationEx}", // แสดงชื่อ playlist
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Text(
+                      month.exerciseType, // แสดงชื่อ playlist
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   searchByDay(String day) async {
     try {
       DateTime dateTime = DateTime.parse(day);
@@ -331,6 +412,25 @@ class _ExercisePageState extends State<ExercisePage> {
           await hisExercise.searchByday(objDay);
       setState(() {
         searchDay = results;
+      });
+    } catch (e) {
+      log("Error ===> [ $e ]");
+    }
+  }
+
+  searchByMonth(String month) async {
+    log("Month ==================> [ $month ]");
+    try {
+      // DateTime dateTime = DateTime.parse(day);
+      ExerciseSearchByMonthGetRequest objMonth =
+          ExerciseSearchByMonthGetRequest(
+        numMonth: month,
+      );
+
+      List<ExerciseSearchByMonthGetResponse> results =
+          await hisExercise.searchByMonth(objMonth);
+      setState(() {
+        searchMonth = results;
       });
     } catch (e) {
       log("Error ===> [ $e ]");
