@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:frontend_fitfit_app/service/model/request/user_login%20google_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/user_register_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
@@ -22,6 +23,8 @@ import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image/image.dart' as img;
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -44,6 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime selectedBirthDate = DateTime.now();
   late UserService userService;
+  File? imageFile;
   List<String> scopes = <String>[
     'email',
   ];
@@ -87,7 +91,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
-                      child: (imgPick != "") ? profileImg() : profileNoImg(),
+                      child:
+                          (imageFile != null) ? profileImg() : profileNoImg(),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 15, bottom: 10),
@@ -322,16 +327,27 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  void showLoading() {
+    SmartDialog.showLoading(msg: "กำลังประมวลผล...");
+  }
+
+  void hideLoading() {
+    SmartDialog.dismiss();
+  }
+
   void signUp() async {
     String birthdayStr = selectedBirthDate.toIso8601String();
     log(birthdayStr);
     String bStr = "${birthdayStr.split(".")[0]}z";
     DateTime birthdayDateTime = DateTime.parse(bStr);
     log(birthdayDateTime.toIso8601String());
-    log(imgPick);
+
     if (_formKey.currentState?.validate() ?? true) {
       if (passwordController.text == confirmPasswordController.text) {
-        if (imgPick != "") {
+        showLoading();
+        if (imageFile != null) {
+          await uploadImg();
+          log("img : $imgPick");
           UserRegisterPostRequest registerObj = UserRegisterPostRequest(
             name: nameController.text,
             birthday: birthdayDateTime,
@@ -343,6 +359,7 @@ class _SignUpPageState extends State<SignUpPage> {
           try {
             int res = await userService.register(registerObj);
             if (res == 1) {
+              hideLoading();
               // ignore: use_build_context_synchronously
               showDialog<String>(
                   context: context,
@@ -402,6 +419,7 @@ class _SignUpPageState extends State<SignUpPage> {
           try {
             int res = await userService.register(registerObj);
             if (res == 1) {
+               hideLoading();
               // ignore: use_build_context_synchronously
               showDialog<String>(
                   context: context,
@@ -514,7 +532,7 @@ class _SignUpPageState extends State<SignUpPage> {
               shape: BoxShape.circle,
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: NetworkImage(imgPick),
+                image: FileImage(imageFile!),
               )),
         ),
         Positioned(
@@ -541,27 +559,59 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   // firebase
-  String base64Image = "";
   void pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      File imageFile = File(image.path);
+      setState(() {
+        imageFile = File(image.path);
+      });
+    }
+  }
 
-      // Read and resize the image
-      img.Image? originalImage =
-          img.decodeImage(await imageFile!.readAsBytes());
-      img.Image resizedImage =
-          img.copyResize(originalImage!, width: 300); // Resize to 300px width
+//upload
+  Future<void> uploadImg() async {
+    if (imageFile != null) {
+      // Read the file as bytes
+      Uint8List imageBytes = await imageFile!.readAsBytes();
 
-      // Convert image to base64
-      // Convert the resized image to base64
-      Uint8List decodedBytes = Uint8List.fromList(img.encodeJpg(resizedImage));
-      String base64Image = base64Encode(decodedBytes);
-      log("$base64Image base64");
-      
-   
+      // Decode
+      img.Image? decodedImage = img.decodeImage(imageBytes);
+
+      if (decodedImage != null) {
+        // Encode
+        Uint8List base64ImgDecode =
+            Uint8List.fromList(img.encodeJpg(decodedImage));
+        // String base64Image = base64Encode(base64ImgDecode);
+        // log("$base64Image base64");
+
+        try {
+          FirebaseStorage storage = FirebaseStorage.instance;
+
+          String fileName = path.basename(imageFile!.path);
+          Reference ref = storage.ref().child('uploadsImg/$fileName');
+
+          // Upload the image bytes to Firebase
+          UploadTask uploadTask = ref.putData(base64ImgDecode);
+          await uploadTask.whenComplete(() async {
+            String downloadURL = await ref.getDownloadURL();
+            log('File uploaded at $downloadURL');
+            if (mounted) {
+              setState(() {
+                imgPick = downloadURL;
+              });
+              log("url $imgPick");
+            }
+          });
+        } catch (e) {
+          log(e.toString());
+        }
+      } else {
+        log('Failed to decode image');
+      }
+    } else {
+      log('No image selected');
     }
   }
 
@@ -639,7 +689,7 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  // void pickImage() async {
+  // void pickImageAndUp() async {
   //   final ImagePicker picker = ImagePicker();
   //   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
   //   if (image != null) {

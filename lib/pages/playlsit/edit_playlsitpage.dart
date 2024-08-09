@@ -1,15 +1,19 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlist_put_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:path/path.dart' as path;
 
 // ignore: must_be_immutable
 class EditPlaylistPage extends StatefulWidget {
@@ -27,6 +31,8 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
   late PlaylistService playlsitService;
   late PlaylistWithWorkoutGetResponse dePlaylist;
   late Future<void> loadData;
+
+  File? imageFile;
   @override
   void initState() {
     super.initState();
@@ -82,7 +88,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: 40,
+          horizontal: 50,
         ),
         child: Column(
           children: [
@@ -93,7 +99,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                   "โปรดใส่ชื่อเพลย์ลิสต์ของคุณ",
                   style: TextStyle(
                       color: Colors.white,
-                      fontSize: 22,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold),
                 ),
               ],
@@ -126,7 +132,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 40, bottom: 50),
-              child: (imgPick != "") ? playlistImg() : noImg(),
+              child: (imageFile != null) ? playlistImg() : noImg(),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
@@ -136,13 +142,12 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                   ElevatedButton(
                     onPressed: edit,
                     style: ButtonStyle(
-                      minimumSize: MaterialStateProperty.all<Size>(
-                          const Size(300, 50)),
+                      minimumSize:
+                          MaterialStateProperty.all<Size>(const Size(300, 50)),
                       backgroundColor: MaterialStateProperty.all<Color>(
                           const Color(0xFFF8721D)),
                       // textStyle: MaterialStateProperty.all(TextStyle(fontSize: 18, color: Colors.white)),
-                      shape:
-                          MaterialStateProperty.all<RoundedRectangleBorder>(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -164,10 +169,11 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
 
   Widget noImg() {
     return Stack(
+      alignment: Alignment.center,
       children: [
         Container(
-          width: 300,
-          height: 200,
+          width: 250,
+          height: 250,
           decoration: BoxDecoration(
               // border: Border.all(width: 3, color: Colors.white),
               borderRadius: const BorderRadius.all(Radius.circular(8.0)),
@@ -178,8 +184,7 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                   image: NetworkImage(dePlaylist.imagePlaylist))),
         ),
         Positioned(
-            bottom: 80, // Adjust this value to move the button up/down
-            right: 130,
+         
             child: Container(
               height: 40,
               width: 40,
@@ -202,20 +207,20 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
 
   Widget playlistImg() {
     return Stack(
+       alignment: Alignment.center,
       children: [
         Container(
-          width: 300,
-          height: 200,
+           width: 250,
+          height: 250,
           decoration: BoxDecoration(
               // border: Border.all(width: 3, color: Colors.white),
               borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               shape: BoxShape.rectangle,
               image: DecorationImage(
-                  fit: BoxFit.cover, image: NetworkImage(imgPick))),
+                  fit: BoxFit.cover, image: FileImage(imageFile!))),
         ),
         Positioned(
-            bottom: 80, // Adjust this value to move the button up/down
-            right: 130,
+           
             child: Container(
               height: 40,
               width: 40,
@@ -236,49 +241,23 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
     );
   }
 
-  File? _image;
-  void pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _image = File(image.path);
-      });
-      try {
-        FirebaseStorage storage = FirebaseStorage.instance;
-        Reference ref = storage.ref().child('uploadsImg/${image.name}');
-        UploadTask uploadTask = ref.putFile(_image!);
-        await uploadTask.whenComplete(() async {
-          String downloadURL = await ref.getDownloadURL();
-          log('File uploaded at $downloadURL');
-          setState(() {
-            imgPick = downloadURL;
-          });
-        });
-      } catch (e) {
-        log(e.toString());
-      }
+  void showLoading() {
+    SmartDialog.showLoading(msg: "กำลังประมวลผล...");
+  }
 
-      // var result = await Dio()
-      //     .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
-      // if (result.statusCode == 201) {
-      //   log(result.data['fileUrl']);
-      //   setState(() {
-      //     imgPick = result.data['fileUrl'];
-      //   });
-      // }
-    }
+  void hideLoading() {
+    SmartDialog.dismiss();
   }
 
   void edit() async {
-    if (imgPick == "" && namePlController.text == "") {
+    if (imageFile == null && namePlController.text == "") {
       Get.snackbar(
         'ไม่มีการแก้ไขของข้อมูล', 'หากต้องการแก้ไขกรอกข้อมูล',
         backgroundColor: Colors.white, // Background color
         colorText: Colors.black,
       );
     } else {
-      if (imgPick == "") {
+      if (imageFile == null) {
         // ignore: use_build_context_synchronously
         showDialog<String>(
             context: context,
@@ -311,6 +290,9 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
+                        showLoading();
+                        await uploadImg();
+                    
                         PlaylsitPutRequest editPl = PlaylsitPutRequest(
                             playlistName: namePlController.text == ""
                                 ? dePlaylist.playlistName
@@ -319,11 +301,11 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                         try {
                           int res = await playlsitService.editPlaylist(
                               widget.pid, editPl);
-                          if (res > 0) {
+                          if (res > 0) {   
+                             hideLoading();
                             log('แก้ไขเพลย์ลิสต์สำเร็จ');
-                            Get.until((route) => Get.isOverlaysClosed);
                             Get.back();
-                            Get.back();
+                            Get.back(result: true);
                           } else {
                             log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
                           }
@@ -382,6 +364,9 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
+                          showLoading();
+                        await uploadImg();
+                    
                         PlaylsitPutRequest editPl = PlaylsitPutRequest(
                             playlistName: namePlController.text == ""
                                 ? dePlaylist.playlistName
@@ -392,9 +377,10 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
                               dePlaylist.pid, editPl);
                           if (res > 0) {
                             log('แก้ไขเพลย์ลิสต์สำเร็จ');
-                            Get.until((route) => Get.isOverlaysClosed);
+                            hideLoading();
                             Get.back();
-                            Get.back();
+                            Get.back(result: true);
+                            loadDataAsync();
                           } else {
                             log('แก้ไขเพลย์ลิสต์ไม่สำเร็จ');
                           }
@@ -424,5 +410,60 @@ class _EditPlaylistPageState extends State<EditPlaylistPage> {
     }
   }
 
- 
+  // firebase
+  void pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        imageFile = File(image.path);
+      });
+    }
+  }
+
+//upload
+  Future<void> uploadImg() async {
+    if (imageFile != null) {
+      // Read the file as bytes
+      Uint8List imageBytes = await imageFile!.readAsBytes();
+
+      // Decode
+      img.Image? decodedImage = img.decodeImage(imageBytes);
+
+      if (decodedImage != null) {
+        // Encode
+        Uint8List base64ImgDecode =
+            Uint8List.fromList(img.encodeJpg(decodedImage));
+        // String base64Image = base64Encode(base64ImgDecode);
+        // log("$base64Image base64");
+
+        try {
+          FirebaseStorage storage = FirebaseStorage.instance;
+
+          String fileName = path.basename(imageFile!.path);
+          Reference ref = storage.ref().child('uploadsImg/$fileName');
+
+          // Upload the image bytes to Firebase
+          UploadTask uploadTask = ref.putData(base64ImgDecode);
+          await uploadTask.whenComplete(() async {
+            String downloadURL = await ref.getDownloadURL();
+            log('File uploaded at $downloadURL');
+            if (mounted) {
+              setState(() {
+                imgPick = downloadURL;
+              });
+              log("url $imgPick");
+            }
+          });
+        } catch (e) {
+          log(e.toString());
+        }
+      } else {
+        log('Failed to decode image');
+      }
+    } else {
+      log('No image selected');
+    }
+  }
 }

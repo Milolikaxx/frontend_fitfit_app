@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend_fitfit_app/service/api/history_exercise.dart';
@@ -9,10 +8,9 @@ import 'package:frontend_fitfit_app/pages/playMusic/play_musicpage.dart';
 import 'package:frontend_fitfit_app/service/api/playlist.dart';
 import 'package:get/get.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
-import 'package:intl/intl.dart';
-
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
+
 
 // ignore: must_be_immutable
 class PreExercisePage extends StatefulWidget {

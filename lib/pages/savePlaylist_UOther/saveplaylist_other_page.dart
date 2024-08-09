@@ -1,5 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_detail_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/playlsit_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/request/workoutMusicType_post_req.dart';
@@ -17,6 +21,8 @@ import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:image/image.dart' as img;
+import 'package:path/path.dart' as path;
 
 // ignore: must_be_immutable
 class SavePlaylistOtherPage extends StatefulWidget {
@@ -37,6 +43,7 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
   late UserLoginPostResponse user;
   late WorkoutProfileService wpService;
   late WorkoutMusicTypeService wpMusictypeService;
+  File? imageFile;
   @override
   void initState() {
     super.initState();
@@ -118,7 +125,7 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 40, bottom: 50),
-                  child: (imgPick != "") ? playlistImg() : noImg(),
+                  child: (imageFile != null) ? playlistImg() : noImg(),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
@@ -188,6 +195,14 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
     );
   }
 
+  void _showLoading() {
+    SmartDialog.showLoading(msg: "กำลังประมวลผล...");
+  }
+
+  void _hideLoading() {
+    SmartDialog.dismiss();
+  }
+
   Future<void> save() async {
     if (_formKey.currentState?.validate() ?? true) {
       WorkoutProfilePostRequest wpObj = WorkoutProfilePostRequest(
@@ -195,6 +210,8 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
           levelExercise: widget.profile.levelExercise,
           duration: widget.profile.duration,
           exerciseType: widget.profile.exerciseType);
+      _showLoading();
+
       try {
         int res = await wpService.saveWP(wpObj);
         if (res != 0) {
@@ -241,43 +258,6 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
                     log(e.toString());
                   }
                 }
-                // ignore: use_build_context_synchronously
-                showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                          title: const Text("สำเร็จ!"),
-                          titleTextStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontSize: 20),
-                          actionsOverflowButtonSpacing: 20,
-                          actions: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Get.to(() => const Barbottom());
-                              },
-                              style: ButtonStyle(
-                                // minimumSize: MaterialStateProperty.all<Size>(
-                                //     const Size(330, 50)),
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        const Color(0xFFF8721D)),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18),
-                                  ),
-                                ),
-                              ),
-                              child: const Text(
-                                "ตกลง",
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.white),
-                              ),
-                            ),
-                          ],
-                          content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
-                        ));
               } else {
                 log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
               }
@@ -311,43 +291,6 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
                     log(e.toString());
                   }
                 }
-                // ignore: use_build_context_synchronously
-                showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                          title: const Text("สำเร็จ!"),
-                          titleTextStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontSize: 20),
-                          actionsOverflowButtonSpacing: 20,
-                          actions: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Get.to(() => const Barbottom());
-                              },
-                              style: ButtonStyle(
-                                // minimumSize: MaterialStateProperty.all<Size>(
-                                //     const Size(330, 50)),
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        const Color(0xFFF8721D)),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18),
-                                  ),
-                                ),
-                              ),
-                              child: const Text(
-                                "ตกลง",
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.white),
-                              ),
-                            ),
-                          ],
-                          content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
-                        ));
               } else {
                 log('เพิ่มเพลย์ลิสต์ไม่สำเร็จ');
               }
@@ -358,6 +301,43 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
         }
       } catch (e) {
         log(e.toString());
+      } finally {
+        _hideLoading();
+        // ignore: use_build_context_synchronously
+        showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: const Text("สำเร็จ!"),
+                  titleTextStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20),
+                  actionsOverflowButtonSpacing: 20,
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Get.to(() => const Barbottom());
+                      },
+                      style: ButtonStyle(
+                        // minimumSize: MaterialStateProperty.all<Size>(
+                        //     const Size(330, 50)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFFF8721D)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        "ตกลง",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                  content: const Text("เพิ่มเพลย์ลิสต์สำเร็จ"),
+                ));
       }
     }
   }
@@ -411,7 +391,7 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
               borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               shape: BoxShape.rectangle,
               image: DecorationImage(
-                  fit: BoxFit.cover, image: NetworkImage(imgPick))),
+                  fit: BoxFit.cover, image: FileImage(imageFile!))),
         ),
         Positioned(
             bottom: 80, // Adjust this value to move the button up/down
@@ -436,29 +416,60 @@ class _SavePlaylistOtherPageState extends State<SavePlaylistOtherPage> {
     );
   }
 
+  // firebase
   void pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      var filePath = image.path;
-      var fileName = image.name;
-      if (filePath.isNotEmpty && fileName.isNotEmpty) {
-        var formData = FormData.fromMap({
-          'file': await MultipartFile.fromFile(
-            filePath,
-            filename: fileName,
-          )
-        });
 
-        var result = await Dio()
-            .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
-        if (result.statusCode == 201) {
-          log(result.data['fileUrl']);
-          setState(() {
-            imgPick = result.data['fileUrl'];
+    if (image != null) {
+      setState(() {
+        imageFile = File(image.path);
+      });
+    }
+  }
+
+//upload
+  Future<void> uploadImg() async {
+    if (imageFile != null) {
+      // Read the file as bytes
+      Uint8List imageBytes = await imageFile!.readAsBytes();
+
+      // Decode
+      img.Image? decodedImage = img.decodeImage(imageBytes);
+
+      if (decodedImage != null) {
+        // Encode
+        Uint8List base64ImgDecode =
+            Uint8List.fromList(img.encodeJpg(decodedImage));
+        // String base64Image = base64Encode(base64ImgDecode);
+        // log("$base64Image base64");
+
+        try {
+          FirebaseStorage storage = FirebaseStorage.instance;
+
+          String fileName = path.basename(imageFile!.path);
+          Reference ref = storage.ref().child('uploadsImg/$fileName');
+
+          // Upload the image bytes to Firebase
+          UploadTask uploadTask = ref.putData(base64ImgDecode);
+          await uploadTask.whenComplete(() async {
+            String downloadURL = await ref.getDownloadURL();
+            log('File uploaded at $downloadURL');
+            if (mounted) {
+              setState(() {
+                imgPick = downloadURL;
+              });
+              log("url $imgPick");
+            }
           });
+        } catch (e) {
+          log(e.toString());
         }
+      } else {
+        log('Failed to decode image');
       }
+    } else {
+      log('No image selected');
     }
   }
 }

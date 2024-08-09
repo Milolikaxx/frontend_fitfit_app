@@ -1,12 +1,15 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:frontend_fitfit_app/pages/barbottom.dart';
-import 'package:frontend_fitfit_app/pages/user/accountpage.dart';
 import 'package:frontend_fitfit_app/pages/user/editpasswordpage.dart';
 import 'package:frontend_fitfit_app/service/provider/appdata.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart';
-import 'package:dio/dio.dart';
 import 'dart:developer';
 import 'package:frontend_fitfit_app/service/model/request/user_edit_put_req.dart';
 import 'package:frontend_fitfit_app/service/api/user.dart';
@@ -15,6 +18,8 @@ import 'package:provider/provider.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
 import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image/image.dart' as img;
+import 'package:path/path.dart' as path;
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -33,6 +38,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   var dateController = TextEditingController();
   DateTime selectedBirthDate = DateTime.now();
   String birthdayDateMe = "";
+  File? imageFile;
+  void showLoading() {
+    SmartDialog.showLoading(msg: "กำลังประมวลผล...");
+  }
+
+  void hideLoading() {
+    SmartDialog.dismiss();
+  }
 
   void editUser() async {
     String birthdayStr = selectedBirthDate.toIso8601String();
@@ -41,43 +54,97 @@ class _EditProfilePageState extends State<EditProfilePage> {
     DateTime birthdayDateTime = DateTime.parse(bStr);
     if (nameController.text == "" &&
         emailController.text == "" &&
-        dateController.text == "" && imgPick == "") {
-     Get.snackbar(
+        dateController.text == "" &&
+        imageFile == null) {
+      Get.snackbar(
         'ไม่มีการแก้ไขของข้อมูล', 'หากต้องการแก้ไขกรอกข้อมูล',
         backgroundColor: Colors.white, // Background color
         colorText: Colors.black,
-      ); 
-    } else {
-       UserEditPutRequest editObj = UserEditPutRequest(
-        name: nameController.text,
-        birthday: birthdayDateTime,
-        email: emailController.text,
-        imageProfile: imgPick,
       );
-      try {
-        // ส่ง request ไปยังเซิร์ฟเวอร์และรอการตอบกลับ
-        UserLoginPostResponse res = await userService.edit(user.uid!, editObj);
+    } else {
+      // ignore: use_build_context_synchronously
+      showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: const Text("ยืนยันการแก้ไขเพลย์ลิสต์หรือไม่!"),
+                titleTextStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 20),
+                actionsOverflowButtonSpacing: 20,
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xFFF8721D)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "ยกเลิก",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      showLoading();
+                      await uploadImg();
 
-        // ตรวจสอบ response ที่ได้รับจากเซิร์ฟเวอร์
-        if (res.uid! > 0) {
-          log((_selectedDate).toString());
-          log(imgPick);
-          if (context.mounted) {
-            context.read<AppData>().user = res;
-          }
-          log('เข้าสู่ระบบ');
-          Get.to(() => const Barbottom(
-                initialIndex: 4,
+                      UserEditPutRequest editObj = UserEditPutRequest(
+                        name: nameController.text,
+                        birthday: birthdayDateTime,
+                        email: emailController.text,
+                        imageProfile: imgPick,
+                      );
+                      try {
+                        // ส่ง request ไปยังเซิร์ฟเวอร์และรอการตอบกลับ
+                        UserLoginPostResponse res =
+                            await userService.edit(user.uid!, editObj);
+                        // ตรวจสอบ response ที่ได้รับจากเซิร์ฟเวอร์
+                        if (res.uid! > 0) {
+                          log((_selectedDate).toString());
+                          log(imgPick);
+                          if (context.mounted) {
+                            context.read<AppData>().user = res;
+                          }
+                          log('เข้าสู่ระบบ');
+                          hideLoading();
+                          Get.to(() => const Barbottom(
+                                initialIndex: 4,
+                              ));
+                          log("Pass");
+                        } else if (res.uid == 0) {
+                          log("Not Pass");
+                        } else {
+                          log("Other");
+                        }
+                      } catch (e) {
+                        log("Error: $e");
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xFFF8721D)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "ยืนยัน",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ],
+                content: const Text("กรุณายืนยันการแก้ไข"),
               ));
-          log("Pass");
-        } else if (res.uid == 0) {
-          log("Not Pass");
-        } else {
-          log("Other");
-        }
-      } catch (e) {
-        log("Error: $e");
-      }
     }
   }
 
@@ -88,15 +155,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
     user = context.read<AppData>().user;
     userService = context.read<AppData>().userService;
     loadData = loadDataAsync();
-     // "1990-12-23T00:00:00Z"
-   
+    // "1990-12-23T00:00:00Z"
   }
 
   loadDataAsync() async {
     var formatter = DateFormat.yMMMd();
     var dateInBuddhistCalendarFormat =
         formatter.formatInBuddhistCalendarThai(user.birthday!);
-   birthdayDateMe= dateInBuddhistCalendarFormat;
+    birthdayDateMe = dateInBuddhistCalendarFormat;
   }
 
   @override
@@ -106,20 +172,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
-            backgroundColor: Colors.black,
-            automaticallyImplyLeading: false,
-             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-              onPressed: () {
-                Get.back();
-              },
-            ),
-            ),
+          backgroundColor: Colors.black,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ),
         body: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 10),
-              child: (imgPick != "") ? profileImg() : profileNoImg(),
+              child: (imageFile != null) ? profileImg() : profileNoImg(),
             ),
             const SizedBox(height: 10),
             Text(
@@ -146,7 +212,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             color: Colors.white,
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -154,43 +220,59 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   editDataSet("อีเมล", "${user.email}", emailController),
                   Padding(
                     padding: const EdgeInsets.only(top: 10, bottom: 10),
-                    child: TextFormField(
-                      controller: dateController,
-                      style: const TextStyle(color: Colors.black),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'กรุณาเลือกวันเกิด';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(color: Colors.black, width: 2),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(color: Colors.black, width: 2),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-
-                          // label: const Text('วันเกิด'),
-                          hintText: 'วันเกิด $birthdayDateMe',
-                          hintStyle: const TextStyle(color: Colors.black),
-                          suffixIcon: const Padding(
-                            padding: EdgeInsets.all(15),
-                            child: FaIcon(
-                              FontAwesomeIcons.calendar,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            "วันเกิด",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                               color: Colors.black,
-                              size: 20,
                             ),
-                          )),
-                      readOnly:
-                          true, //set it true, so that user will not able to edit text
-                      onTap: () async {
-                        calendar();
-                      },
+                          ),
+                        ),
+                        TextFormField(
+                          controller: dateController,
+                          style: const TextStyle(color: Colors.black),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'กรุณาเลือกวันเกิด';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    color: Colors.black, width: 2),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    color: Colors.black, width: 2),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+
+                              // label: const Text('วันเกิด'),
+                              hintText: 'วันเกิด $birthdayDateMe',
+                              hintStyle: const TextStyle(color: Colors.black),
+                              suffixIcon: const Padding(
+                                padding: EdgeInsets.all(15),
+                                child: FaIcon(
+                                  FontAwesomeIcons.calendar,
+                                  color: Colors.black,
+                                  size: 20,
+                                ),
+                              )),
+                          readOnly:
+                              true, //set it true, so that user will not able to edit text
+                          onTap: () async {
+                            calendar();
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   Padding(
@@ -303,7 +385,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Text(
               title,
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
@@ -389,7 +471,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 padding: EdgeInsets.zero,
                 color: Colors.white,
                 onPressed: pickImage,
-                icon: const Icon(Icons.add),
+                icon: const Icon(Icons.edit),
               ),
             ))
       ],
@@ -412,7 +494,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ],
               shape: BoxShape.circle,
               image: DecorationImage(
-                  fit: BoxFit.cover, image: NetworkImage(imgPick))),
+                  fit: BoxFit.cover, image: FileImage(imageFile!))),
         ),
         Positioned(
             bottom: 0,
@@ -437,29 +519,60 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  // firebase
   void pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      var filePath = image.path;
-      var fileName = image.name;
-      if (filePath.isNotEmpty && fileName.isNotEmpty) {
-        var formData = FormData.fromMap({
-          'file': await MultipartFile.fromFile(
-            filePath,
-            filename: fileName,
-          )
-        });
 
-        var result = await Dio()
-            .post('http://202.28.34.197:8888/cdn/fileupload', data: formData);
-        if (result.statusCode == 201) {
-          log(result.data['fileUrl']);
-          setState(() {
-            imgPick = result.data['fileUrl'];
+    if (image != null) {
+      setState(() {
+        imageFile = File(image.path);
+      });
+    }
+  }
+
+//upload
+  Future<void> uploadImg() async {
+    if (imageFile != null) {
+      // Read the file as bytes
+      Uint8List imageBytes = await imageFile!.readAsBytes();
+
+      // Decode
+      img.Image? decodedImage = img.decodeImage(imageBytes);
+
+      if (decodedImage != null) {
+        // Encode
+        Uint8List base64ImgDecode =
+            Uint8List.fromList(img.encodeJpg(decodedImage));
+        // String base64Image = base64Encode(base64ImgDecode);
+        // log("$base64Image base64");
+
+        try {
+          FirebaseStorage storage = FirebaseStorage.instance;
+
+          String fileName = path.basename(imageFile!.path);
+          Reference ref = storage.ref().child('uploadsImg/$fileName');
+
+          // Upload the image bytes to Firebase
+          UploadTask uploadTask = ref.putData(base64ImgDecode);
+          await uploadTask.whenComplete(() async {
+            String downloadURL = await ref.getDownloadURL();
+            log('File uploaded at $downloadURL');
+            if (mounted) {
+              setState(() {
+                imgPick = downloadURL;
+              });
+              log("url $imgPick");
+            }
           });
+        } catch (e) {
+          log(e.toString());
         }
+      } else {
+        log('Failed to decode image');
       }
+    } else {
+      log('No image selected');
     }
   }
 }

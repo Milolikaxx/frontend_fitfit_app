@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:frontend_fitfit_app/pages/playlsitMusic/playlsit_music_page.dart';
 import 'package:frontend_fitfit_app/service/model/request/share_playlsit_post_req.dart';
 import 'package:frontend_fitfit_app/service/model/response/playlsit_with_wp_workoutprofile_get_res.dart';
 import 'package:frontend_fitfit_app/service/model/response/user_login_post_res.dart';
@@ -28,7 +29,7 @@ class _PostPageState extends State<PostPage> {
   late PlaylistService playlsitService;
   late PostService postService;
   late PlaylistWithWorkoutGetResponse dePlaylist;
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -151,39 +152,77 @@ class _PostPageState extends State<PostPage> {
                                       fontSize: 16,
                                       color: Colors.white), // สีของข้อความ hint
                                   counterStyle: TextStyle(
-                                    color: Colors.white, // สีของ maxLength counter
+                                    color:
+                                        Colors.white, // สีของ maxLength counter
                                   ),
                                 ),
                                 style: const TextStyle(
-                                    color: Colors.white), // สีของข้อความที่พิมพ์
+                                    color:
+                                        Colors.white), // สีของข้อความที่พิมพ์
                               ),
-                               Padding(
-                                padding: const EdgeInsets.only(top: 10),
-                                child: Container(
-                                  width: 400,
-                                  height: 250,
-                                  decoration: BoxDecoration(
-                                      // border: Border.all(width: 3, color: Colors.white),
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(8.0)),
-                                      shape: BoxShape.rectangle,
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          alignment: Alignment.topCenter,
-                                          image: NetworkImage(
-                                              dePlaylist.imagePlaylist))),
-                                  child: const Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 10),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: [
-                                        Icon(
-                                          Icons.playlist_play_rounded,
-                                          size: 30,
-                                          color: Colors.white,
-                                        ),
-                                      ],
+                              GestureDetector(
+                                 onTap: () {
+                                  Get.to(() => MusicPlaylistPage(dePlaylist.pid));
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Card(
+                                    child: Container(
+                                      width: 350,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xff2E2F33),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                      ),
+                                      padding: const EdgeInsets.only(right: 20),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 100,
+                                            height: 100,
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: NetworkImage(
+                                                    dePlaylist.imagePlaylist),
+                                                fit: BoxFit.cover,
+                                              ),
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(4),
+                                                      bottomLeft:
+                                                          Radius.circular(4)),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Flexible(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  dePlaylist.playlistName
+                                                              .length >
+                                                          10
+                                                      ? '${dePlaylist.playlistName.substring(0, 10)}...'
+                                                      : dePlaylist.playlistName,
+                                                  style: const TextStyle(
+                                                    color: Color(0xffffffff),
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w700,
+                                                    fontStyle: FontStyle.normal,
+                                                    overflow: TextOverflow.clip,
+                                                  ),
+                                                ),
+                                                const Icon(Icons.playlist_play_rounded, color: Colors.white,size: 30,)
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -206,10 +245,11 @@ class _PostPageState extends State<PostPage> {
                                     hintText: dePlaylist.playlistName,
                                     hintStyle: const TextStyle(
                                         fontSize: 16,
-                                        color: Colors.white), // สีของข้อความ hint
+                                        color:
+                                            Colors.white), // สีของข้อความ hint
                                     counterStyle: const TextStyle(
-                                      color:
-                                          Colors.white, // สีของ maxLength counter
+                                      color: Colors
+                                          .white, // สีของ maxLength counter
                                     ),
                                   ),
                                   style: const TextStyle(
@@ -220,7 +260,6 @@ class _PostPageState extends State<PostPage> {
                             ],
                           ),
                         ),
-                       
                       ],
                     ),
                   ),
@@ -258,10 +297,11 @@ class _PostPageState extends State<PostPage> {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Get.to(() => const Barbottom(initialIndex: 1,));
+                          Get.to(() => const Barbottom(
+                                initialIndex: 1,
+                              ));
                         },
                         style: ButtonStyle(
-                    
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
@@ -271,7 +311,8 @@ class _PostPageState extends State<PostPage> {
                         ),
                         child: const Text(
                           "ตกลง",
-                          style: TextStyle(fontSize: 16, color: Color(0xFFF8721D)),
+                          style:
+                              TextStyle(fontSize: 16, color: Color(0xFFF8721D)),
                         ),
                       ),
                     ],
